@@ -53,6 +53,9 @@ public class ControllerUtils {
      * Given a username and a domain name, returns a {@link org.apache.mailet.MailAddress}
      */
     public static MailAddress getMailAddress(String username, String domainName) {
+        if (username == null) {
+            return null;
+        }
         try {
             return new MailAddress(username, domainName);
         } catch (AddressException e) {

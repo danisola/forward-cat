@@ -27,9 +27,6 @@ public class AddProxy extends Controller {
 
     protected static final Logger logger = LoggerFactory.getLogger(AddProxy.class.getName());
 
-    private static final String PROXY_PARAM = "proxy";
-    private static final String MAIL_PARAM = "email";
-    private static final String DURATION_PARAM = "duration";
     private final JedisPool jedisPool;
     private final ObjectMapper mapper;
     private final MailSender mailSender;
@@ -41,18 +38,12 @@ public class AddProxy extends Controller {
         this.mailSender = mailSender;
     }
 
-    public Result addProxy() {
+    public Result addProxy(String proxy, String email, int duration) {
         Http.Request request = request();
 
-        String proxyUserName = request.getQueryString(PROXY_PARAM);
-        MailAddress userMail = toMailAddress(request.getQueryString(MAIL_PARAM));
-        String durationParam = request.getQueryString(DURATION_PARAM);
-        if (proxyUserName == null || userMail == null || durationParam == null || !isNumeric(durationParam)) {
-            return badRequest();
-        }
-
-        int duration = Integer.parseInt(durationParam);
-        if (!isValidDuration(duration)) {
+        // Checking params
+        MailAddress userMail = toMailAddress(email);
+        if (proxy == null || userMail == null || !isValidDuration(duration)) {
             return badRequest();
         }
 
@@ -61,7 +52,7 @@ public class AddProxy extends Controller {
             return badRequest();
         }
 
-        MailAddress proxyMailAddress = getMailAddress(proxyUserName);
+        MailAddress proxyMailAddress = getMailAddress(proxy);
         if (proxyMailAddress == null) {
             return badRequest();
         }
@@ -70,7 +61,7 @@ public class AddProxy extends Controller {
         String creationTimeStr = toStringValue(creationTime);
         String expirationTimeStr = toStringValue(creationTime.plusDays(duration));
         Lang lang = getBestLanguage(request, lang());
-        ProxyMail proxy = new ProxyMail(userMail.toString(), creationTimeStr, expirationTimeStr, lang.code());
+        ProxyMail proxyMail = new ProxyMail(userMail.toString(), creationTimeStr, expirationTimeStr, lang.code());
 
         // Creating the proxy
         Jedis jedis = null;
@@ -84,7 +75,7 @@ public class AddProxy extends Controller {
                 return badRequest();
             }
 
-            String jsonValue = mapper.writeValueAsString(proxy);
+            String jsonValue = mapper.writeValueAsString(proxyMail);
 
             Pipeline pipeline = jedis.pipelined();
             pipeline.set(proxyKey, jsonValue);
@@ -108,7 +99,7 @@ public class AddProxy extends Controller {
 
         // Sending the confirmation mail
         String subject = "Forward Cat";
-        Html content = proxy_created_email.render(lang, proxyMailAddress.toString(), getHash(proxy));
+        Html content = proxy_created_email.render(lang, proxyMailAddress.toString(), getHash(proxyMail));
         mailSender.sendHtmlMail(userMail, subject, content.toString());
 
         return ok("true");

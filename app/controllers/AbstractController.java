@@ -11,8 +11,6 @@ import redis.clients.jedis.JedisPool;
 abstract class AbstractController extends Controller {
 
     protected static final Logger logger = LoggerFactory.getLogger(AbstractController.class.getName());
-    protected static final String PROXY_PARAM = "p";
-    protected static final String HASH_PARAM = "h";
 
     /**
      * Returns the {@link ProxyMail} linked to the given proxy key or null

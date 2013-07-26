@@ -32,13 +32,12 @@ public class ExtendProxy extends AbstractController {
         this.mapper = mapper;
     }
 
-    public Result extend() {
+    public Result extend(String p, String h) {
         Http.Request request = request();
 
         // Checking params
-        MailAddress proxyMail = toMailAddress(request.getQueryString(PROXY_PARAM));
-        String hashParam = request.getQueryString(HASH_PARAM);
-        if (proxyMail == null || hashParam == null) {
+        MailAddress proxyMail = toMailAddress(p);
+        if (proxyMail == null || h == null) {
             logger.debug("Wrong params: {}", request);
             return badRequest();
         }
@@ -52,8 +51,8 @@ public class ExtendProxy extends AbstractController {
 
         // Checking that the hash is correct
         String hashValue = getHash(proxy);
-        if (!hashParam.equals(hashValue)) {
-            logger.debug("Hash values are not equals {} - {}", hashParam, hashValue);
+        if (!h.equals(hashValue)) {
+            logger.debug("Hash values are not equals {} - {}", h, hashValue);
             return badRequest();
         }
 

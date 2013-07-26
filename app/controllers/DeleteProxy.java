@@ -34,13 +34,12 @@ public class DeleteProxy extends AbstractController {
         this.mapper = mapper;
     }
 
-    public Result confirmDeletion() {
+    public Result confirmDeletion(String p, String h) {
         Http.Request request = request();
 
         // Checking params
-        MailAddress proxyMail = toMailAddress(request.getQueryString(PROXY_PARAM));
-        String hashParam = request.getQueryString(HASH_PARAM);
-        if (proxyMail == null || hashParam == null) {
+        MailAddress proxyMail = toMailAddress(p);
+        if (proxyMail == null || h == null) {
             logger.debug("Wrong params: {}", request);
             return badRequest();
         }
@@ -54,8 +53,8 @@ public class DeleteProxy extends AbstractController {
 
         // Checking that the hash is correct
         String hashValue = getHash(proxy);
-        if (!hashParam.equals(hashValue)) {
-            logger.debug("Hash values are not equals {} - {}", hashParam, hashValue);
+        if (!h.equals(hashValue)) {
+            logger.debug("Hash values are not equals {} - {}", h, hashValue);
             return badRequest();
         }
 
@@ -72,13 +71,12 @@ public class DeleteProxy extends AbstractController {
         return ok(confirm_deletion.render(lang, proxyMail.toString(), date, hashValue));
     }
 
-    public Result delete() {
+    public Result delete(String p, String h) {
         Http.Request request = request();
 
         // Checking params
-        MailAddress proxyMail = toMailAddress(request.getQueryString(PROXY_PARAM));
-        String hashParam = request.getQueryString(HASH_PARAM);
-        if (proxyMail == null || hashParam == null) {
+        MailAddress proxyMail = toMailAddress(p);
+        if (proxyMail == null || h == null) {
             logger.debug("Wrong params: {}", request);
             return badRequest();
         }
@@ -93,8 +91,8 @@ public class DeleteProxy extends AbstractController {
 
         // Checking that the hash is correct
         String hashValue = getHash(proxy);
-        if (!hashParam.equals(hashValue)) {
-            logger.debug("Hash values are not equals %s - %s", hashParam, hashValue);
+        if (!h.equals(hashValue)) {
+            logger.debug("Hash values are not equals %s - %s", h, hashValue);
             return badRequest();
         }
 

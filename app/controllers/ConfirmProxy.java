@@ -30,13 +30,12 @@ public class ConfirmProxy extends AbstractController {
         this.mapper = mapper;
     }
 
-    public Result confirm() throws Exception {
+    public Result confirm(String p, String h) throws Exception {
         Http.Request request = request();
 
         // Checking params
-        MailAddress proxyMail = toMailAddress(request.getQueryString(PROXY_PARAM));
-        String hashParam = request.getQueryString(HASH_PARAM);
-        if (proxyMail == null || hashParam == null) {
+        MailAddress proxyMail = toMailAddress(p);
+        if (proxyMail == null || h == null) {
             logger.debug("Wrong params: {}", request);
             return badRequest();
         }
@@ -50,8 +49,8 @@ public class ConfirmProxy extends AbstractController {
 
         // Checking that the hash is correct
         String hashValue = getHash(proxy);
-        if (!hashParam.equals(hashValue)) {
-            logger.debug("Hash values are not equals %s - %s", hashParam, hashValue);
+        if (!h.equals(hashValue)) {
+            logger.debug("Hash values are not equals %s - %s", h, hashValue);
             return badRequest();
         }
 

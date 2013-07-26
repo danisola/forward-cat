@@ -16,7 +16,6 @@ import static models.ControllerUtils.getMailAddress;
 public class ValidateProxy extends Controller {
 
     protected static final Logger logger = LoggerFactory.getLogger(ValidateProxy.class.getName());
-    private static final String PROXY_PARAM = "proxy";
     private final JedisPool jedisPool;
 
     @Inject
@@ -24,13 +23,12 @@ public class ValidateProxy extends Controller {
         this.jedisPool = jedisPool;
     }
 
-    public Result validate() {
+    public Result validate(String proxy) {
         Http.Request request = request();
 
         // Checking params
-        String userName = request.getQueryString(PROXY_PARAM);
-        MailAddress mailAddress = getMailAddress(userName);
-        if (userName == null || mailAddress == null) {
+        MailAddress mailAddress = getMailAddress(proxy);
+        if (mailAddress == null) {
             logger.debug("Wrong params: {}", request);
             return badRequest();
         }

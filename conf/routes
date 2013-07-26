@@ -5,13 +5,13 @@
 # Home page
 GET        /                         controllers.Landing.index()
 GET        /email_sent               controllers.Landing.emailSent()
-GET        /confirm               @controllers.ConfirmProxy.confirm()
-GET        /add        @controllers.AddProxy.addProxy()
-GET        /validate        @controllers.ValidateProxy.validate()
-GET        /confirm-deletion        @controllers.DeleteProxy.confirmDeletion()
-GET        /delete        @controllers.DeleteProxy.delete()
-GET        /extend        @controllers.ExtendProxy.extend()
-GET        /stats        @controllers.Stats.render()
+GET        /confirm                 @controllers.ConfirmProxy.confirm(p: String, h: String)
+GET        /add                     @controllers.AddProxy.addProxy(proxy: String, email: String, duration: Int)
+GET        /validate                @controllers.ValidateProxy.validate(proxy: String)
+GET        /confirm-deletion        @controllers.DeleteProxy.confirmDeletion(p: String, h: String)
+GET        /delete                  @controllers.DeleteProxy.delete(p: String, h: String)
+GET        /extend                  @controllers.ExtendProxy.extend(p: String, h: String)
+GET        /stats                   @controllers.Stats.render()
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file             controllers.Assets.at(path="/public", file)
