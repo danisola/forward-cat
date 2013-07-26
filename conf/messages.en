@@ -1,0 +1,80 @@
+index.title = Forward Cat - Temporary email addresses
+index.canonicalurl = http://forward.cat
+index.description = Forward Cat allows you to create a temporary email address that automatically forwards to your real email address
+index.contact.label = Contact
+index.contact.subject = Hi%20there!
+
+index.header = Get Started!
+index.subheader = Create a temporary email address
+index.form.address.label = Your email address:
+index.form.address.title = Your email address
+index.form.address.content = Insert your real email address. We will never sell or use it, and it will never be disclosed.
+index.form.address.placeholder = Email
+index.form.proxy.label = Temporary address:
+index.form.proxy.title = Username
+index.form.proxy.content = This will be your username
+index.form.proxy.placeholder = example
+index.form.duration.label = Active for:
+index.form.duration.title = Duration
+index.form.duration.content = Select how long your temporary address should be active
+index.form.duration.3day = 3 days
+index.form.duration.5day = 5 days
+index.form.duration.7day = 7 days
+index.form.lang = en
+index.form.submit = Let''s do this!
+index.about.header = About
+index.about.content = Forward Cat is a service that allows you to quickly create a temporary email address that automatically forwards to your real email address.
+index.about.section1.title = Don''t reveal your address
+index.about.section1.content = Forward Cat is anonymous- give out a temporary email address when you don''t want to disclose your real address.
+index.about.section2.title = Avoid spam
+index.about.section2.content = Forward Cat provides a way to stop companies and individuals from continuing to send you emails after you''ve concluded your desired transaction. Keep your address out of sight!
+index.about.section3.title = When to use Forward Cat
+index.about.section3.content = Use a temporary email address to register for websites that ask for your details in exchange for access, or to sell something on a classifieds site.
+index.about.section4.title = Totally private
+index.about.section4.content = Forward Cat doesn''t store your emails, and they''re not visible to anyone except you. Your temporary email address will be totally deactivated after the lifespan you select comes to an end.
+index.footer.by = Made by <a target="_blank" href="http://www.dani-sola.com">Dani Solà</a>. Special thanks to <a href="http://sophiacasas.es" target="_blank">Sophia Casas</a>. Illustrations by <a href="http://raulilustrado.wordpress.com" target="_blank">Raúl Vélez</a>.
+index.footer.code = Code licensed under the <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> and hosted on <a href="https://bitbucket.org/danisola/forward-cat" target="_blank">Bitbucket</a>.
+index.footer.langs = Other languages: <a href="http://ca.forward.cat">Català</a> - <a href="http://es.forward.cat">Español</a>
+
+email_sent.title = Activate your temporary email address!
+email_sent.header = Activate your temporary email address!
+email_sent.content1 = We have sent you an email, activate your new temporary email address within the next 30 minutes to start using it.
+email_sent.content2 = If you don''t see the email, please check your spam folder.
+email_sent.back = Back to Forward Cat
+
+proxy_created_email.title = Activate your temporary email address
+proxy_created_email.content1 = The temporary address <b>{0}</b> has been successfully created.
+proxy_created_email.content2 = Click <a href="http://www.forward.cat/confirm?p={0}&h={1}" target="_blank">here</a> to activate it.
+proxy_created_email.content3 = If you have not created this temporary email address, just delete this mail and forget about it :)
+proxy_created_email.content4 = To deactivate your temporary email address at any time after it''s been activated, click <a href="http://www.forward.cat/confirm-deletion?p={0}&h={1}" target="_blank">here</a>.
+proxy_created_email.content5 = Thanks for using Forward Cat!
+
+proxy_created.title = Temporary address activated
+proxy_created.header = Congratulations!
+proxy_created.content1 = <b>{0}</b> will be active until {1}.
+proxy_created.content2 = If you want to deactivate it earlier, just click on the deactivation link in the confirmation email you just received.
+proxy_created.content3 = We hope you find Forward Cat useful!
+
+confirm_deletion.title = Deactivating temporary email address
+confirm_deletion.header = Deactivating temporary email address
+confirm_deletion.content1 = <b>{0}</b> is set to be active until {1}.
+confirm_deletion.content2 = Do you want to delete {0}, effective now?
+confirm_deletion.deactivate = <a href="/delete?p={0}&h={1}" class="btn btn-primary">Deactivate it!</a>
+
+proxy_deleted.title = Temporary email address deactivated
+proxy_deleted.header = Temporary email address deactivated
+proxy_deleted.content1 = You won''t receive any more email from this temporary email address.
+proxy_deleted.content2 = We hope Forward Cat has been useful!
+proxy_deleted.back = Back to Forward Cat
+
+proxy_expiring_email.title = Your temporary email address will expire soon
+proxy_expiring_email.content1 = The temporary address <b>{0}</b> will expire on {1}
+proxy_expiring_email.content2 = Click <a href="http://www.forward.cat/extend?p={0}&h={1}" target="_blank">here</a> to extend its life for a few more days.
+proxy_expiring_email.content3 = To deactivate your temporary email address whenever you want, click <a href="http://www.forward.cat/confirm-deletion?p={0}&h={1}">here</a>.
+proxy_expiring_email.content4 = Thanks for using Forward Cat!
+
+proxy_extended.title = Temporary email address successfully extended
+proxy_extended.header = Temporary email address successfully extended
+proxy_extended.content1 = Your temporary address <b>{0}</b> will be active until {1}.
+proxy_extended.content2 = If you want to deactivate it earlier, just click on the deactivation link in the email you just received.
+proxy_extended.content3 = Happy forwarding!

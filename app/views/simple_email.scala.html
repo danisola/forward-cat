@@ -1,0 +1,52 @@
+@(lang: Lang, title: String)(content: Html)
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>Forward Cat - @title</title>
+        <style type="text/css">
+            @* /* Based on The MailChimp Reset INLINE: Yes. */ *@
+            @* /* Client-specific Styles */ *@
+            #outlook a {padding:0;} @* /* Force Outlook to provide a "view in browser" menu link. */ *@
+            body{width:100% !important; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%; margin:0; padding:0;}
+            @* /* Prevent Webkit and Windows Mobile platforms from changing default font sizes. */ *@
+            .ExternalClass {width:100%;} @* /* Force Hotmail to display emails at full width */ *@
+            .ExternalClass, .ExternalClass p, .ExternalClass span, .ExternalClass font, .ExternalClass td, .ExternalClass div {line-height: 100%;}
+            @* /* Forces Hotmail to display normal line spacing. More on that: http://www.emailonacid.com/forum/viewthread/43/ */ *@
+            #backgroundTable {margin:0; padding:0; width:100% !important; line-height: 100% !important;}
+            @* /* End reset */ *@
+
+            @* /* Some sensible defaults for images
+            Bring inline: Yes. */ *@
+            img {outline:none; text-decoration:none; -ms-interpolation-mode: bicubic;}
+            a img {border:none;}
+            .image_fix {display:block;}
+
+            @* /* Yahoo paragraph fix
+            Bring inline: Yes. */ *@
+            p {margin: 1em 0;}
+
+            @* /* Outlook 07, 10 Padding issue fix
+            Bring inline: No. */ *@
+            table td {border-collapse: collapse;}
+
+            @* /* Remove spacing around Outlook 07, 10 tables
+            Bring inline: Yes */ *@
+            table { border-collapse:collapse; mso-table-lspace:0pt; mso-table-rspace:0pt; }
+        </style>
+    </head>
+    <body>
+        @*<!-- Wrapper/Container Table: Use a wrapper table to control the width and the background color consistently of your email. Use this approach instead of setting attributes on the body tag. -->*@
+    <table cellpadding="0" cellspacing="0" border="0" id="backgroundTable">
+        <tr>
+            <td valign="top">
+                @*<!-- Gmail/Hotmail image display fix -->
+                <img class="image_fix" src="full path to image" alt="Your alt text" title="Your title text" width="x" height="x" />*@
+                @content
+            </td>
+        </tr>
+    </table>
+        @*<!-- End of wrapper table -->*@
+    </body>
+</html>

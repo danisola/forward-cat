@@ -1,0 +1,7 @@
+@(lang: Lang)
+
+    @simple_page(lang, Messages("proxy_deleted.title")(lang), Messages("proxy_deleted.header")(lang)) {
+        <p>@Messages("proxy_deleted.content1")(lang)</p>
+        <p>@Messages("proxy_deleted.content2")(lang)</p> <br />
+        <p><a href="/" class="btn btn-primary"><i class="icon-chevron-left\"></i> @Messages("proxy_deleted.back")(lang)</a></p>
+    }

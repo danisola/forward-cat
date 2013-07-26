@@ -1,0 +1,137 @@
+@(lang: Lang)
+
+<!DOCTYPE html>
+<html lang="@lang.code">
+    <head>
+        <meta charset="utf-8">
+        <title>@Messages("index.title")(lang)</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="@Messages("description")(lang)">
+        <meta name="author" content="Dani Solà">
+
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <link rel="canonical" href="@Messages("index.canonicalurl")(lang)" />
+        <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+        <link href="@routes.Assets.at("css/styles.min.css")" rel="stylesheet" >
+        <link href="@routes.Assets.at("images/favicon.ico")" rel="shortcut icon">
+
+        <meta property="og:image" content="@routes.Assets.at("images/forward_small.png")"/>
+        <link rel="image_src" href="@routes.Assets.at("images/forward_small.png")" />
+
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-39179494-1']);
+            _gaq.push(['_setDomainName', 'forward.cat']);
+            _gaq.push(['_trackPageview']);
+            (function() {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+        </script>
+    </head>
+
+    <body>
+        <div class="container-narrow">
+
+            <div class="masthead">
+                <ul class="nav nav-pills pull-right">
+                    <li class="active"><a target="_blank" href="mailto:contact@@forward.cat?subject=@Messages("index.contact.subject")(lang)">@Messages("index.contact.label")(lang)</a></li>
+                </ul>
+                <h3 class="muted">Forward Cat</h3>
+            </div>
+
+            <hr>
+
+            <div class="jumbotron">
+                <div class="cat-img"></div>
+                <h1>@Messages("index.header")(lang)</h1>
+                <p class="lead">@Messages("index.subheader")(lang)</p>
+            </div>
+
+            <div class="row-fluid marketing">
+                <div class="span12">
+                    <form class="form-horizontal" id="proxy-form" action="/add" method="GET">
+                        <div class="control-group">
+                            <label class="control-label" for="email">@Messages("index.form.address.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.address.title")(lang)" data-content="@Messages("index.form.address.content")(lang)" class="icon-question-sign icon-large info-icon"></i></label>
+
+                            <div class="controls">
+                                <input type="email" class="input-xlarge" id="email" name="email" placeholder="@Messages("index.form.address.placeholder")(lang)" autocomplete="off">
+                                <p class="help-block"></p>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="proxy">@Messages("index.form.proxy.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.proxy.title")(lang)" data-content="@Messages("index.form.proxy.content")(lang)" class="icon-question-sign icon-large info-icon"></i></label>
+
+                            <div class="controls">
+                                <input type="text" class="input-xlarge" id="proxy" name="proxy" placeholder="@Messages("index.form.proxy.placeholder")(lang)" autocomplete="off">
+
+                                <p class="help-inline">@@forward.cat</p>
+                                <p class="help-block"></p>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="duration">@Messages("index.form.duration.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.duration.title")(lang)" data-content="@Messages("index.form.duration.content")(lang)" class="icon-question-sign icon-large info-icon"></i></label>
+
+                            <div class="controls">
+                                <select id="duration" name="duration">
+                                    <option value="3">@Messages("index.form.duration.3day")(lang)</option>
+                                    <option selected value="5">@Messages("index.form.duration.5day")(lang)</option>
+                                    <option value="7">@Messages("index.form.duration.7day")(lang)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <input type="hidden" name="lang" value="@Messages("index.form.lang")(lang)">
+                            <button type="submit" class="btn btn-primary">@Messages("index.form.submit")(lang)</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="alerts span12">
+    </div>
+            </div>
+            <hr>
+
+            <div class="page-header" id="about">
+                <h2>@Messages("index.about.header")(lang)</h2>
+                <p>@Messages("index.about.content")(lang)</p>
+
+                <div class="row-fluid marketing">
+                    <div class="span6">
+                        <h4><i class="icon-envelope"></i> @Messages("index.about.section1.title")(lang)</h4>
+                        <p>@Messages("index.about.section1.content")(lang)</p>
+
+                        <h4><i class="icon-ban-circle"></i> @Messages("index.about.section2.title")(lang)</h4>
+                        <p>@Messages("index.about.section2.content")(lang)</p>
+                    </div>
+
+                    <div class="span6">
+                        <h4><i class="icon-lightbulb"></i> @Messages("index.about.section3.title")(lang)</h4>
+                        <p>@Messages("index.about.section3.content")(lang)</p>
+
+                        <h4><i class="icon-eye-close"></i> @Messages("index.about.section4.title")(lang)</h4>
+                        <p>@Messages("index.about.section4.content")(lang)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                @Html(Messages("index.footer.by")(lang)) <br/>
+                @Html(Messages("index.footer.code")(lang)) <br/>
+                @Html(Messages("index.footer.langs")(lang)) <br/>
+            </div>
+
+        </div>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
+        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.js"></script>
+        <script src="@routes.Assets.at("js/jquery.form.js")"></script>
+        <script src="@routes.Assets.at("js/application.min.js")"></script>
+
+    </body>
+</html>

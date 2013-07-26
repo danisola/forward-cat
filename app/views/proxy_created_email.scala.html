@@ -1,0 +1,9 @@
+@(lang: Lang, proxy: String, hash: String)
+
+    @simple_email(lang, Messages("proxy_created_email.title")(lang)) {
+        <p>@Html(Messages("proxy_created_email.content1", proxy)(lang))</p>
+        <p>@Html(Messages("proxy_created_email.content2", proxy, hash)(lang))</p>
+        <p>@Html(Messages("proxy_created_email.content3")(lang))</p>
+        <p>@Html(Messages("proxy_created_email.content4", proxy, hash)(lang))</p>
+        <p>@Html(Messages("proxy_created_email.content5")(lang))</p>
+    }

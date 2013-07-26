@@ -1,0 +1,7 @@
+@(lang: Lang, proxy: String, date: String)
+
+    @simple_page(lang, Messages("proxy_extended.title")(lang), Messages("proxy_extended.header")(lang)) {
+        <p>@Html(Messages("proxy_extended.content1", proxy, date)(lang))</p>
+        <p>@Html(Messages("proxy_extended.content2")(lang))</p>
+        <p>@Html(Messages("proxy_extended.content3")(lang))</p>
+    }

@@ -1,0 +1,39 @@
+@(lang: Lang, title: String, header: String)(content: Html)
+
+<!DOCTYPE html>
+<html lang="@lang.code">
+    <head>
+        <meta charset="utf-8">
+        <title>@title - Forward Cat</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="author" content="Dani Solà">
+
+        <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+
+        <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+        <link href="@routes.Assets.at("css/styles.min.css")" rel="stylesheet" >
+        <link href="@routes.Assets.at("images/favicon.ico")" rel="shortcut icon">
+    </head>
+
+    <body>
+        <div class="container-narrow">
+            <div class="masthead">
+                <h3 class="muted">Forward Cat</h3>
+            </div>
+
+            <hr>
+
+            <div class="page-header" id="about">
+                <h2>@header</h2>
+                @content
+            </div>
+
+        </div>
+
+        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
+    </body>
+</html>

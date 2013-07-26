@@ -1,0 +1,16 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET        /                         controllers.Landing.index()
+GET        /email_sent               controllers.Landing.emailSent()
+GET        /confirm               @controllers.ConfirmProxy.confirm()
+GET        /add        @controllers.AddProxy.addProxy()
+GET        /validate        @controllers.ValidateProxy.validate()
+GET        /confirm-deletion        @controllers.DeleteProxy.confirmDeletion()
+GET        /delete        @controllers.DeleteProxy.delete()
+GET        /extend        @controllers.ExtendProxy.extend()
+
+# Map static resources from the /public folder to the /assets URL path
+GET        /assets/*file             controllers.Assets.at(path="/public", file)

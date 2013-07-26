@@ -1,0 +1,7 @@
+@(lang: Lang)
+
+    @simple_page(lang, Messages("email_sent.title")(lang), Messages("email_sent.header")(lang)) {
+        <p>@Messages("email_sent.content1")(lang)</p>
+        <p>@Messages("email_sent.content2")(lang)</p> <br />
+        <p><a href="/" class="btn btn-primary"><i class="icon-chevron-left\"></i> @Messages("email_sent.back")(lang)</a></p>
+    }

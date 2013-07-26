@@ -1,0 +1,7 @@
+@(lang: Lang, proxy: String, date: String, hash: String)
+
+    @simple_page(lang, Messages("confirm_deletion.title")(lang), Messages("confirm_deletion.header")(lang)) {
+        <p>@Html(Messages("confirm_deletion.content1", proxy, date)(lang))</p>
+        <p>@Html(Messages("confirm_deletion.content2", proxy)(lang))</p>
+        <p>@Html(Messages("confirm_deletion.deactivate", proxy, hash)(lang))</p> <br />
+    }
