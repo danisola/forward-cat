@@ -4,8 +4,8 @@ index.description = Forward Cat et permet crear fàcilment una adreça temporal 
 index.contact.label = Contactar
 index.contact.subject = Hola!
 
-index.header = Comencem!
-index.subheader = Crea una nova adreça temporal d''e-mail
+index.header = Crea una nova adreça temporal d''e-mail
+index.subheader = És gratuït, ràpid i anònim
 index.form.address.label = La teva adreça:
 index.form.address.title = La teva adreça
 index.form.address.content = Introdueix la teva adreça e-mail real. Mai la farem servir indegudament.

@@ -4,8 +4,8 @@ index.description = Forward Cat allows you to create a temporary email address t
 index.contact.label = Contact
 index.contact.subject = Hi%20there!
 
-index.header = Get Started!
-index.subheader = Create a temporary email address
+index.header = Get a temporary email address
+index.subheader = It''s fast, free and anonymous
 index.form.address.label = Your email address:
 index.form.address.title = Your email address
 index.form.address.content = Insert your real email address. We will never sell or use it, and it will never be disclosed.

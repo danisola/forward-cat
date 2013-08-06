@@ -4,8 +4,8 @@ index.description = Forward Cat te permite crear fácilmente una dirección temp
 index.contact.label = Contactar
 index.contact.subject = ¡Hola!
 
-index.header = ¡Empecemos!
-index.subheader = Crea una nueva dirección temporal de correo
+index.header = Crea una nueva dirección temporal de correo
+index.subheader = Es rápido, gratuito y anónimo
 index.form.address.label = Tu dirección:
 index.form.address.title = Tu dirección
 index.form.address.content = Introduce tu dirección de correo real. No la utilizaremos nunca indebidamente.
