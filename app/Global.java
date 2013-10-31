@@ -6,12 +6,13 @@ import models.Options;
 import org.quartz.*;
 import play.Application;
 import play.GlobalSettings;
-import play.extras.iteratees.GzipFilter;
+import play.api.mvc.EssentialFilter;
+import play.filters.gzip.GzipFilter;
 
 public class Global extends GlobalSettings {
 
     private static final String JOB_NAME = "sendAlertJob";
-    private static final Injector INJECTOR = createInjector();
+    private static final Injector INJECTOR = Guice.createInjector(new Module());
     private Scheduler alertScheduler;
     private Options options;
 
@@ -30,7 +31,6 @@ public class Global extends GlobalSettings {
         } catch (SchedulerException e) {
             Throwables.propagate(e);
         }
-
     }
 
     @Override
@@ -38,12 +38,8 @@ public class Global extends GlobalSettings {
         return INJECTOR.getInstance(controllerClass);
     }
 
-    private static Injector createInjector() {
-        return Guice.createInjector(new Module());
-    }
-
-    public <T extends play.api.mvc.EssentialFilter> Class<T>[] filters() {
-        return new Class[] { GzipFilter.class };
+    public <T extends EssentialFilter> Class<T>[] filters() {
+        return new Class[]{ GzipFilter.class };
     }
 
     private void scheduleAlerts() {
