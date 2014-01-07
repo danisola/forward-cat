@@ -6,13 +6,14 @@ import com.forwardcat.common.RedisKeys;
 import com.google.inject.Inject;
 import org.apache.mailet.MailAddress;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.i18n.Lang;
 import play.mvc.Http;
 import play.mvc.Result;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.Response;
 import views.html.proxy_created;
 
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
@@ -21,6 +22,7 @@ import static models.ExpirationUtils.*;
 
 public class ConfirmProxy extends AbstractController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmProxy.class.getName());
     private final JedisPool jedisPool;
     private final ObjectMapper mapper;
 
@@ -36,7 +38,7 @@ public class ConfirmProxy extends AbstractController {
         // Checking params
         MailAddress proxyMail = toMailAddress(p);
         if (proxyMail == null || h == null) {
-            logger.debug("Wrong params: {}", request);
+            LOGGER.debug("Wrong params: {}", request);
             return badRequest();
         }
 
@@ -50,13 +52,13 @@ public class ConfirmProxy extends AbstractController {
         // Checking that the hash is correct
         String hashValue = getHash(proxy);
         if (!h.equals(hashValue)) {
-            logger.debug("Hash values are not equals %s - %s", h, hashValue);
+            LOGGER.debug("Hash values are not equals %s - %s", h, hashValue);
             return badRequest();
         }
 
         // Checking that the proxy is not already active
         if (proxy.isActive()) {
-            logger.debug("Proxy {} is already active", proxy);
+            LOGGER.debug("Proxy {} is already active", proxy);
             return badRequest();
         }
         proxy.activate();
@@ -71,24 +73,16 @@ public class ConfirmProxy extends AbstractController {
             DateTime alertTime = getAlertTime(expirationTime);
 
             pipeline.set(proxyKey, mapper.writeValueAsString(proxy)); // Saving the proxy
-            Response<Long> expireResponse = pipeline.expire(proxyKey, secondsTo(expirationTime)); // Setting TTL
+            pipeline.expire(proxyKey, secondsTo(expirationTime)); // Setting TTL
             pipeline.zadd(RedisKeys.ALERTS_SET, alertTime.getMillis(), proxyMail.toString()); // Adding an alert
             pipeline.incr(RedisKeys.PROXIES_ACTIVATED_COUNTER); // Incrementing proxies activated
             pipeline.sync();
-
-            if (expireResponse.get() != 1L) {
-                // Very unlikely, but something has gone wrong
-                logger.error("Error while expiring %s", proxyKey);
-                return badRequest();
-            }
         } catch (Exception ex) {
-            logger.error("Error while connecting to Redis", ex);
+            LOGGER.error("Error while connecting to Redis", ex);
+            returnJedisOnException(jedisPool, jedis, ex);
             return internalServerError();
-        } finally {
-            if (jedis != null) {
-                jedisPool.returnResource(jedis);
-            }
         }
+        jedisPool.returnResource(jedis);
 
         // Generating the response
         DateTime expirationTime = toDateTime(proxy.getExpirationTime());

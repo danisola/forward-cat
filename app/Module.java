@@ -1,5 +1,6 @@
 import alerts.GuiceJobFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.google.common.base.Throwables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -20,8 +21,12 @@ public class Module extends AbstractModule {
     protected void configure() {
         // Performing bindings
         bind(Options.class).toInstance(options);
-        bind(ObjectMapper.class).in(Singleton.class);
+        bind(ObjectMapper.class).toInstance(objectMapper());
         bind(MailSender.class).in(Singleton.class);
+    }
+
+    private ObjectMapper objectMapper() {
+        return new ObjectMapper().registerModule(new AfterburnerModule());
     }
 
     @Provides

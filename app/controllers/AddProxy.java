@@ -10,23 +10,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.api.templates.Html;
 import play.i18n.Lang;
-import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.Response;
 import views.html.proxy_created_email;
 
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
 
-public class AddProxy extends Controller {
+public class AddProxy extends AbstractController {
 
-    protected static final Logger logger = LoggerFactory.getLogger(AddProxy.class.getName());
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(AddProxy.class.getName());
     private final JedisPool jedisPool;
     private final ObjectMapper mapper;
     private final MailSender mailSender;
@@ -79,23 +76,14 @@ public class AddProxy extends Controller {
 
             Pipeline pipeline = jedis.pipelined();
             pipeline.set(proxyKey, jsonValue);
-            Response<Long> expire = pipeline.expire(proxyKey, getUnconfirmedProxyDuration());
+            pipeline.expire(proxyKey, getUnconfirmedProxyDuration());
             pipeline.sync();
-
-            if (expire.get() != 1L) {
-                // Expire couldn't be set, trying to remove
-                logger.error("Expire command couldn't be executed");
-                jedis.del(proxyKey);
-                return internalServerError();
-            }
         } catch (Exception ex) {
-            logger.error("Error while connecting to Redis", ex);
+            returnJedisOnException(jedisPool, jedis, ex);
+            LOGGER.error("Error while connecting to Redis", ex);
             return internalServerError();
-        } finally {
-            if (jedis != null) {
-                jedisPool.returnResource(jedis);
-            }
         }
+        jedisPool.returnResource(jedis);
 
         // Sending the confirmation mail
         String subject = "Forward Cat";

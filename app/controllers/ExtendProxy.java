@@ -6,23 +6,23 @@ import com.forwardcat.common.RedisKeys;
 import com.google.inject.Inject;
 import org.apache.mailet.MailAddress;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import play.i18n.Lang;
 import play.mvc.Http;
 import play.mvc.Result;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.Response;
 import views.html.proxy_extended;
 
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
-import static models.ControllerUtils.getBestLanguage;
-import static models.ControllerUtils.getHash;
-import static models.ControllerUtils.toMailAddress;
+import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
 
 public class ExtendProxy extends AbstractController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExtendProxy.class.getName());
     private final JedisPool jedisPool;
     private final ObjectMapper mapper;
 
@@ -38,7 +38,7 @@ public class ExtendProxy extends AbstractController {
         // Checking params
         MailAddress proxyMail = toMailAddress(p);
         if (proxyMail == null || h == null) {
-            logger.debug("Wrong params: {}", request);
+            LOGGER.debug("Wrong params: {}", request);
             return badRequest();
         }
 
@@ -52,13 +52,13 @@ public class ExtendProxy extends AbstractController {
         // Checking that the hash is correct
         String hashValue = getHash(proxy);
         if (!h.equals(hashValue)) {
-            logger.debug("Hash values are not equals {} - {}", h, hashValue);
+            LOGGER.debug("Hash values are not equals {} - {}", h, hashValue);
             return badRequest();
         }
 
         // Checking that the proxy is active
         if (!proxy.isActive()) {
-            logger.debug("Proxy {} is already active", proxy);
+            LOGGER.debug("Proxy {} is already active", proxy);
             return badRequest();
         }
 
@@ -79,7 +79,7 @@ public class ExtendProxy extends AbstractController {
             Pipeline pipeline = jedis.pipelined();
 
             pipeline.set(proxyKey, mapper.writeValueAsString(proxy)); // Saving the proxy
-            Response<Long> expireResponse = pipeline.expire(proxyKey, secondsTo(newExpirationTime)); // Setting the TTL
+            pipeline.expire(proxyKey, secondsTo(newExpirationTime)); // Setting the TTL
 
             // Adding or overwriting the alert if the time has not passed
             DateTime newAlertTime = getAlertTime(newExpirationTime);
@@ -88,20 +88,12 @@ public class ExtendProxy extends AbstractController {
             }
 
             pipeline.sync();
-
-            if (expireResponse.get() != 1L) {
-                // Very unlikely, but something has gone wrong
-                logger.error("Error while expiring {}", proxyKey);
-                return badRequest();
-            }
         } catch (Exception ex) {
-            logger.error("Error while connecting to Redis", ex);
+            LOGGER.error("Error while connecting to Redis", ex);
+            returnJedisOnException(jedisPool, jedis, ex);
             return internalServerError();
-        } finally {
-            if (jedis != null) {
-                jedisPool.returnResource(jedis);
-            }
         }
+        jedisPool.returnResource(jedis);
 
         // Generating the answer
         Lang language = getBestLanguage(request, lang());
