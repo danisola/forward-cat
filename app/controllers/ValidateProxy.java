@@ -32,7 +32,7 @@ public class ValidateProxy extends AbstractController {
             return badRequest();
         }
 
-        Boolean valid = false;
+        Boolean valid;
 
         // Creating the proxy
         Jedis jedis = null;

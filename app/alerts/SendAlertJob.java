@@ -71,22 +71,27 @@ public class SendAlertJob implements Job {
                 // Getting the proxy
                 String proxyKey = RedisKeys.generateProxyKey(toMailAddress(alertProxy));
                 String proxyValue = jedis.get(proxyKey);
-                ProxyMail proxyMail = mapper.readValue(proxyValue, ProxyMail.class);
-                DateTime expirationTime = toDateTime(proxyMail.getExpirationTime());
 
-                // Sending the mail
-                Lang lang = new Lang(Lang.get(proxyMail.getLang()).get());
-                MailAddress address = toMailAddress(proxyMail.getUserAddress());
+                if (proxyValue != null) {
+                    ProxyMail proxyMail = mapper.readValue(proxyValue, ProxyMail.class);
+                    DateTime expirationTime = toDateTime(proxyMail.getExpirationTime());
 
-                String date = formatInstant(expirationTime, lang);
+                    // Sending the mail
+                    Lang lang = new Lang(Lang.get(proxyMail.getLang()).get());
+                    MailAddress address = toMailAddress(proxyMail.getUserAddress());
 
-                Html content = proxy_expiring_email.render(lang, alertProxy, date, getHash(proxyMail));
-                mailSender.sendHtmlMail(address, subject, content.toString());
+                    String date = formatInstant(expirationTime, lang);
+
+                    Html content = proxy_expiring_email.render(lang, alertProxy, date, getHash(proxyMail));
+                    mailSender.sendHtmlMail(address, subject, content.toString());
+                } else {
+                    logger.warn("Proxy had already expired: " + proxyKey);
+                }
 
                 // Removing the alert
                 jedis.zrem(RedisKeys.ALERTS_SET, alertProxy);
             } catch (Exception ex) {
-                logger.error("Unexpected exception", ex);
+                logger.error("Unexpected exception for proxy: " + alertProxy, ex);
             } finally {
                 jedisPool.returnResource(jedis);
             }

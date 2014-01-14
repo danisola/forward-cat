@@ -23,10 +23,9 @@ abstract class AbstractController extends Controller {
         try {
             jedis = jedisPool.getResource();
 
-            // Getting the proxy as a string
             String proxyString = jedis.get(proxyKey);
             if (proxyString == null) {
-                LOGGER.debug("Proxy % doesn't exist", proxyString);
+                LOGGER.debug("Proxy % doesn't exist", proxyKey);
                 return null;
             }
 
