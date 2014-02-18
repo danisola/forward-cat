@@ -11,10 +11,11 @@ import redis.clients.jedis.JedisPool;
 
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.getMailAddress;
+import static models.JedisHelper.returnJedisOnException;
 
 public class ValidateProxy extends AbstractController {
 
-    protected static final Logger LOGGER = LoggerFactory.getLogger(ValidateProxy.class.getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateProxy.class.getName());
     private final JedisPool jedisPool;
 
     @Inject

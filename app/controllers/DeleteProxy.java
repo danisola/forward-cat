@@ -21,6 +21,7 @@ import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.formatInstant;
 import static models.ExpirationUtils.toDateTime;
+import static models.JedisHelper.returnJedisOnException;
 
 public class DeleteProxy extends AbstractController {
 

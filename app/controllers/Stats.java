@@ -12,6 +12,8 @@ import redis.clients.jedis.Pipeline;
 import redis.clients.jedis.Response;
 import views.html.stats;
 
+import static models.JedisHelper.returnJedisOnException;
+
 public class Stats extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Stats.class.getName());

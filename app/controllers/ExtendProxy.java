@@ -19,6 +19,7 @@ import views.html.proxy_extended;
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
+import static models.JedisHelper.returnJedisOnException;
 
 public class ExtendProxy extends AbstractController {
 

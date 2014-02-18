@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import play.mvc.Controller;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.exceptions.JedisConnectionException;
+
+import static models.JedisHelper.returnJedisIfNotNull;
+import static models.JedisHelper.returnJedisOnException;
 
 abstract class AbstractController extends Controller {
 
@@ -18,33 +20,22 @@ abstract class AbstractController extends Controller {
      * if it does not exist
      */
     protected ProxyMail getProxy(String proxyKey, JedisPool jedisPool, ObjectMapper mapper) {
-        ProxyMail proxy;
+        ProxyMail proxy = null;
         Jedis jedis = null;
         try {
             jedis = jedisPool.getResource();
 
             String proxyString = jedis.get(proxyKey);
-            if (proxyString == null) {
-                LOGGER.debug("Proxy % doesn't exist", proxyKey);
-                return null;
+            if (proxyString != null) {
+                proxy = mapper.readValue(proxyString, ProxyMail.class);
             }
-
-            // Checking that the hash is correct
-            proxy = mapper.readValue(proxyString, ProxyMail.class);
         } catch (Exception ex) {
             LOGGER.error("Error while connecting to Redis", ex);
             returnJedisOnException(jedisPool, jedis, ex);
-            return null;
+            jedis = null;
+        } finally {
+            returnJedisIfNotNull(jedisPool, jedis);
         }
-        jedisPool.returnResource(jedis);
         return proxy;
-    }
-
-    protected void returnJedisOnException(JedisPool pool, Jedis jedis, Exception ex) {
-        if (ex instanceof JedisConnectionException) {
-            pool.returnBrokenResource(jedis);
-        } else {
-            pool.returnResource(jedis);
-        }
     }
 }

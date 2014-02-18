@@ -17,7 +17,6 @@ import play.api.templates.Html;
 import play.i18n.Lang;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.exceptions.JedisException;
 import views.html.proxy_expiring_email;
 
 import java.util.Set;
@@ -26,6 +25,8 @@ import static models.ControllerUtils.getHash;
 import static models.ControllerUtils.toMailAddress;
 import static models.ExpirationUtils.formatInstant;
 import static models.ExpirationUtils.toDateTime;
+import static models.JedisHelper.returnJedisIfNotNull;
+import static models.JedisHelper.returnJedisOnException;
 
 /**
  * Job that sends alerts to the users of proxies before they expire in order to
@@ -33,6 +34,7 @@ import static models.ExpirationUtils.toDateTime;
  */
 public class SendAlertJob implements Job {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SendAlertJob.class.getName());
     private final String subject = "Forward Cat";
     private final JedisPool jedisPool;
     private final ObjectMapper mapper;
@@ -51,20 +53,30 @@ public class SendAlertJob implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         // Getting the proxies that will expire before tomorrow
+        Set<String> alerts = null;
         Jedis scanJedis = jedisPool.getResource();
-        Set<String> alerts;
         try {
             // Getting the alerts that should be sent now
             long currentMillis = System.currentTimeMillis();
             alerts = scanJedis.zrangeByScore(RedisKeys.ALERTS_SET, 0L, currentMillis);
-        } catch (JedisException ex) {
-            logger.error("Unexpected exception", ex);
+        } catch (Exception ex) {
+            LOGGER.error("Unexpected exception", ex);
+            returnJedisOnException(jedisPool, scanJedis, ex);
             return;
-        } finally {
-            jedisPool.returnResource(scanJedis);
         }
+        jedisPool.returnResource(scanJedis);
 
-        // Sending alerts to those proxy users and deleting the alerts
+        if (alerts != null) {
+            sendAlerts(alerts);
+        }
+    }
+
+    /**
+     * Send email alerts to the given proxy users and delete the alerts
+     *
+     * @param alerts
+     */
+    private void sendAlerts(Set<String> alerts) {
         for (String alertProxy : alerts) {
             Jedis jedis = jedisPool.getResource();
             try {
@@ -85,25 +97,24 @@ public class SendAlertJob implements Job {
                     Html content = proxy_expiring_email.render(lang, alertProxy, date, getHash(proxyMail));
                     mailSender.sendHtmlMail(address, subject, content.toString());
                 } else {
-                    logger.warn("Proxy had already expired: " + proxyKey);
+                    LOGGER.warn("Proxy had already expired: " + proxyKey);
                 }
 
                 // Removing the alert
                 jedis.zrem(RedisKeys.ALERTS_SET, alertProxy);
             } catch (Exception ex) {
-                logger.error("Unexpected exception for proxy: " + alertProxy, ex);
-            } finally {
-                jedisPool.returnResource(jedis);
+                LOGGER.error("Unexpected exception for proxy: " + alertProxy, ex);
+                returnJedisOnException(jedisPool, jedis, ex);
+                jedis = null;
             }
+            returnJedisIfNotNull(jedisPool, jedis);
 
             // Wait before sending another email
             try {
                 Thread.sleep(options.getTimeBetweenAlertMailsMillis());
             } catch (InterruptedException e) {
-                logger.error("Unexpected error", e);
+                LOGGER.error("Unexpected error", e);
             }
         }
     }
-
-    protected static final Logger logger = LoggerFactory.getLogger(SendAlertJob.class.getName());
 }

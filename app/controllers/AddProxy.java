@@ -20,6 +20,7 @@ import views.html.proxy_created_email;
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
+import static models.JedisHelper.returnJedisOnException;
 
 public class AddProxy extends AbstractController {
 
@@ -59,6 +60,7 @@ public class AddProxy extends AbstractController {
         String expirationTimeStr = toStringValue(creationTime.plusDays(duration));
         Lang lang = getBestLanguage(request, lang());
         ProxyMail proxyMail = new ProxyMail(userMail.toString(), creationTimeStr, expirationTimeStr, lang.code());
+        Boolean proxyAlreadyExists;
 
         // Creating the proxy
         Jedis jedis = null;
@@ -66,18 +68,15 @@ public class AddProxy extends AbstractController {
             jedis = jedisPool.getResource();
 
             String proxyKey = generateProxyKey(proxyMailAddress);
-            Boolean exists = jedis.exists(proxyKey);
-            if (exists) {
-                // Proxy already exists cannot create a new one
-                return badRequest();
+            proxyAlreadyExists = jedis.exists(proxyKey);
+            if (!proxyAlreadyExists) {
+                String jsonValue = mapper.writeValueAsString(proxyMail);
+
+                Pipeline pipeline = jedis.pipelined();
+                pipeline.set(proxyKey, jsonValue);
+                pipeline.expire(proxyKey, getUnconfirmedProxyDuration());
+                pipeline.sync();
             }
-
-            String jsonValue = mapper.writeValueAsString(proxyMail);
-
-            Pipeline pipeline = jedis.pipelined();
-            pipeline.set(proxyKey, jsonValue);
-            pipeline.expire(proxyKey, getUnconfirmedProxyDuration());
-            pipeline.sync();
         } catch (Exception ex) {
             returnJedisOnException(jedisPool, jedis, ex);
             LOGGER.error("Error while connecting to Redis", ex);
@@ -85,27 +84,15 @@ public class AddProxy extends AbstractController {
         }
         jedisPool.returnResource(jedis);
 
+        if (proxyAlreadyExists) {
+            return badRequest(); // Proxy already exists: cannot create a new one
+        }
+
         // Sending the confirmation mail
         String subject = "Forward Cat";
         Html content = proxy_created_email.render(lang, proxyMailAddress.toString(), getHash(proxyMail));
         mailSender.sendHtmlMail(userMail, subject, content.toString());
 
         return ok("true");
-    }
-
-    /**
-     * Code based on org.apache.commons.lang.StringUtils#isNumeric
-     */
-    private static boolean isNumeric(String str) {
-        if (str.length() == 0) {
-            return false;
-        }
-        int sz = str.length();
-        for (int i = 0; i < sz; i++) {
-            if (!Character.isDigit(str.charAt(i))) {
-                return false;
-            }
-        }
-        return true;
     }
 }
