@@ -6,8 +6,6 @@ import models.Options;
 import org.quartz.*;
 import play.Application;
 import play.GlobalSettings;
-import play.api.mvc.EssentialFilter;
-import play.filters.gzip.GzipFilter;
 
 public class Global extends GlobalSettings {
 
@@ -36,10 +34,6 @@ public class Global extends GlobalSettings {
     @Override
     public <A> A getControllerInstance(Class<A> controllerClass) throws Exception {
         return INJECTOR.getInstance(controllerClass);
-    }
-
-    public <T extends EssentialFilter> Class<T>[] filters() {
-        return new Class[]{ GzipFilter.class };
     }
 
     private void scheduleAlerts() {

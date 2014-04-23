@@ -5,7 +5,6 @@ name := "forward-cat-web"
 version := "1.0-SNAPSHOT"
 
 libraryDependencies ++= Seq(
-    filters,
     "redis.clients" % "jedis" % "2.1.0",
     "org.apache.james" % "apache-mailet" % "2.4",
     "com.google.inject" % "guice" % "3.0",
