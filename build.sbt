@@ -1,8 +1,15 @@
-import play.Project._
+import com.typesafe.sbt.less.Import.LessKeys
+import com.typesafe.sbt.web.SbtWeb
+import play.PlayJava
+import com.typesafe.sbt.web.SbtWeb.autoImport._
 
 name := "forward-cat-web"
 
 version := "1.0-SNAPSHOT"
+
+scalaVersion := "2.11.4"
+
+lazy val root = (project in file(".")).enablePlugins(PlayJava, SbtWeb)
 
 libraryDependencies ++= Seq(
     "redis.clients" % "jedis" % "2.1.0",
@@ -15,4 +22,12 @@ libraryDependencies ++= Seq(
     "org.mockito" % "mockito-all" % "1.9.5" % "test"
 )
 
-playJavaSettings
+resolvers += ("Local Maven Repository" at "file:///"+Path.userHome.absolutePath+"/.m2/repository")
+
+pipelineStages := Seq(rjs)
+
+includeFilter in (Assets, LessKeys.less) := "*.less"
+
+excludeFilter in (Assets, LessKeys.less) := "_*.less"
+
+LessKeys.compress := true

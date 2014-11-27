@@ -1,6 +1,7 @@
 package models;
 
 import com.forwardcat.common.ProxyMail;
+import com.google.common.base.Charsets;
 import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
@@ -37,7 +38,7 @@ public class ControllerUtils {
      */
     public static String getHash(ProxyMail proxy) {
         Hasher hasher = HASH_FUNCTION.newHasher();
-        hasher.putString(proxy.getCreationTime());
+        hasher.putString(proxy.getCreationTime(), Charsets.UTF_8);
         return hasher.hash().toString();
     }
 
