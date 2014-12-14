@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.forwardcat</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>james</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>Forward Cat - James</name>
+
+    <properties>
+        <james.server.version>3.0.0-beta5-SNAPSHOT</james.server.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.forwardcat</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.james</groupId>
+            <artifactId>james-server-mailets</artifactId>
+            <version>${james.server.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.james</groupId>
+            <artifactId>james-server-core</artifactId>
+            <version>${james.server.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- jDKIM is a DKIM implementation library written in Java [http://james.apache.org/jdkim]-->
+        <dependency>
+            <groupId>org.apache.james.jdkim</groupId>
+            <artifactId>apache-jdkim-library</artifactId>
+            <version>0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.james.jdkim</groupId>
+            <artifactId>apache-jdkim-mailets</artifactId>
+            <version>0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>3.1.0.RELEASE</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <!-- Library of matchers for building test expressions [http://code.google.com/p/hamcrest/]-->
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-all</artifactId>
+            <scope>test</scope>
+            <version>1.3</version>
+        </dependency>
+        <dependency>
+            <!-- A blazingly small and sane redis java client
+            [https://github.com/xetorthio/jedis] -->
+            <groupId>redis.clients</groupId>
+            <artifactId>jedis</artifactId>
+            <version>2.1.0</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <!-- Apache Commons Configuration software library
+            [http://commons.apache.org/configuration]-->
+            <groupId>commons-configuration</groupId>
+            <artifactId>commons-configuration</artifactId>
+            <version>1.9</version>
+        </dependency>
+        <dependency>
+            <!-- JUnit is a simple framework to write repeatable tests [http://junit.sourceforge.net/]-->
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <!-- Simpler & better mocking [http://code.google.com/p/mockito/] -->
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>1.7.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.artifactId}</finalName>
+                            <createDependencyReducedPom>false</createDependencyReducedPom>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

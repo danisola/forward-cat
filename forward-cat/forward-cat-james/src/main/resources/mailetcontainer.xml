@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one   
+  or more contributor license agreements.  See the NOTICE file 
+  distributed with this work for additional information        
+  regarding copyright ownership.  The ASF licenses this file   
+  to you under the Apache License, Version 2.0 (the            
+  "License"); you may not use this file except in compliance   
+  with the License.  You may obtain a copy of the License at   
+                                                               
+    http://www.apache.org/licenses/LICENSE-2.0                 
+                                                               
+  Unless required by applicable law or agreed to in writing,   
+  software distributed under the License is distributed on an  
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY       
+  KIND, either express or implied.  See the License for the    
+  specific language governing permissions and limitations      
+  under the License.                                           
+ -->
+
+<!--
+   This template file can be used as example for James Server configuration
+   DO NOT USE IT AS SUCH AND ADAPT IT TO YOUR NEEDS
+-->
+
+<!-- See http://james.apache.org/server/3/config.html for usage -->
+
+<!-- This block is responsible for processing messages on the spool. -->
+
+<mailetcontainer enableJmx="true">
+
+  <!-- MailAddress used for PostMaster -->
+  <context>
+    <postmaster>contact@forward.cat</postmaster>
+  </context>
+
+  <!-- Number of spool threads -->
+  <spooler>
+    <threads>10</threads>
+  </spooler>
+
+  <processors>
+
+    <processor state="root" enableJmx="true">
+
+      <!-- Important check to avoid looping -->
+      <mailet match="RelayLimit=30" class="Null"/>
+
+      <!-- Sending all the mails sent by us -->
+      <mailet match="SenderHostIs=forward.cat" class="ToProcessor">
+        <processor>transport</processor>
+      </mailet>
+
+      <!-- Sending all bounced emails -->
+      <mailet match="HasMailAttribute=bounced" class="ToProcessor">
+        <processor>transport</processor>
+      </mailet>
+
+      <!-- Filtering the incoming mails, so we only forward the ones that have a proxy-->
+      <mailet match="All" class="com.forwardcat.james.ForwardMailet">
+        <recipients>recipients</recipients>
+        <to>recipients</to>
+        <sender>no-reply@forward.cat</sender>
+        <replyTo>sender</replyTo>
+        <prefix xml:space="preserve">[Forward Cat] </prefix>
+        <debug>false</debug>
+        <static>true</static>
+      </mailet>
+
+      <mailet match="HasMailAttributeWithValue=com.forwardcat.bounce, true" class="ToProcessor">
+        <processor>bounces</processor>
+      </mailet>
+    </processor>
+
+    <!-- Processor CONFIGURATION SAMPLE: transport is a sample custom processor for local or -->
+    <!-- remote delivery -->
+    <processor state="transport" enableJmx="true">
+
+      <!-- Don't allow to chain proxies -->
+      <mailet match="HostIs=forward.cat" class="ToProcessor">
+        <processor>error</processor>
+      </mailet>
+
+      <mailet match="All" class="org.apache.james.jdkim.mailets.ConvertTo7Bit"/>
+
+      <mailet match="All" class="com.forwardcat.james.FileDKIMSign">
+        <signatureTemplate>v=1; s=1361717785; d=forward.cat; h=from:to:received:received; a=rsa-sha256; bh=; b=;</signatureTemplate>
+        <privateKeyFile>privatekey.pem</privateKeyFile>
+      </mailet>
+
+      <!-- Attempt remote delivery using the specified repository for the spool, -->
+      <!-- using delay time to retry delivery and the maximum number of retries -->
+      <mailet match="All" class="RemoteDelivery">
+        <outgoingQueue>outgoing</outgoingQueue>
+
+        <!-- Delivery Schedule based upon RFC 2821, 4.5.4.1 -->
+        <!-- 5 day retry period, with 4 attempts in the first
+               hour, two more within the first 6 hours, and then
+               every 6 hours for the rest of the period. -->
+        <!--   This format is not yet supported, instead, use a unique
+               tag with the list of delays in milliseconds separated by commas.
+        <delayTime>5 minutes</delayTime>
+        <delayTime>10 minutes</delayTime>
+        <delayTime>45 minutes</delayTime>
+        <delayTime>2 hours</delayTime>
+        <delayTime>3 hours</delayTime>
+        <delayTime>6 hours</delayTime>
+        -->
+        <delayTime>5000, 100000, 500000</delayTime>
+        <maxRetries>7</maxRetries>
+
+        <!-- The max reties which will used if no A or MX record for the domain was found. -->
+        <!-- If 0 it will fail on first time -->
+        <maxDnsProblemRetries>0</maxDnsProblemRetries>
+
+        <!-- The number of threads that should be trying to deliver outgoing messages -->
+        <deliveryThreads>10</deliveryThreads>
+
+        <!-- If false the message will not be sent to given server if any recipients fail -->
+        <sendpartial>true</sendpartial>
+
+        <!-- By default we send bounces to the "bounce" processor -->
+        <!-- By removing this configuration James will fallback to hardcoded bounce -->
+        <!-- notifications -->
+        <bounceProcessor>bounces</bounceProcessor>
+
+        <!-- A single mail server to deliver all outgoing messages. -->
+        <!-- This is useful if this server is a backup or failover machine, -->
+        <!-- or if you want all messages to be routed through a particular mail server, -->
+        <!-- regardless of the email addresses specified in the message -->
+        <!-- -->
+        <!-- The gateway element specifies the gateway SMTP server name. -->
+        <!-- If your gateway mail server is listening on a port other than 25, -->
+        <!-- you can set James to connect to it on that port using the gatewayPort -->
+        <!-- element. -->
+        <!-- Although normally multiple addresses are implemented through proper -->
+        <!-- DNS configuration, the RemoteDelivery mail does allow specifying -->
+        <!-- multiple gateway elements, each of which may also have a port -->
+        <!-- e.g., mygateway:2525 -->
+        <!-- the gatewayPort element is used as a default -->
+        <!--
+        <gateway>otherserver.mydomain.com</gateway>
+        <gatewayPort>25</gatewayPort>
+          -->
+        <!-- If the gateway requires smtp authentication the following directives -->
+        <!-- (gatewayUsername/gatewayPassword) can be used. -->
+        <!--
+        <gatewayUsername>login</gatewayUsername>
+        <gatewayPassword>pass</gatewayPassword>
+          -->
+
+        <!-- Set the HELO/EHLO name to use when connectiong to remote SMTP-Server -->
+        <!--
+        <mail.smtp.localhost>myMailServer</mail.smtp.localhost>
+          -->
+      </mailet>
+
+    </processor>
+
+    <!-- This processor handle the bounces from RemoteDelivery: As of James v2.3, this is the new -->
+    <!-- Default. -->
+    <!-- -->
+    <!-- DSNBounce properly create a DSN compliant bounce -->
+    <processor state="bounces" enableJmx="true">
+      <!-- Marking mail as bounced -->
+      <mailet match="All" class="SetMailAttribute">
+        <bounced>true</bounced>
+      </mailet>
+
+      <mailet match="All" class="DSNBounce">
+        <sender>no-reply@forward.cat</sender>
+        <passThrough>false</passThrough>
+        <debug>true</debug>
+      </mailet>
+    </processor>
+
+    <!-- The error processor is required.  James may internally set emails to the -->
+    <!-- error state.  The error processor is generally invoked when there is an -->
+    <!-- unexpected error either in the mailet chain or internal to James. -->
+    <!-- -->
+    <!-- By default configuration all email that generates an error in placed in -->
+    <!-- an error repository. -->
+    <processor state="error" enableJmx="true">
+      <!-- If you want to notify the sender their message generated an error, uncomment this       -->
+      <!--
+      <mailet match="All" class="Bounce"/>
+        -->
+      <!-- If you want to notify the postmaster that a message generated an error, uncomment this  -->
+      <!--
+      <mailet match="All" class="NotifyPostmaster"/>
+        -->
+
+      <!-- Logs any messages to the repository specified -->
+      <!--<mailet match="All" class="ToRepository">
+         <repositoryPath>file://var/mail/error/</repositoryPath>
+      </mailet>-->
+    </processor>
+
+  </processors>
+
+</mailetcontainer>
