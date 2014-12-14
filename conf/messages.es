@@ -23,7 +23,8 @@ index.form.duration.7day = 7 días
 index.form.lang = es
 index.form.submit = ¡Adelante!
 index.about.header = Acerca de
-index.about.content = Forward Cat es un servicio permite crear fácilmente una dirección de correo temporal que te reenvía automáticamente el correo a tu dirección real.<br/><strong>Importante:</strong> nos reservamos el derecho de cancelar o bloquear tu cuenta si descubrimos que la usas para enviar spam.
+index.about.content = Forward Cat es un servicio permite crear fácilmente una dirección de correo temporal que te reenvía automáticamente el correo a tu dirección real.
+index.about.spam = <strong>Importante:</strong> nos reservamos el derecho de cancelar o bloquear tu cuenta si descubrimos que la usas para enviar spam. Si crees que alguien usa Forward Cat para enviar spam, <a href="/report">repórtalo</a> por favor.
 index.about.section1.title = No reveles tu dirección
 index.about.section1.content = Forward Cat es anónimo, así puedes dar una dirección temporal cuando no quieres revelar tu dirección real.
 index.about.section2.title = Evita el correo no deseado
@@ -41,6 +42,18 @@ email_sent.header = ¡Activa tu dirección temporal!
 email_sent.content1 = Te hemos enviado un email, activa tu dirección de correo temporal en los siguientes 30 minutos para empezar a usarla.
 email_sent.content2 = Si no recibes el email, comprueba que no esté en la carpeta de correo no deseado.
 email_sent.back = Volver a Forward Cat
+
+report_user.title = Reportar uso indebido
+report_user.header = Reportar uso indebido
+report_proxy.content = Si crees que alguien usa Forward Cat para enviar spam o para cualquier otro uso fraudulento, rellena el siguiente formulario por favor:
+report_user.user = Usuario:
+report_user.reason = Contenido del mail:
+report_user.report = Reportar
+
+user_reported.title = Usuario reportado
+user_reported.header = Usuario reportado
+user_reported.content = El usuario ha sido reportado y pronto será investigado. De todas formas, ten en cuenta que aunque bloqueemos su cuenta no podemos evitar que siga enviando spam.
+user_reported.thanks = Gracias por informarnos!
 
 proxy_created_email.title = Activa su dirección de correo temporal
 proxy_created_email.content1 = La dirección temporal <b>{0}</b> ha sido creada correctamente.

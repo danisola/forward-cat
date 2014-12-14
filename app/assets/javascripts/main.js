@@ -1,5 +1,5 @@
 $(document).ready(function () {
-  var validator = $('#proxy-form').validate({
+  $('#proxy-form').validate({
     rules: {
       email: {
         required: true,
@@ -27,8 +27,8 @@ $(document).ready(function () {
     },
     submitHandler: function (form) {
       $(form).ajaxSubmit({
-        url:"/add",
-        type:"get",
+        url: "/add",
+        type: "get",
         success: function() {
           window.location.href = "/email_sent";
         }
@@ -39,7 +39,44 @@ $(document).ready(function () {
     }
   });
 
-  $("#proxy-form i[rel='tooltip']").popover({
+  $('#report-form').validate({
+    rules: {
+      proxy: {
+        required: true,
+        minlength: 3,
+        email: true
+      },
+      message: {
+        required: true
+      }
+    },
+    messages: {
+      email: {
+        required: "Please enter a valid proxy address",
+        email: "Please enter a valid proxy address"
+      },
+      message: {
+        required: "Required"
+      }
+    },
+    errorPlacement: function (error, element) {
+      error.appendTo(element.parent().find(".help-block"));
+    },
+    submitHandler: function (form) {
+      $(form).ajaxSubmit({
+        url: "/report-user",
+        type: "get",
+        success: function() {
+          window.location.href = "/user-reported";
+        }
+      });
+    },
+    success: function (label) {
+      label.remove();
+    }
+  });
+
+  $('#proxy-form').find("i[rel='tooltip']").popover({
     placement: "top",
     trigger: "manual"
   }).click(function() {
@@ -48,6 +85,6 @@ $(document).ready(function () {
   });
 
   $('body').click(function() {
-    $('#proxy-form i[rel="tooltip"]').popover('hide');
+    $('#proxy-form').find("i[rel='tooltip']").popover('hide');
   });
 });

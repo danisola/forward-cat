@@ -23,7 +23,8 @@ index.form.duration.7day = 7 dies
 index.form.lang = ca
 index.form.submit = Som-hi!
 index.about.header = Quant a
-index.about.content = Forward Cat és un servei que permet crear fàcilment una adreça temporal d''email que reenvia automàticament els correus a la teva adreça real.<br/><strong>Important:</strong> ens reservem el dret de cancel·lar o bloquejar la teva compta si descobrim que la fas servir per enviar spam.
+index.about.content = Forward Cat és un servei que permet crear fàcilment una adreça temporal d''email que reenvia automàticament els correus a la teva adreça real.
+index.about.spam = <strong>Important:</strong> ens reservem el dret de cancel·lar o bloquejar la teva compta si descobrim que la fas servir per enviar spam. Si creus que algú està fent servir Forward Cat per enviar spam, <a href="/report">reporta-ho</a> si us plau.
 index.about.section1.title = No revelis la teva adreça
 index.about.section1.content = Forward Cat és anònim, dóna una adreça temporal quan no vulguis revelar la teva adreça real.
 index.about.section2.title = Evita el correu no desitjat
@@ -41,6 +42,18 @@ email_sent.header = Activeu la vostra adreça temporal!
 email_sent.content1 = T''hem enviat un email, activa l''adreça temporal en els propers 30 minuts per començar a utilitzar-la.
 email_sent.content2 = Si no trobes el correu, comprova que no hagi anat a parar a la carpeta de correu no desitjat.
 email_sent.back = Tornar a Forward Cat
+
+report_user.title = Reportar us indegut
+report_user.header = Reportar us indegut
+report_proxy.content = Si crees que algú fa servir Forward Cat per enviar spam o per qualsevol altre ús fraudulent, omple el següent formulari si us plau:
+report_user.user = Usuari:
+report_user.reason = Contingut del mail:
+report_user.report = Reportar
+
+user_reported.title = Usuari reportat
+user_reported.header = Usuari reportat
+user_reported.content = L'usuari ha sigut reportat i aviat serà investigat. De totes formes, tingues en compte que encara que bloquegem la seva compta no podem evitar que segueixi enviant spam.
+user_reported.thanks = Gràcies per informar-nos!
 
 proxy_created_email.title = Activa la teva adreça d''email temporal
 proxy_created_email.content1 = L''adreça temporal <b>{0}</b> s''ha creat correctament.

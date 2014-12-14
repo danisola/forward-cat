@@ -14,8 +14,8 @@
         <![endif]-->
 
         <link rel="canonical" href="@Messages("index.canonicalurl")(lang)" />
-        <link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
-        <link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
+        <link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
         <link href="@routes.Assets.at("stylesheets/styles.min.css")" rel="stylesheet" >
         <link href="@routes.Assets.at("images/favicon.ico")" rel="shortcut icon">
 
@@ -55,7 +55,7 @@
 
             <div class="row-fluid marketing">
                 <div class="span12">
-                    <form class="form-horizontal" id="proxy-form" action="/add" method="GET">
+                    <form class="form-horizontal" id="proxy-form" action="/add" method="get">
                         <div class="control-group">
                             <label class="control-label" for="email">@Messages("index.form.address.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.address.title")(lang)" data-content="@Messages("index.form.address.content")(lang)" class="icon-question-sign icon-large info-icon"></i></label>
 
@@ -91,14 +91,14 @@
                         </div>
                     </form>
                 </div>
-                <div class="alerts span12">
-    </div>
+                <div class="alerts span12"></div>
             </div>
             <hr>
 
             <div class="page-header" id="about">
                 <h2>@Messages("index.about.header")(lang)</h2>
-                <p>@Html(Messages("index.about.content")(lang))</p>
+                <p>@Messages("index.about.content")(lang)</p>
+                <p>@Html(Messages("index.about.spam")(lang))</p>
 
                 <div class="row-fluid marketing">
                     <div class="span6">
@@ -124,12 +124,11 @@
                 @Html(Messages("index.footer.code")(lang)) <br/>
                 @Html(Messages("index.footer.langs")(lang)) <br/>
             </div>
-
         </div>
 
-        <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-        <script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
-        <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
+        <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.js"></script>
         <script src="@routes.Assets.at("javascripts/jquery.form.js")"></script>
         <script src="@routes.Assets.at("javascripts/main.js")"></script>
 

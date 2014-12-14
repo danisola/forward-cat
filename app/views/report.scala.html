@@ -1,0 +1,27 @@
+@(lang: Lang)
+
+    @simple_page(lang, Messages("report_user.title")(lang), Messages("report_user.header")(lang)) {
+        <p>@Messages("report_proxy.content")(lang)</p><br />
+
+        <form class="form-horizontal" id="report-form" action="/report-user" method="get">
+            <div class="control-group">
+                <label class="control-label" for="proxy">@Messages("report_user.user")(lang)</label>
+
+                <div class="controls">
+                    <input type="text" class="input-xlarge" id="proxy" name="proxy" placeholder="abc@@forward.cat" autocomplete="off">
+                    <p class="help-block"></p>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="message">@Messages("report_user.reason")(lang)</label>
+
+                <div class="controls">
+                    <textarea id="message" name="message" rows="4" class="input-xlarge"></textarea>
+                    <p class="help-block"></p>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">@Messages("report_user.report")(lang)</button>
+            </div>
+        </form>
+    }

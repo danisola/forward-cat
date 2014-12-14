@@ -1,0 +1,7 @@
+@(lang: Lang, reportedUser: String, message: String)
+
+    @simple_email(lang, "User reported") {
+        <p>The following user has been reported: @reportedUser</p>
+        <p>Message:</p>
+        <p>@message</p>
+    }

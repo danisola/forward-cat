@@ -1,0 +1,6 @@
+@(lang: Lang)
+
+    @simple_page(lang, Messages("user_reported.title")(lang), Messages("user_reported.header")(lang)) {
+        <p>@Messages("user_reported.content")(lang)</p>
+        <p>@Messages("user_reported.thanks")(lang)</p>
+    }

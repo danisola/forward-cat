@@ -18,17 +18,15 @@ import java.util.Properties;
 public class MailSender {
 
     private static final String TEXT_HTML = "text/html; charset=UTF-8";
-    private static final String MAIL_SERVER_HOST = "mailServerHost";
-    private static final String MAIL_SENDER_ADDRESS = "mailSenderAddress";
 
     private final Properties mailServerProperties = System.getProperties();
     private final InternetAddress senderAddress;
 
     public MailSender() throws AddressException {
-        String mailServerHost = Play.application().configuration().getString(MAIL_SERVER_HOST);
+        String mailServerHost = Play.application().configuration().getString("mailServerHost");
         mailServerProperties.setProperty("mail.smtp.host", mailServerHost);
 
-        String senderAddressStr = Play.application().configuration().getString(MAIL_SENDER_ADDRESS);
+        String senderAddressStr = Play.application().configuration().getString("mailSenderAddress");
         this.senderAddress = new InternetAddress(senderAddressStr);
     }
 
