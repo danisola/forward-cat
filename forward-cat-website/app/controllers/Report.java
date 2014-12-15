@@ -16,6 +16,8 @@ import views.html.user_reported_email;
 
 import javax.mail.internet.AddressException;
 
+import java.util.Optional;
+
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 
@@ -45,10 +47,10 @@ public class Report extends AbstractController {
     }
 
     public Result reportUser(String proxy, String message) {
-        MailAddress mailAddress = toMailAddress(proxy);
-        if (mailAddress != null && isLocal(mailAddress)) {
+        Optional<MailAddress> mailAddress = toMailAddress(proxy);
+        if (mailAddress.isPresent() && isLocal(mailAddress.get())) {
 
-            String proxyKey = generateProxyKey(mailAddress);
+            String proxyKey = generateProxyKey(mailAddress.get());
             ProxyMail proxyMail = getProxy(proxyKey, jedisPool, mapper);
             if (proxyMail != null && proxyMail.isActive() && !proxyMail.isBlocked()) {
                 Html content = user_reported_email.render(lang(), proxy, message);

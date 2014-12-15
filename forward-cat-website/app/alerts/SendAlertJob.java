@@ -81,7 +81,7 @@ public class SendAlertJob implements Job {
             Jedis jedis = jedisPool.getResource();
             try {
                 // Getting the proxy
-                String proxyKey = RedisKeys.generateProxyKey(toMailAddress(alertProxy));
+                String proxyKey = RedisKeys.generateProxyKey(toMailAddress(alertProxy).get());
                 String proxyValue = jedis.get(proxyKey);
 
                 if (proxyValue != null) {
@@ -90,7 +90,7 @@ public class SendAlertJob implements Job {
 
                     // Sending the mail
                     Lang lang = new Lang(Lang.get(proxyMail.getLang()).get());
-                    MailAddress address = toMailAddress(proxyMail.getUserAddress());
+                    MailAddress address = toMailAddress(proxyMail.getUserAddress()).get();
 
                     String date = formatInstant(expirationTime, lang);
 

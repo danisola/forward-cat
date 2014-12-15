@@ -17,6 +17,8 @@ import redis.clients.jedis.Pipeline;
 import views.html.confirm_deletion;
 import views.html.proxy_deleted;
 
+import java.util.Optional;
+
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.formatInstant;
@@ -39,13 +41,14 @@ public class DeleteProxy extends AbstractController {
         Http.Request request = request();
 
         // Checking params
-        MailAddress proxyMail = toMailAddress(p);
-        if (proxyMail == null || h == null) {
+        Optional<MailAddress> maybeProxyMail = toMailAddress(p);
+        if (!maybeProxyMail.isPresent() || h == null) {
             LOGGER.debug("Wrong params: {}", request);
             return badRequest();
         }
 
         // Validating the proxy
+        MailAddress proxyMail = maybeProxyMail.get();
         ProxyMail proxy = getProxy(generateProxyKey(proxyMail), jedisPool, mapper);
         if (proxy == null) {
             LOGGER.debug("Proxy {} doesn't exist", proxy);
@@ -76,13 +79,14 @@ public class DeleteProxy extends AbstractController {
         Http.Request request = request();
 
         // Checking params
-        MailAddress proxyMail = toMailAddress(p);
-        if (proxyMail == null || h == null) {
+        Optional<MailAddress> maybeProxyMail = toMailAddress(p);
+        if (!maybeProxyMail.isPresent() || h == null) {
             LOGGER.debug("Wrong params: {}", request);
             return badRequest();
         }
 
         // Validating the proxy
+        MailAddress proxyMail = maybeProxyMail.get();
         String proxyKey = generateProxyKey(proxyMail);
         ProxyMail proxy = getProxy(proxyKey, jedisPool, mapper);
         if (proxy == null) {

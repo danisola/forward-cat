@@ -16,6 +16,8 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import views.html.proxy_created;
 
+import java.util.Optional;
+
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
@@ -37,13 +39,13 @@ public class ConfirmProxy extends AbstractController {
         Http.Request request = request();
 
         // Checking params
-        MailAddress proxyMail = toMailAddress(p);
-        if (proxyMail == null || h == null) {
-            LOGGER.debug("Wrong params: {}", request);
+        Optional<MailAddress> maybeProxyMail = toMailAddress(p);
+        if (!maybeProxyMail.isPresent() || h == null) {
             return badRequest();
         }
 
         // Getting the proxy
+        MailAddress proxyMail = maybeProxyMail.get();
         String proxyKey = generateProxyKey(proxyMail);
         ProxyMail proxy = getProxy(proxyKey, jedisPool, mapper);
         if (proxy == null) {

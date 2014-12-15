@@ -4,10 +4,11 @@ import com.google.inject.Inject;
 import org.apache.mailet.MailAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import play.mvc.Http;
 import play.mvc.Result;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+
+import java.util.Optional;
 
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.getMailAddress;
@@ -24,12 +25,9 @@ public class ValidateProxy extends AbstractController {
     }
 
     public Result validate(String proxy) {
-        Http.Request request = request();
-
         // Checking params
-        MailAddress mailAddress = getMailAddress(proxy);
-        if (mailAddress == null) {
-            LOGGER.debug("Wrong params: {}", request);
+        Optional<MailAddress> mailAddress = getMailAddress(proxy);
+        if (!mailAddress.isPresent()) {
             return badRequest();
         }
 
@@ -41,7 +39,7 @@ public class ValidateProxy extends AbstractController {
             jedis = jedisPool.getResource();
 
             // Checking whether the proxy exists
-            String proxyKey = generateProxyKey(mailAddress);
+            String proxyKey = generateProxyKey(mailAddress.get());
             valid = !jedis.exists(proxyKey);
         } catch (Exception ex) {
             LOGGER.error("Error while connecting to Redis", ex);

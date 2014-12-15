@@ -11,6 +11,7 @@ import play.i18n.Lang;
 import play.mvc.Http;
 
 import javax.mail.internet.AddressException;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
 public class ControllerUtils {
@@ -45,7 +46,7 @@ public class ControllerUtils {
     /**
      * Given a username and a domain name, returns a {@link org.apache.mailet.MailAddress}
      */
-    public static MailAddress getMailAddress(String username) {
+    public static Optional<MailAddress> getMailAddress(String username) {
         String domainName = Play.application().configuration().getString(DOMAIN_NAME_PROP);
         return getMailAddress(username, domainName);
     }
@@ -53,15 +54,15 @@ public class ControllerUtils {
     /**
      * Given a username and a domain name, returns a {@link org.apache.mailet.MailAddress}
      */
-    public static MailAddress getMailAddress(String username, String domainName) {
-        if (username == null) {
-            return null;
+    public static Optional<MailAddress> getMailAddress(String username, String domainName) {
+        if (username != null && domainName != null) {
+            try {
+                return Optional.of(new MailAddress(username, domainName));
+            } catch (AddressException e) {
+                // Do nothing
+            }
         }
-        try {
-            return new MailAddress(username, domainName);
-        } catch (AddressException e) {
-            return null;
-        }
+        return Optional.empty();
     }
 
     /**
@@ -73,19 +74,17 @@ public class ControllerUtils {
     }
 
     /**
-     * Converts the given String to a {@link MailAddress}. If any error is found,
-     * returns null
+     * Converts the given String to a {@link MailAddress}
      */
-    public static MailAddress toMailAddress(String emailAddress) {
-        if (emailAddress == null) {
-            return null;
+    public static Optional<MailAddress> toMailAddress(String emailAddress) {
+        if (emailAddress != null) {
+            try {
+                return Optional.of(new MailAddress(emailAddress));
+            } catch (AddressException ex) {
+                // Do nothing
+            }
         }
-        try {
-            return new MailAddress(emailAddress);
-        } catch (AddressException ex) {
-            // Do nothing
-        }
-        return null;
+        return Optional.empty();
     }
 
     private ControllerUtils() {

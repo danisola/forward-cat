@@ -17,6 +17,8 @@ import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import views.html.proxy_created_email;
 
+import java.util.Optional;
+
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
@@ -40,18 +42,19 @@ public class AddProxy extends AbstractController {
         Http.Request request = request();
 
         // Checking params
-        MailAddress userMail = toMailAddress(email);
-        if (proxy == null || userMail == null || !isValidDuration(duration)) {
+        Optional<MailAddress> maybeUserMail = toMailAddress(email);
+        if (proxy == null || !maybeUserMail.isPresent() || !isValidDuration(duration)) {
             return badRequest();
         }
 
+        MailAddress userMail = maybeUserMail.get();
         // Don't allow chained proxies
         if (isLocal(userMail)) {
             return badRequest();
         }
 
-        MailAddress proxyMailAddress = getMailAddress(proxy);
-        if (proxyMailAddress == null) {
+        Optional<MailAddress> proxyMailAddress = getMailAddress(proxy);
+        if (!proxyMailAddress.isPresent()) {
             return badRequest();
         }
 
@@ -67,7 +70,7 @@ public class AddProxy extends AbstractController {
         try {
             jedis = jedisPool.getResource();
 
-            String proxyKey = generateProxyKey(proxyMailAddress);
+            String proxyKey = generateProxyKey(proxyMailAddress.get());
             proxyAlreadyExists = jedis.exists(proxyKey);
             if (!proxyAlreadyExists) {
                 String jsonValue = mapper.writeValueAsString(proxyMail);

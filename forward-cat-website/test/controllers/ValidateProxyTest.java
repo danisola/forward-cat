@@ -35,10 +35,10 @@ public class ValidateProxyTest extends PlayTest {
     public AbstractModule getModule() throws IOException {
         when(jedisPool.getResource()).thenReturn(jedis);
 
-        String inUseKey = generateProxyKey(getMailAddress(USER_IN_USE, "forward.cat"));
+        String inUseKey = generateProxyKey(getMailAddress(USER_IN_USE, "forward.cat").get());
         when(jedis.exists(inUseKey)).thenReturn(true);
 
-        String notInUseKey = generateProxyKey(getMailAddress(USER_NOT_IN_USE, "forward.cat"));
+        String notInUseKey = generateProxyKey(getMailAddress(USER_NOT_IN_USE, "forward.cat").get());
         when(jedis.exists(notInUseKey)).thenReturn(false);
 
         return new AbstractModule() {
