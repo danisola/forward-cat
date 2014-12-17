@@ -24,13 +24,12 @@ import static models.ControllerUtils.*;
 public class Report extends AbstractController {
 
     private final MailSender mailSender;
-    private final JedisPool jedisPool;
     private final ObjectMapper mapper;
     private final MailAddress reportAddress;
 
     @Inject
     public Report(JedisPool jedisPool, ObjectMapper mapper, MailSender mailSender) throws AddressException {
-        this.jedisPool = jedisPool;
+        super(jedisPool);
         this.mapper = mapper;
         this.mailSender = mailSender;
         this.reportAddress = new MailAddress(Play.application().configuration().getString("reportAddress"));
@@ -51,10 +50,15 @@ public class Report extends AbstractController {
         if (mailAddress.isPresent() && isLocal(mailAddress.get())) {
 
             String proxyKey = generateProxyKey(mailAddress.get());
-            ProxyMail proxyMail = getProxy(proxyKey, jedisPool, mapper);
-            if (proxyMail != null && proxyMail.isActive() && !proxyMail.isBlocked()) {
-                Html content = user_reported_email.render(lang(), proxy, message);
-                mailSender.sendHtmlMail(reportAddress, "User reported", content.toString());
+
+            Optional<ProxyMail> maybeProxyMail = getProxy(proxyKey, mapper);
+            if (maybeProxyMail.isPresent()) {
+
+                ProxyMail proxyMail = maybeProxyMail.get();
+                if (proxyMail.isActive() && !proxyMail.isBlocked()) {
+                    Html content = user_reported_email.render(lang(), proxy, message);
+                    mailSender.sendHtmlMail(reportAddress, "User reported", content.toString());
+                }
             }
         }
 

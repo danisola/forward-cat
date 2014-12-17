@@ -1,8 +1,10 @@
-@(lang: Lang, activeProxies: Int, emailsBlocked: Int, emailsForwarded: Int, proxiesActivated: Int)
+@import controllers.Stats.StatsCounters
+
+@(lang: Lang, counters: StatsCounters)
 
     @simple_page(lang, "Some Stats", "Some Stats") {
-        <p>Current active proxies (approx): @activeProxies</p>
-        <p>Total emails blocked: @emailsBlocked</p>
-        <p>Total emails forwarded: @emailsForwarded</p>
-        <p>Total proxies activated: @proxiesActivated</p>
+        <p>Current active proxies (approx): @counters.activeProxies</p>
+        <p>Total emails blocked: @counters.emailsBlocked</p>
+        <p>Total emails forwarded: @counters.emailsForwarded</p>
+        <p>Total proxies activated: @counters.proxiesActivated</p>
     }

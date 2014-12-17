@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import play.i18n.Lang;
 import play.mvc.Http;
 import play.mvc.Result;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import views.html.confirm_deletion;
@@ -23,17 +22,15 @@ import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.formatInstant;
 import static models.ExpirationUtils.toDateTime;
-import static models.JedisHelper.returnJedisOnException;
 
 public class DeleteProxy extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteProxy.class.getName());
-    private final JedisPool jedisPool;
     private final ObjectMapper mapper;
 
     @Inject
     public DeleteProxy(JedisPool jedisPool, ObjectMapper mapper) {
-        this.jedisPool = jedisPool;
+        super(jedisPool);
         this.mapper = mapper;
     }
 
@@ -49,13 +46,14 @@ public class DeleteProxy extends AbstractController {
 
         // Validating the proxy
         MailAddress proxyMail = maybeProxyMail.get();
-        ProxyMail proxy = getProxy(generateProxyKey(proxyMail), jedisPool, mapper);
-        if (proxy == null) {
-            LOGGER.debug("Proxy {} doesn't exist", proxy);
+        Optional<ProxyMail> maybeProxy = getProxy(generateProxyKey(proxyMail), mapper);
+        if (!maybeProxy.isPresent()) {
+            LOGGER.debug("Proxy {} doesn't exist", proxyMail);
             return badRequest();
         }
 
         // Checking that the hash is correct
+        ProxyMail proxy = maybeProxy.get();
         String hashValue = getHash(proxy);
         if (!h.equals(hashValue)) {
             LOGGER.debug("Hash values are not equals {} - {}", h, hashValue);
@@ -88,13 +86,14 @@ public class DeleteProxy extends AbstractController {
         // Validating the proxy
         MailAddress proxyMail = maybeProxyMail.get();
         String proxyKey = generateProxyKey(proxyMail);
-        ProxyMail proxy = getProxy(proxyKey, jedisPool, mapper);
-        if (proxy == null) {
+        Optional<ProxyMail> maybeProxy = getProxy(generateProxyKey(proxyMail), mapper);
+        if (!maybeProxy.isPresent()) {
             LOGGER.debug("Proxy % doesn't exist", proxyKey);
             return badRequest();
         }
 
         // Checking that the hash is correct
+        ProxyMail proxy = maybeProxy.get();
         String hashValue = getHash(proxy);
         if (!h.equals(hashValue)) {
             LOGGER.debug("Hash values are not equals %s - %s", h, hashValue);
@@ -108,20 +107,13 @@ public class DeleteProxy extends AbstractController {
         }
 
         // Removing the proxy
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        dbStatement(jedis -> {
             Pipeline pipeline = jedis.pipelined();
 
             pipeline.del(proxyKey);
             pipeline.zrem(RedisKeys.ALERTS_SET, proxyMail.toString());
             pipeline.sync();
-        } catch (Exception ex) {
-            LOGGER.error("Error while connecting to Redis", ex);
-            returnJedisOnException(jedisPool, jedis, ex);
-            return internalServerError();
-        }
-        jedisPool.returnResource(jedis);
+        });
 
         // Sending the response
         Lang lang = getBestLanguage(request, lang());

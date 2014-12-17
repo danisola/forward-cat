@@ -12,7 +12,6 @@ import play.i18n.Lang;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.twirl.api.Html;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import views.html.proxy_created_email;
@@ -22,18 +21,15 @@ import java.util.Optional;
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
-import static models.JedisHelper.returnJedisOnException;
 
 public class AddProxy extends AbstractController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AddProxy.class.getName());
-    private final JedisPool jedisPool;
     private final ObjectMapper mapper;
     private final MailSender mailSender;
 
     @Inject
     public AddProxy(JedisPool jedisPool, ObjectMapper mapper, MailSender mailSender) {
-        this.jedisPool = jedisPool;
+        super(jedisPool);
         this.mapper = mapper;
         this.mailSender = mailSender;
     }
@@ -53,26 +49,23 @@ public class AddProxy extends AbstractController {
             return badRequest();
         }
 
-        Optional<MailAddress> proxyMailAddress = getMailAddress(proxy);
-        if (!proxyMailAddress.isPresent()) {
+        Optional<MailAddress> maybeProxyMailAddress = getMailAddress(proxy);
+        if (!maybeProxyMailAddress.isPresent()) {
             return badRequest();
         }
 
+        MailAddress proxyMailAddress = maybeProxyMailAddress.get();
         DateTime creationTime = new DateTime();
         String creationTimeStr = toStringValue(creationTime);
         String expirationTimeStr = toStringValue(creationTime.plusDays(duration));
         Lang lang = getBestLanguage(request, lang());
         ProxyMail proxyMail = new ProxyMail(userMail.toString(), creationTimeStr, expirationTimeStr, lang.code());
-        Boolean proxyAlreadyExists;
 
         // Creating the proxy
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
-
-            String proxyKey = generateProxyKey(proxyMailAddress.get());
-            proxyAlreadyExists = jedis.exists(proxyKey);
-            if (!proxyAlreadyExists) {
+        Optional<Boolean> proxyAlreadyExists = dbFunction(jedis -> {
+            String proxyKey = generateProxyKey(proxyMailAddress);
+            Boolean exists = jedis.exists(proxyKey);
+            if (!exists) {
                 String jsonValue = mapper.writeValueAsString(proxyMail);
 
                 Pipeline pipeline = jedis.pipelined();
@@ -80,14 +73,10 @@ public class AddProxy extends AbstractController {
                 pipeline.expire(proxyKey, getUnconfirmedProxyDuration());
                 pipeline.sync();
             }
-        } catch (Exception ex) {
-            returnJedisOnException(jedisPool, jedis, ex);
-            LOGGER.error("Error while connecting to Redis", ex);
-            return internalServerError();
-        }
-        jedisPool.returnResource(jedis);
+            return exists;
+        });
 
-        if (proxyAlreadyExists) {
+        if (!proxyAlreadyExists.isPresent() || proxyAlreadyExists.get()) {
             return badRequest(); // Proxy already exists: cannot create a new one
         }
 

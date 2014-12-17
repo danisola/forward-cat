@@ -62,10 +62,11 @@ public class ValidateProxyTest extends PlayTest {
     }
 
     @Test
-    public void redisConnectionError_sendInternalError() throws Exception {
+    public void redisConnectionError_sendFalse() throws Exception {
         doThrow(JedisException.class).when(jedis).exists(anyString());
         Result route = route(request(USER_NOT_IN_USE));
-        assertThat(status(route), is(INTERNAL_SERVER_ERROR));
+        assertThat(status(route), is(OK));
+        assertThat(contentAsString(route), is("false"));
     }
 
     @Test

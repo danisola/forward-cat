@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import play.i18n.Lang;
 import play.mvc.Http;
 import play.mvc.Result;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import views.html.proxy_created;
@@ -21,17 +20,15 @@ import java.util.Optional;
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
-import static models.JedisHelper.returnJedisOnException;
 
 public class ConfirmProxy extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmProxy.class.getName());
-    private final JedisPool jedisPool;
     private final ObjectMapper mapper;
 
     @Inject
     ConfirmProxy(JedisPool jedisPool, ObjectMapper mapper) {
-        this.jedisPool = jedisPool;
+        super(jedisPool);
         this.mapper = mapper;
     }
 
@@ -47,12 +44,13 @@ public class ConfirmProxy extends AbstractController {
         // Getting the proxy
         MailAddress proxyMail = maybeProxyMail.get();
         String proxyKey = generateProxyKey(proxyMail);
-        ProxyMail proxy = getProxy(proxyKey, jedisPool, mapper);
-        if (proxy == null) {
+        Optional<ProxyMail> maybeProxy = getProxy(proxyKey, mapper);
+        if (!maybeProxy.isPresent()) {
             return badRequest();
         }
 
         // Checking that the hash is correct
+        ProxyMail proxy = maybeProxy.get();
         String hashValue = getHash(proxy);
         if (!h.equals(hashValue)) {
             LOGGER.debug("Hash values are not equals %s - %s", h, hashValue);
@@ -66,9 +64,7 @@ public class ConfirmProxy extends AbstractController {
         }
         proxy.activate();
 
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        dbStatement(jedis -> {
             Pipeline pipeline = jedis.pipelined();
 
             // Calculating the TTL of the proxy
@@ -80,12 +76,7 @@ public class ConfirmProxy extends AbstractController {
             pipeline.zadd(RedisKeys.ALERTS_SET, alertTime.getMillis(), proxyMail.toString()); // Adding an alert
             pipeline.incr(RedisKeys.PROXIES_ACTIVATED_COUNTER); // Incrementing proxies activated
             pipeline.sync();
-        } catch (Exception ex) {
-            LOGGER.error("Error while connecting to Redis", ex);
-            returnJedisOnException(jedisPool, jedis, ex);
-            return internalServerError();
-        }
-        jedisPool.returnResource(jedis);
+        });
 
         // Generating the response
         DateTime expirationTime = toDateTime(proxy.getExpirationTime());

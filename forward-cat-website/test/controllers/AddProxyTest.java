@@ -98,7 +98,7 @@ public class AddProxyTest extends PlayTest {
         when(jedis.exists("p:test@forward.cat")).thenThrow(JedisException.class);
 
         Result route = route(request("test", "user@mail.com", 3));
-        assertThat(status(route), is(INTERNAL_SERVER_ERROR));
+        assertThat(status(route), is(BAD_REQUEST));
         verify(jedisPool).returnResource(jedis);
     }
 

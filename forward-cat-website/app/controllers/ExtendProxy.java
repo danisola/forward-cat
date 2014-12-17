@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import play.i18n.Lang;
 import play.mvc.Http;
 import play.mvc.Result;
-import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.Pipeline;
 import views.html.proxy_extended;
@@ -21,17 +20,15 @@ import java.util.Optional;
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
-import static models.JedisHelper.returnJedisOnException;
 
 public class ExtendProxy extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtendProxy.class.getName());
-    private final JedisPool jedisPool;
     private final ObjectMapper mapper;
 
     @Inject
     ExtendProxy(JedisPool jedisPool, ObjectMapper mapper) {
-        this.jedisPool = jedisPool;
+        super(jedisPool);
         this.mapper = mapper;
     }
 
@@ -47,12 +44,13 @@ public class ExtendProxy extends AbstractController {
         // Getting the proxy
         MailAddress proxyMail = maybeProxyMail.get();
         String proxyKey = generateProxyKey(proxyMail);
-        ProxyMail proxy = getProxy(proxyKey, jedisPool, mapper);
-        if (proxy == null) {
+        Optional<ProxyMail> maybeProxy = getProxy(proxyKey, mapper);
+        if (!maybeProxy.isPresent()) {
             return badRequest();
         }
 
         // Checking that the hash is correct
+        ProxyMail proxy = maybeProxy.get();
         String hashValue = getHash(proxy);
         if (!h.equals(hashValue)) {
             LOGGER.debug("Hash values are not equals {} - {}", h, hashValue);
@@ -69,16 +67,11 @@ public class ExtendProxy extends AbstractController {
         DateTime expirationTime = toDateTime(proxy.getExpirationTime());
 
         // Checking that the proxy has not been active for more than 15 days
-        DateTime newExpirationTime = expirationTime.plusDays(getIncrementDaysAdded());
         DateTime maxExpirationTime = creationTime.plusDays(getMaxProxyDuration());
-        if (newExpirationTime.isAfter(maxExpirationTime)) {
-            newExpirationTime = maxExpirationTime;
-        }
+        DateTime newExpirationTime = getNewExpirationTime(expirationTime.plusDays(getIncrementDaysAdded()), maxExpirationTime);
         proxy.setExpirationTime(toStringValue(newExpirationTime));
 
-        Jedis jedis = null;
-        try {
-            jedis = jedisPool.getResource();
+        dbStatement(jedis -> {
             Pipeline pipeline = jedis.pipelined();
 
             pipeline.set(proxyKey, mapper.writeValueAsString(proxy)); // Saving the proxy
@@ -91,16 +84,18 @@ public class ExtendProxy extends AbstractController {
             }
 
             pipeline.sync();
-        } catch (Exception ex) {
-            LOGGER.error("Error while connecting to Redis", ex);
-            returnJedisOnException(jedisPool, jedis, ex);
-            return internalServerError();
-        }
-        jedisPool.returnResource(jedis);
+        });
 
         // Generating the answer
         Lang language = getBestLanguage(request, lang());
         String date = formatInstant(newExpirationTime, language);
         return ok(proxy_extended.render(language, proxyMail.toString(), date));
+    }
+
+    private DateTime getNewExpirationTime(DateTime newExpirationTime, DateTime maxExpirationTime) {
+        if (newExpirationTime.isAfter(maxExpirationTime)) {
+            return maxExpirationTime;
+        }
+        return newExpirationTime;
     }
 }
