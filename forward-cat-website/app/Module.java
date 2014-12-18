@@ -10,6 +10,7 @@ import models.Options;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
+import play.libs.Json;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -21,12 +22,9 @@ public class Module extends AbstractModule {
     protected void configure() {
         // Performing bindings
         bind(Options.class).toInstance(options);
-        bind(ObjectMapper.class).toInstance(objectMapper());
         bind(MailSender.class).in(Singleton.class);
-    }
 
-    private ObjectMapper objectMapper() {
-        return new ObjectMapper().registerModule(new AfterburnerModule());
+        Json.setObjectMapper(new ObjectMapper().registerModule(new AfterburnerModule()));
     }
 
     @Provides

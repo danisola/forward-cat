@@ -1,6 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forwardcat.common.ProxyMail;
 import com.forwardcat.common.RedisKeys;
 import com.google.inject.Inject;
@@ -26,12 +25,10 @@ import static models.ExpirationUtils.toDateTime;
 public class DeleteProxy extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteProxy.class.getName());
-    private final ObjectMapper mapper;
 
     @Inject
-    public DeleteProxy(JedisPool jedisPool, ObjectMapper mapper) {
+    public DeleteProxy(JedisPool jedisPool) {
         super(jedisPool);
-        this.mapper = mapper;
     }
 
     public Result confirmDeletion(String p, String h) {
@@ -46,7 +43,7 @@ public class DeleteProxy extends AbstractController {
 
         // Validating the proxy
         MailAddress proxyMail = maybeProxyMail.get();
-        Optional<ProxyMail> maybeProxy = getProxy(generateProxyKey(proxyMail), mapper);
+        Optional<ProxyMail> maybeProxy = getProxy(generateProxyKey(proxyMail));
         if (!maybeProxy.isPresent()) {
             LOGGER.debug("Proxy {} doesn't exist", proxyMail);
             return badRequest();
@@ -86,7 +83,7 @@ public class DeleteProxy extends AbstractController {
         // Validating the proxy
         MailAddress proxyMail = maybeProxyMail.get();
         String proxyKey = generateProxyKey(proxyMail);
-        Optional<ProxyMail> maybeProxy = getProxy(generateProxyKey(proxyMail), mapper);
+        Optional<ProxyMail> maybeProxy = getProxy(generateProxyKey(proxyMail));
         if (!maybeProxy.isPresent()) {
             LOGGER.debug("Proxy % doesn't exist", proxyKey);
             return badRequest();

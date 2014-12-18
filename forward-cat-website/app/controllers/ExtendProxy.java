@@ -1,6 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forwardcat.common.ProxyMail;
 import com.forwardcat.common.RedisKeys;
 import com.google.inject.Inject;
@@ -24,12 +23,10 @@ import static models.ExpirationUtils.*;
 public class ExtendProxy extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtendProxy.class.getName());
-    private final ObjectMapper mapper;
 
     @Inject
-    ExtendProxy(JedisPool jedisPool, ObjectMapper mapper) {
+    ExtendProxy(JedisPool jedisPool) {
         super(jedisPool);
-        this.mapper = mapper;
     }
 
     public Result extend(String p, String h) {
@@ -44,7 +41,7 @@ public class ExtendProxy extends AbstractController {
         // Getting the proxy
         MailAddress proxyMail = maybeProxyMail.get();
         String proxyKey = generateProxyKey(proxyMail);
-        Optional<ProxyMail> maybeProxy = getProxy(proxyKey, mapper);
+        Optional<ProxyMail> maybeProxy = getProxy(proxyKey);
         if (!maybeProxy.isPresent()) {
             return badRequest();
         }
@@ -74,7 +71,7 @@ public class ExtendProxy extends AbstractController {
         dbStatement(jedis -> {
             Pipeline pipeline = jedis.pipelined();
 
-            pipeline.set(proxyKey, mapper.writeValueAsString(proxy)); // Saving the proxy
+            pipeline.set(proxyKey, toJsonString(proxy)); // Saving the proxy
             pipeline.expire(proxyKey, secondsTo(newExpirationTime)); // Setting the TTL
 
             // Adding or overwriting the alert if the time has not passed

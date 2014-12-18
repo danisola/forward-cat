@@ -1,6 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.Inject;
 import models.MailSender;
@@ -15,7 +14,6 @@ import views.html.user_reported;
 import views.html.user_reported_email;
 
 import javax.mail.internet.AddressException;
-
 import java.util.Optional;
 
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
@@ -24,13 +22,11 @@ import static models.ControllerUtils.*;
 public class Report extends AbstractController {
 
     private final MailSender mailSender;
-    private final ObjectMapper mapper;
     private final MailAddress reportAddress;
 
     @Inject
-    public Report(JedisPool jedisPool, ObjectMapper mapper, MailSender mailSender) throws AddressException {
+    public Report(JedisPool jedisPool, MailSender mailSender) throws AddressException {
         super(jedisPool);
-        this.mapper = mapper;
         this.mailSender = mailSender;
         this.reportAddress = new MailAddress(Play.application().configuration().getString("reportAddress"));
     }
@@ -51,7 +47,7 @@ public class Report extends AbstractController {
 
             String proxyKey = generateProxyKey(mailAddress.get());
 
-            Optional<ProxyMail> maybeProxyMail = getProxy(proxyKey, mapper);
+            Optional<ProxyMail> maybeProxyMail = getProxy(proxyKey);
             if (maybeProxyMail.isPresent()) {
 
                 ProxyMail proxyMail = maybeProxyMail.get();

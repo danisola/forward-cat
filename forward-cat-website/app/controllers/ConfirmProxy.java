@@ -1,6 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forwardcat.common.ProxyMail;
 import com.forwardcat.common.RedisKeys;
 import com.google.inject.Inject;
@@ -24,12 +23,10 @@ import static models.ExpirationUtils.*;
 public class ConfirmProxy extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmProxy.class.getName());
-    private final ObjectMapper mapper;
 
     @Inject
-    ConfirmProxy(JedisPool jedisPool, ObjectMapper mapper) {
+    ConfirmProxy(JedisPool jedisPool) {
         super(jedisPool);
-        this.mapper = mapper;
     }
 
     public Result confirm(String p, String h) throws Exception {
@@ -44,7 +41,7 @@ public class ConfirmProxy extends AbstractController {
         // Getting the proxy
         MailAddress proxyMail = maybeProxyMail.get();
         String proxyKey = generateProxyKey(proxyMail);
-        Optional<ProxyMail> maybeProxy = getProxy(proxyKey, mapper);
+        Optional<ProxyMail> maybeProxy = getProxy(proxyKey);
         if (!maybeProxy.isPresent()) {
             return badRequest();
         }
@@ -71,7 +68,7 @@ public class ConfirmProxy extends AbstractController {
             DateTime expirationTime = toDateTime(proxy.getExpirationTime());
             DateTime alertTime = getAlertTime(expirationTime);
 
-            pipeline.set(proxyKey, mapper.writeValueAsString(proxy)); // Saving the proxy
+            pipeline.set(proxyKey, toJsonString(proxy)); // Saving the proxy
             pipeline.expire(proxyKey, secondsTo(expirationTime)); // Setting TTL
             pipeline.zadd(RedisKeys.ALERTS_SET, alertTime.getMillis(), proxyMail.toString()); // Adding an alert
             pipeline.incr(RedisKeys.PROXIES_ACTIVATED_COUNTER); // Incrementing proxies activated

@@ -1,14 +1,13 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forwardcat.common.ProxyMail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import play.libs.Json;
 import play.mvc.Controller;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-import java.io.IOException;
 import java.util.Optional;
 
 import static models.JedisHelper.returnJedisIfNotNull;
@@ -26,13 +25,13 @@ abstract class AbstractController extends Controller {
     /**
      * Returns the {@link ProxyMail} linked to the given proxy key
      */
-    protected Optional<ProxyMail> getProxy(String proxyKey, ObjectMapper mapper) {
+    protected Optional<ProxyMail> getProxy(String proxyKey) {
         return dbFunction(jedis -> {
             String proxyString = jedis.get(proxyKey);
             if (proxyString != null) {
                 try {
-                    return mapper.readValue(proxyString, ProxyMail.class);
-                } catch (IOException ex) {
+                    return Json.fromJson(Json.parse(proxyString), ProxyMail.class);
+                } catch (Exception ex) {
                     LOGGER.error("Error while parsing proxy: " + proxyString, ex);
                 }
             }
@@ -79,5 +78,14 @@ abstract class AbstractController extends Controller {
     @FunctionalInterface
     protected static interface DbConsumer {
         public void accept(Jedis jedis) throws Exception;
+    }
+
+    public String toJsonString(Object object) {
+        try {
+            return Json.stringify(Json.toJson(object));
+        } catch (Exception ex) {
+            LOGGER.error("Error while converting object to JSON string: " + object, ex); // Should never haven
+        }
+        return null;
     }
 }
