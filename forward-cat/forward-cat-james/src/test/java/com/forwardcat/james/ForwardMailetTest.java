@@ -1,6 +1,7 @@
 package com.forwardcat.james;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
 import com.google.common.collect.Lists;
 import org.apache.james.core.MailImpl;
 import org.apache.james.dnsservice.api.DNSService;
@@ -26,8 +27,9 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -72,7 +74,8 @@ public class ForwardMailetTest {
         mailet.service(mail);
 
         verify(pool, atLeastOnce()).returnResource(jedis);
-        assertHasBounceAttr(mail);
+        assertThatIsBounced(mail);
+        assertNoMailHasBeenSent();
     }
 
     @Test
@@ -83,7 +86,8 @@ public class ForwardMailetTest {
         mailet.service(mail);
 
         verify(pool, atLeastOnce()).returnResource(jedis);
-        assertHasBounceAttr(mail);
+        assertThatIsBounced(mail);
+        assertNoMailHasBeenSent();
     }
 
     @Test
@@ -95,7 +99,21 @@ public class ForwardMailetTest {
         mailet.service(mail);
 
         verify(pool, atLeastOnce()).returnResource(jedis);
-        assertHasBounceAttr(mail);
+        assertThatIsBounced(mail);
+        assertNoMailHasBeenSent();
+    }
+
+    @Test
+    public void proxyBlocked_shouldSwallowMail() throws MessagingException {
+        String proxy = "{\"ua\":\"someone@gmail.com\",\"ts\":\"2013-02-04T20:55:19.625Z\",\"ex\":\"2013-02-09T20:55:19.625Z\",\"ac\":true, \"bl\":true}";
+        when(jedis.get(generateProxyKey(recipient))).thenReturn(proxy);
+
+        Mail mail = newMail();
+        mailet.service(mail);
+
+        verify(pool, atLeastOnce()).returnResource(jedis);
+        assertThatHasBeenSwallowed(mail);
+        assertNoMailHasBeenSent();
     }
 
     @Test
@@ -125,9 +143,21 @@ public class ForwardMailetTest {
         return mail;
     }
 
-    private void assertHasBounceAttr(Mail mail) {
+    private void assertThatIsBounced(Mail mail) {
         Serializable attr = mail.getAttribute(ForwardMailet.BOUNCE_ATTRIBUTE);
-        assertNotNull(attr);
         assertThat((String) attr, is("true"));
+    }
+
+    private void assertThatHasBeenSwallowed(Mail mail) {
+        String attr = mail.getState();
+        assertThat(attr, is(Mail.GHOST));
+    }
+
+    private void assertNoMailHasBeenSent() {
+        try {
+            verify(context, never()).sendMail(any(Mail.class));
+        } catch (MessagingException e) {
+            Throwables.propagate(e);
+        }
     }
 }

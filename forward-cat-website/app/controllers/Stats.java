@@ -25,6 +25,7 @@ public class Stats extends AbstractController {
             Response<String> emailsBlockedRs = pipeline.get(EMAILS_BLOCKED_COUNTER);
             Response<String> emailsForwardedRs = pipeline.get(EMAILS_FORWARDED_COUNTER);
             Response<String> proxiesActivatedRs = pipeline.get(PROXIES_ACTIVATED_COUNTER);
+            Response<String> spammerProxiesBlockedRs = pipeline.get(SPAMMER_PROXIES_BLOCKED_COUNTER);
 
             pipeline.sync();
 
@@ -32,7 +33,8 @@ public class Stats extends AbstractController {
                     activeProxiesRs.get().intValue(),
                     toInt(emailsBlockedRs.get()),
                     toInt(emailsForwardedRs.get()),
-                    toInt(proxiesActivatedRs.get()));
+                    toInt(proxiesActivatedRs.get()),
+                    toInt(spammerProxiesBlockedRs.get()));
         }).get();
 
         return ok(stats.render(lang(), counters));
@@ -43,12 +45,14 @@ public class Stats extends AbstractController {
         public final int emailsBlocked;
         public final int emailsForwarded;
         public final int proxiesActivated;
+        public final int spammerProxiesBlocked;
 
-        public StatsCounters(int activeProxies, int emailsBlocked, int emailsForwarded, int proxiesActivated) {
+        public StatsCounters(int activeProxies, int emailsBlocked, int emailsForwarded, int proxiesActivated, int spammerProxiesBlocked) {
             this.activeProxies = activeProxies;
             this.emailsBlocked = emailsBlocked;
             this.emailsForwarded = emailsForwarded;
             this.proxiesActivated = proxiesActivated;
+            this.spammerProxiesBlocked = spammerProxiesBlocked;
         }
     }
 

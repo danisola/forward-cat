@@ -84,7 +84,7 @@ abstract class AbstractController extends Controller {
         try {
             return Json.stringify(Json.toJson(object));
         } catch (Exception ex) {
-            LOGGER.error("Error while converting object to JSON string: " + object, ex); // Should never haven
+            LOGGER.error("Error while converting object to JSON string: " + object, ex); // Should never happen
         }
         return null;
     }

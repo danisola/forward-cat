@@ -21,7 +21,7 @@ public class ValidateProxy extends AbstractController {
         // Checking params
         Optional<MailAddress> mailAddress = getMailAddress(proxy);
         if (!mailAddress.isPresent()) {
-            return badRequest();
+            return ok(Boolean.FALSE.toString());
         }
 
         String proxyKey = generateProxyKey(mailAddress.get());

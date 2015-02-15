@@ -3,6 +3,7 @@ package controllers;
 import com.forwardcat.common.ProxyMail;
 import com.forwardcat.common.RedisKeys;
 import com.google.inject.Inject;
+import models.SpamCatcher;
 import org.apache.mailet.MailAddress;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -23,10 +24,12 @@ import static models.ExpirationUtils.*;
 public class ConfirmProxy extends AbstractController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmProxy.class.getName());
+    private final SpamCatcher spamCatcher;
 
     @Inject
-    ConfirmProxy(JedisPool jedisPool) {
+    ConfirmProxy(JedisPool jedisPool, SpamCatcher spamCatcher) {
         super(jedisPool);
+        this.spamCatcher = spamCatcher;
     }
 
     public Result confirm(String p, String h) throws Exception {
@@ -63,6 +66,11 @@ public class ConfirmProxy extends AbstractController {
 
         dbStatement(jedis -> {
             Pipeline pipeline = jedis.pipelined();
+
+            if (spamCatcher.isSpam(proxyMail)) {
+                proxy.block();
+                pipeline.incr(RedisKeys.SPAMMER_PROXIES_BLOCKED_COUNTER);
+            }
 
             // Calculating the TTL of the proxy
             DateTime expirationTime = toDateTime(proxy.getExpirationTime());

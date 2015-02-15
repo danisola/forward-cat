@@ -89,7 +89,7 @@ public class ForwardMailet extends AbstractRedirect {
         }
 
         // Checking whether the proxy is considered to be a spammer: just ignore
-        if (!proxy.isBlocked()) {
+        if (proxy.isBlocked()) {
             logIfDebug("Proxy is blocked: %s", recipient);
             mail.setState(Mail.GHOST);
             incrementCounter(RedisKeys.SPAMMER_EMAILS_BLOCKED_COUNTER);

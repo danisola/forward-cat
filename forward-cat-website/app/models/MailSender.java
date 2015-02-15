@@ -43,9 +43,9 @@ public class MailSender {
 
             Transport.send(message);
         } catch (Exception ex) {
-            logger.error("Unexpected error", ex);
+            LOGGER.error("Unexpected error", ex);
         }
     }
 
-    private static Logger logger = LoggerFactory.getLogger(MailSender.class.getName());
+    private static Logger LOGGER = LoggerFactory.getLogger(MailSender.class.getName());
 }

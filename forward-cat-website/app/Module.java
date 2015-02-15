@@ -7,6 +7,7 @@ import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import models.MailSender;
 import models.Options;
+import models.SpamCatcher;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
@@ -23,6 +24,7 @@ public class Module extends AbstractModule {
         // Performing bindings
         bind(Options.class).toInstance(options);
         bind(MailSender.class).in(Singleton.class);
+        bind(SpamCatcher.class).in(Singleton.class);
 
         Json.setObjectMapper(new ObjectMapper().registerModule(new AfterburnerModule()));
     }

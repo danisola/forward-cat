@@ -20,7 +20,6 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
-import static play.mvc.Http.Status.BAD_REQUEST;
 import static play.test.Helpers.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -50,37 +49,34 @@ public class ValidateProxyTest extends PlayTest {
     }
 
     @Test
-    public void noProxyParam_sendBadRequest() throws Exception {
-        Result route = route(request(null));
-        assertThat(status(route), is(BAD_REQUEST));
+    public void noProxyParam_sendInvalidUsername() throws Exception {
+        Result route = route(request(""));
+        assertThatIsInvalid(route);
     }
 
     @Test
-    public void incorrectProxyParam_sendBadRequest() throws Exception {
+    public void incorrectProxyParam_sendInvalidUsername() throws Exception {
         Result route = route(request("has space"));
-        assertThat(status(route), is(BAD_REQUEST));
+        assertThatIsInvalid(route);
     }
 
     @Test
-    public void redisConnectionError_sendFalse() throws Exception {
+    public void redisConnectionError_sendInvalidUsername() throws Exception {
         doThrow(JedisException.class).when(jedis).exists(anyString());
         Result route = route(request(USER_NOT_IN_USE));
-        assertThat(status(route), is(OK));
-        assertThat(contentAsString(route), is("false"));
+        assertThatIsInvalid(route);
     }
 
     @Test
-    public void userNameInUse_sendFalse() throws Exception {
+    public void usernameInUse_sendInvalidUsername() throws Exception {
         Result route = route(request(USER_IN_USE));
-        assertThat(status(route), is(OK));
-        assertThat(contentAsString(route), is("false"));
+        assertThatIsInvalid(route);
     }
 
     @Test
-    public void userNameFree_sendTrue() throws Exception {
+    public void usernameFree_sendValidUsername() throws Exception {
         Result route = route(request(USER_NOT_IN_USE));
-        assertThat(status(route), is(OK));
-        assertThat(contentAsString(route), is("true"));
+        assertThatIsValid(route);
     }
 
     private FakeRequest request(String proxy) {
@@ -88,5 +84,15 @@ public class ValidateProxyTest extends PlayTest {
             return fakeRequest(GET, "/validate");
         }
         return fakeRequest(GET, "/validate?proxy=" + proxy);
+    }
+
+    private void assertThatIsValid(Result route) {
+        assertThat(status(route), is(OK));
+        assertThat(contentAsString(route), is("true"));
+    }
+
+    private void assertThatIsInvalid(Result route) {
+        assertThat(status(route), is(OK));
+        assertThat(contentAsString(route), is("false"));
     }
 }
