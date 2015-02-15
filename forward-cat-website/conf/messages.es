@@ -1,10 +1,8 @@
 index.title = Forward Cat - Direcciones temporales de email
 index.canonicalurl = http://es.forward.cat
 index.description = Forward Cat te permite crear fácilmente una dirección temporal de email que reenvía automáticamente el correo a tu dirección real
-index.contact.label = Contactar
-index.contact.subject = ¡Hola!
 
-index.header = Crea una nueva dirección temporal de correo
+index.header = Crea una dirección temporal de correo
 index.subheader = Es rápido, gratuito y anónimo
 index.form.address.label = Tu dirección:
 index.form.address.title = Tu dirección
@@ -25,6 +23,7 @@ index.form.submit = ¡Adelante!
 index.about.header = Acerca de
 index.about.content = Forward Cat es un servicio permite crear fácilmente una dirección de correo temporal que te reenvía automáticamente el correo a tu dirección real.
 index.about.spam = <strong>Importante:</strong> nos reservamos el derecho de cancelar o bloquear tu cuenta si descubrimos que la usas para enviar spam. Si crees que alguien usa Forward Cat para enviar spam, <a href="/report">repórtalo</a> por favor.
+index.about.contact = También puedes <a target="_blank" href="mailto:contact@forward.cat?subject=Hola!">contactarnos</a> para cualquier otro asunto.
 index.about.section1.title = No reveles tu dirección
 index.about.section1.content = Forward Cat es anónimo, así puedes dar una dirección temporal cuando no quieres revelar tu dirección real.
 index.about.section2.title = Evita el correo no deseado
@@ -34,7 +33,7 @@ index.about.section3.content = Usa una dirección de email temporal cuando te re
 index.about.section4.title = Totalment privado
 index.about.section4.content = Forward Cat no guarda tus correos y no son visibles para nadie que no seas tú. Tu dirección de correo temporal será destruida completamente cuando termine la duración que hayas establecido.
 index.footer.by = Creado por <a target="_blank" href="http://www.dani-sola.com">Dani Solà</a>. Agradecimiento especial a <a href="http://sophiacasas.es" target="_blank">Sophia Casas</a>. Ilustraciones realizadas por <a href="http://raulilustrado.wordpress.com" target="_blank">Raúl Vélez</a>.
-index.footer.code = Código bajo licencia <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> hospedado en <a href="https://bitbucket.org/danisola/forward-cat" target="_blank">Bitbucket</a>.
+index.footer.code = Código bajo licencia <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> hospedado en <a href="https://github.com/danisola/forward-cat" target="_blank">GitHub</a>.
 index.footer.langs = Otros idiomas: <a href="http://ca.forward.cat">Català</a> - <a href="http://en.forward.cat">English</a>
 
 email_sent.title = ¡Activa tu dirección temporal!

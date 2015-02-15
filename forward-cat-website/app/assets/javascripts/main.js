@@ -18,8 +18,8 @@ $(document).ready(function () {
       },
       proxy: {
         required: "Choose an address",
-        minlength: jQuery.format("Enter at least {0} characters"),
-        remote: jQuery.format("'{0}@forward.cat' is not valid or already in use")
+        minlength: jQuery.validator.format("Enter at least {0} characters"),
+        remote: jQuery.validator.format("'{0}@forward.cat' is not valid or already in use")
       }
     },
     errorPlacement: function (error, element) {
@@ -76,15 +76,39 @@ $(document).ready(function () {
     }
   });
 
-  $('#proxy-form').find("i[rel='tooltip']").popover({
+  $('#proxy-form').find('i[rel=\'tooltip\']').popover({
     placement: "top",
     trigger: "manual"
   }).click(function() {
-    $(this).popover('show');
+    var currentElem = $(this);
+    var isTooltipOpen = hasTooltip(currentElem);
+    hideTooltip(getElemsWithTooltip());
+
+    if (!isTooltipOpen) {
+      showTooltip(currentElem);
+    }
     return false; // Stop propagation & prevent default
   });
 
   $('body').click(function() {
-    $('#proxy-form').find("i[rel='tooltip']").popover('hide');
+    hideTooltip(getElemsWithTooltip());  // Hide all tooltips
   });
 });
+
+function getElemsWithTooltip() {
+  return $('#proxy-form').find("i[rel='tooltip'].tooltip-open");
+}
+
+function hasTooltip(elem) {
+  return elem.hasClass('tooltip-open');
+}
+
+function hideTooltip(elems) {
+  elems.removeClass('tooltip-open');
+  elems.popover('hide');
+}
+
+function showTooltip(elems) {
+  elems.popover('show');
+  elems.addClass('tooltip-open');
+}

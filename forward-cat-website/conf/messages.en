@@ -1,8 +1,6 @@
 index.title = Forward Cat - Temporary email addresses
 index.canonicalurl = http://forward.cat
 index.description = Forward Cat allows you to create a temporary email address that automatically forwards to your real email address
-index.contact.label = Contact
-index.contact.subject = Hi%20there!
 
 index.header = Get a temporary email address
 index.subheader = It''s fast, free and anonymous
@@ -25,6 +23,7 @@ index.form.submit = Let''s do this!
 index.about.header = About
 index.about.content = Forward Cat is a service that allows you to quickly create a temporary email address that automatically forwards to your real email address.
 index.about.spam = <strong>Important:</strong> we reserve the right to cancel or block your account without any further notice if you are found to be sending spam. If you believe someone is using this service to spam, please <a href="/report">report it</a>.
+index.about.contact = You can also <a target="_blank" href="mailto:contact@forward.cat?subject=Hi%20there!">contact us</a> for any other issue.
 index.about.section1.title = Don''t reveal your address
 index.about.section1.content = Forward Cat is anonymous- give out a disposable email address when you don''t want to disclose your real address.
 index.about.section2.title = Avoid spam
@@ -34,7 +33,7 @@ index.about.section3.content = Use a temporary email address to register for web
 index.about.section4.title = Totally private
 index.about.section4.content = Forward Cat doesn''t store your emails, and they''re not visible to anyone except you. Your temporary email address will be totally deactivated after the lifespan you select comes to an end.
 index.footer.by = Made by <a target="_blank" href="http://www.dani-sola.com">Dani Solà</a>. Special thanks to <a href="http://sophiacasas.es" target="_blank">Sophia Casas</a>. Illustrations by <a href="http://raulilustrado.wordpress.com" target="_blank">Raúl Vélez</a>.
-index.footer.code = Code licensed under the <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> and hosted on <a href="https://bitbucket.org/danisola/forward-cat" target="_blank">Bitbucket</a>.
+index.footer.code = Code licensed under the <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> and hosted on <a href="https://github.com/danisola/forward-cat" target="_blank">GitHub</a>.
 index.footer.langs = Other languages: <a href="http://ca.forward.cat">Català</a> - <a href="http://es.forward.cat">Español</a>
 
 email_sent.title = Activate your temporary email address!

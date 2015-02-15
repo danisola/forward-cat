@@ -1,10 +1,8 @@
 index.title = Forward Cat - Adreces temporals d''email
 index.canonicalurl = http://ca.forward.cat
 index.description = Forward Cat et permet crear fàcilment una adreça temporal d''email que reenvia automàticament els correus a la teva adreça real
-index.contact.label = Contactar
-index.contact.subject = Hola!
 
-index.header = Crea una nova adreça temporal d''e-mail
+index.header = Crea una adreça temporal d''e-mail
 index.subheader = És gratuït, ràpid i anònim
 index.form.address.label = La teva adreça:
 index.form.address.title = La teva adreça
@@ -25,6 +23,7 @@ index.form.submit = Som-hi!
 index.about.header = Quant a
 index.about.content = Forward Cat és un servei que permet crear fàcilment una adreça temporal d''email que reenvia automàticament els correus a la teva adreça real.
 index.about.spam = <strong>Important:</strong> ens reservem el dret de cancel·lar o bloquejar la teva compta si descobrim que la fas servir per enviar spam. Si creus que algú està fent servir Forward Cat per enviar spam, <a href="/report">reporta-ho</a> si us plau.
+index.about.contact = També pots <a target="_blank" href="mailto:contact@forward.cat?subject=Hola!">contactar-nos</a> per a qualsevol altre assumpte.
 index.about.section1.title = No revelis la teva adreça
 index.about.section1.content = Forward Cat és anònim, dóna una adreça temporal quan no vulguis revelar la teva adreça real.
 index.about.section2.title = Evita el correu no desitjat
@@ -34,7 +33,7 @@ index.about.section3.content = Fes servir una adreça d''email temporal quan et 
 index.about.section4.title = Totalment privat
 index.about.section4.content = Forward Cat no guarda el teu correu, i no és visible per a ningú a part de tu. La teva adreça de correu temporal serà totalment esborrada un cop arribi a la fi de la seva durada.
 index.footer.by = Fet per <a target="_blank" href="http://www.dani-sola.com">Dani Solà</a>. Agraïment especial a <a href="http://sophiacasas.es" target="_blank">Sophia Casas</a>. Il·lustracions fetes per <a href="http://raulilustrado.wordpress.com" target="_blank">Raúl Vélez</a>.
-index.footer.code = Codi sota llicència <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> hostatjat a <a href="https://bitbucket.org/danisola/forward-cat" target="_blank">Bitbucket</a>.
+index.footer.code = Codi sota llicència <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> hostatjat a <a href="https://github.com/danisola/forward-cat" target="_blank">GitHub</a>.
 index.footer.langs = Altres llengües: <a href="http://en.forward.cat">English</a> - <a href="http://es.forward.cat">Español</a>
 
 email_sent.title = Activeu la vostra adreça temporal!

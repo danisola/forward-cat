@@ -39,10 +39,7 @@
         <div class="container-narrow">
 
             <div class="masthead">
-                <ul class="nav nav-pills pull-right">
-                    <li class="active"><a target="_blank" href="mailto:contact@@forward.cat?subject=@Messages("index.contact.subject")(lang)">@Messages("index.contact.label")(lang)</a></li>
-                </ul>
-                <h3 class="muted">Forward Cat</h3>
+                <h3 class="muted title">Forward Cat</h3>
             </div>
 
             <hr>
@@ -99,6 +96,7 @@
                 <h2>@Messages("index.about.header")(lang)</h2>
                 <p>@Messages("index.about.content")(lang)</p>
                 <p>@Html(Messages("index.about.spam")(lang))</p>
+                <p>@Html(Messages("index.about.contact")(lang))</p>
 
                 <div class="row-fluid marketing">
                     <div class="span6">
@@ -126,9 +124,9 @@
             </div>
         </div>
 
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
         <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/js/bootstrap.min.js"></script>
-        <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.10.0/jquery.validate.js"></script>
+        <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.13.1/jquery.validate.js"></script>
         <script src="@routes.Assets.at("javascripts/jquery.form.js")"></script>
         <script src="@routes.Assets.at("javascripts/main.js")"></script>
 
