@@ -1,6 +1,6 @@
 index.title = Forward Cat - Direcciones temporales de email
 index.canonicalurl = http://es.forward.cat
-index.description = Forward Cat te permite crear fácilmente una dirección temporal de email que reenvía automáticamente el correo a tu dirección real
+index.description = Crea una dirección temporal de email que reenvía automáticamente el correo a tu dirección real. ¡Es rápido, gratuito y anónimo!
 
 index.header = Crea una dirección temporal de correo
 index.subheader = Es rápido, gratuito y anónimo
