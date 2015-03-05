@@ -106,8 +106,8 @@
         <delayTime>3 hours</delayTime>
         <delayTime>6 hours</delayTime>
         -->
-        <delayTime>5000, 100000, 500000</delayTime>
-        <maxRetries>7</maxRetries>
+        <delayTime>5000, 100000, 500000, 5000000</delayTime>
+        <maxRetries>5</maxRetries>
 
         <!-- The max reties which will used if no A or MX record for the domain was found. -->
         <!-- If 0 it will fail on first time -->
