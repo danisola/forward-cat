@@ -36,7 +36,7 @@
 
   <!-- Number of spool threads -->
   <spooler>
-    <threads>10</threads>
+    <threads>15</threads>
   </spooler>
 
   <processors>
@@ -106,8 +106,8 @@
         <delayTime>3 hours</delayTime>
         <delayTime>6 hours</delayTime>
         -->
-        <delayTime>5000, 100000, 500000, 5000000</delayTime>
-        <maxRetries>5</maxRetries>
+        <delayTime>5000, 500000, 1000000</delayTime>
+        <maxRetries>4</maxRetries>
 
         <!-- The max reties which will used if no A or MX record for the domain was found. -->
         <!-- If 0 it will fail on first time -->
