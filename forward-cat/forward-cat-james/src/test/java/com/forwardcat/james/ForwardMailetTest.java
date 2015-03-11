@@ -2,7 +2,6 @@ package com.forwardcat.james;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Throwables;
-import com.google.common.collect.Lists;
 import org.apache.james.core.MailImpl;
 import org.apache.james.dnsservice.api.DNSService;
 import org.apache.mailet.Mail;
@@ -22,9 +21,11 @@ import redis.clients.jedis.JedisPool;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Collections;
 
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static org.hamcrest.CoreMatchers.is;
@@ -79,6 +80,26 @@ public class ForwardMailetTest {
     }
 
     @Test
+    public void proxyNotFoundAndSenderIgnorable_shouldIgnoreMail() throws MessagingException {
+        Mail mail = newMail("do-not-reply@mail.com");
+        mailet.service(mail);
+
+        verify(pool, atLeastOnce()).returnResource(jedis);
+        assertThatIsIgnored(mail);
+        assertNoMailHasBeenSent();
+    }
+
+    @Test
+    public void proxyNotFoundAndSenderIsFbUpdate_shouldIgnoreMail() throws MessagingException {
+        Mail mail = newMail("notification+zj4za=zy2==c@facebookmail.com");
+        mailet.service(mail);
+
+        verify(pool, atLeastOnce()).returnResource(jedis);
+        assertThatIsIgnored(mail);
+        assertNoMailHasBeenSent();
+    }
+
+    @Test
     public void proxyNotWellFormed_shouldBounceMail() throws MessagingException {
         when(jedis.get(generateProxyKey(recipient))).thenReturn("not a valid proxy");
 
@@ -112,7 +133,7 @@ public class ForwardMailetTest {
         mailet.service(mail);
 
         verify(pool, atLeastOnce()).returnResource(jedis);
-        assertThatHasBeenSwallowed(mail);
+        assertThatIsIgnored(mail);
         assertNoMailHasBeenSent();
     }
 
@@ -133,22 +154,23 @@ public class ForwardMailetTest {
     }
 
     private Mail newMail() throws MessagingException {
-        MailImpl mail = new MailImpl();
-        mail.setName("name");
+        return newMail("sender@mail.com");
+    }
 
+    private Mail newMail(String sender) throws MessagingException {
         MimeMessage message = new MimeMessage(Session.getDefaultInstance(System.getProperties()));
+        message.setContent(new MimeMultipart());
         message.setSubject("Some subject");
-        mail.setMessage(message);
-        mail.setRecipients(Lists.newArrayList(recipient));
-        return mail;
+
+        return new MailImpl("test email", new MailAddress(sender), Collections.singletonList(recipient), message);
     }
 
     private void assertThatIsBounced(Mail mail) {
         Serializable attr = mail.getAttribute(ForwardMailet.BOUNCE_ATTRIBUTE);
-        assertThat((String) attr, is("true"));
+        assertThat(attr, is("true"));
     }
 
-    private void assertThatHasBeenSwallowed(Mail mail) {
+    private void assertThatIsIgnored(Mail mail) {
         String attr = mail.getState();
         assertThat(attr, is(Mail.GHOST));
     }

@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.forwardcat.common.RedisKeys.generateProxyKey;
+import static com.forwardcat.james.MailUtils.shouldBounce;
 
 public class ForwardMailet extends AbstractRedirect {
 
@@ -44,7 +45,7 @@ public class ForwardMailet extends AbstractRedirect {
         // Don't accept emails sent to multiple recipients
         MailAddress recipient = getRecipient(mail);
         if (recipient == null) {
-            mail.setAttribute(BOUNCE_ATTRIBUTE, "true");
+            reject(mail);
             return;
         }
 
@@ -61,7 +62,7 @@ public class ForwardMailet extends AbstractRedirect {
             }
         } catch (Exception e) {
             log("Error: " + getStackTrace(e));
-            mail.setAttribute(BOUNCE_ATTRIBUTE, "true");
+            reject(mail);
             return;
         } finally {
             pool.returnResource(jedis);
@@ -75,7 +76,7 @@ public class ForwardMailet extends AbstractRedirect {
         // Checking whether we have this proxy created
         if (proxy == null) {
             logIfDebug("Proxy not found for key: %s - Sender: %s", recipient, mail.getSender());
-            mail.setAttribute(BOUNCE_ATTRIBUTE, "true");
+            reject(mail);
             incrementCounter(RedisKeys.EMAILS_BLOCKED_COUNTER);
             return;
         }
@@ -83,7 +84,7 @@ public class ForwardMailet extends AbstractRedirect {
         // Checking whether we have this proxy created
         if (!proxy.isActive()) {
             logIfDebug("Proxy not active: %s", recipient);
-            mail.setAttribute(BOUNCE_ATTRIBUTE, "true");
+            reject(mail);
             incrementCounter(RedisKeys.EMAILS_BLOCKED_COUNTER);
             return;
         }
@@ -91,7 +92,7 @@ public class ForwardMailet extends AbstractRedirect {
         // Checking whether the proxy is considered to be a spammer: just ignore
         if (proxy.isBlocked()) {
             logIfDebug("Proxy is blocked: %s", recipient);
-            mail.setState(Mail.GHOST);
+            ignore(mail);
             incrementCounter(RedisKeys.SPAMMER_EMAILS_BLOCKED_COUNTER);
             return;
         }
@@ -116,6 +117,19 @@ public class ForwardMailet extends AbstractRedirect {
         } finally {
             pool.returnResource(jedis);
         }
+    }
+
+    private void reject(Mail mail) {
+        if (shouldBounce(mail)) {
+            mail.setAttribute(BOUNCE_ATTRIBUTE, "true");
+        } else {
+            logIfDebug("Ignoring %s", mail.getName());
+            ignore(mail);
+        }
+    }
+
+    private void ignore(Mail mail) {
+        mail.setState(Mail.GHOST);
     }
 
     /**
@@ -260,7 +274,7 @@ public class ForwardMailet extends AbstractRedirect {
         if (mail.getRecipients().size() > 1) {
             return null;
         }
-        return (MailAddress) mail.getRecipients().iterator().next();
+        return mail.getRecipients().iterator().next();
     }
 
     @Override
