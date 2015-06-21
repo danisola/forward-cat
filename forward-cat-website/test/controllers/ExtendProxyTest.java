@@ -1,56 +1,43 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.AbstractModule;
+import models.ProxyRepository;
+import org.apache.mailet.MailAddress;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import play.mvc.Result;
 import play.test.FakeRequest;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Pipeline;
-import redis.clients.jedis.Response;
 
 import java.io.IOException;
 
+import static controllers.TestUtils.*;
 import static models.ControllerUtils.getHash;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.verify;
 import static play.test.Helpers.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ExtendProxyTest extends PlayTest {
 
-    String proxyMail = "test@forward.cat";
-    String proxyData = "{\"ua\":\"my_address@mail.com\",\"ts\":\"2013-01-27T01:58:53.874+01:00\",\"ex\":\"2013-02-01T01:58:53.874+01:00\",\"ac\":true}";
-    String proxyHash;
+    MailAddress proxyMail = toMailAddress("test@forward.cat");
+    ProxyMail proxy = activeProxy(proxyMail, false);
+    String proxyHash = getHash(proxy);
 
-    @Mock JedisPool jedisPool;
-    @Mock Jedis jedis;
-    @Mock Pipeline pipeline;
-    @Mock Response<Long> expireResponse;
+    @Mock ProxyRepository proxyRepo;
 
     @Override
     public AbstractModule getModule() throws IOException {
-        when(jedisPool.getResource()).thenReturn(jedis);
-        when(jedis.get("p:" + proxyMail)).thenReturn(proxyData);
-        when(jedis.pipelined()).thenReturn(pipeline);
-        when(pipeline.expire(anyString(), anyInt())).thenReturn(expireResponse);
-        when(expireResponse.get()).thenReturn(1L);
-
-        ProxyMail proxy = new ObjectMapper().readValue(proxyData, ProxyMail.class);
-        proxyHash = getHash(proxy);
+        whenAddressReturnProxy(proxyRepo, proxyMail, proxy);
 
         return new AbstractModule() {
             @Override
             protected void configure() {
-                bind(JedisPool.class).toInstance(jedisPool);
+                bind(ProxyRepository.class).toInstance(proxyRepo);
             }
         };
     }
@@ -63,7 +50,7 @@ public class ExtendProxyTest extends PlayTest {
 
     @Test
     public void hashMissing_sendBadRequest() throws Exception {
-        Result route = route(request(proxyMail, null));
+        Result route = route(request(proxyMail.toString(), null));
         assertThat(status(route), is(BAD_REQUEST));
     }
 
@@ -75,14 +62,15 @@ public class ExtendProxyTest extends PlayTest {
 
     @Test
     public void invalidHash_sendBadRequest() throws Exception {
-        Result route = route(request(proxyMail, "wrongHash"));
+        Result route = route(request(proxyMail.toString(), "wrongHash"));
         assertThat(status(route), is(BAD_REQUEST));
     }
 
     @Test
     public void everythingFine_sendConfirmationPage() throws Exception {
-        Result route = route(request(proxyMail, proxyHash));
+        Result route = route(request(proxyMail.toString(), proxyHash));
         assertThat(status(route), is(OK));
+        verify(proxyRepo).update(any(ProxyMail.class));
     }
 
     private FakeRequest request(String proxy, String hash) {

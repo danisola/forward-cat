@@ -1,6 +1,7 @@
 package com.forwardcat.james;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.avaje.ebean.EbeanServer;
+import com.forwardcat.common.ProxyMail;
 import com.google.common.base.Throwables;
 import org.apache.james.core.MailImpl;
 import org.apache.james.dnsservice.api.DNSService;
@@ -26,8 +27,8 @@ import java.io.Serializable;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Collections;
+import java.util.Date;
 
-import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.junit.Assert.assertThat;
@@ -42,17 +43,18 @@ public class ForwardMailetTest {
     @Mock ForwardCatResourcesProvider resourcesProvider;
     @Mock JedisPool pool;
     @Mock Jedis jedis;
+    @Mock EbeanServer ebeanServer;
     @Mock MailetContext context;
 
-    ObjectMapper mapper = new ObjectMapper();
     String prefix = "[Forward.cat] ";
     MailAddress recipient;
+    MailAddress userAddress;
 
     @Before
     public void setUp() throws MessagingException, UnknownHostException {
         when(pool.getResource()).thenReturn(jedis);
         when(resourcesProvider.getPool()).thenReturn(pool);
-        when(resourcesProvider.getMapper()).thenReturn(mapper);
+        when(resourcesProvider.getEbeanServer()).thenReturn(ebeanServer);
 
         DNSService dns = mock(DNSService.class);
         when(dns.getLocalHost()).thenReturn(InetAddress.getLocalHost());
@@ -61,6 +63,7 @@ public class ForwardMailetTest {
         mailet.setResourceProvider(resourcesProvider);
 
         recipient = new MailAddress("recipient@forward.cat");
+        userAddress = new MailAddress("user@mail.com");
         MailetConfig config = mock(MailetConfig.class);
         when(config.getInitParameter("sender")).thenReturn("no-reply@forward.cat");
         when(config.getInitParameter("prefix")).thenReturn(prefix);
@@ -84,7 +87,6 @@ public class ForwardMailetTest {
         Mail mail = newMail("do-not-reply@mail.com");
         mailet.service(mail);
 
-        verify(pool, atLeastOnce()).returnResource(jedis);
         assertThatIsIgnored(mail);
         assertNoMailHasBeenSent();
     }
@@ -94,59 +96,46 @@ public class ForwardMailetTest {
         Mail mail = newMail("notification+zj4za=zy2==c@facebookmail.com");
         mailet.service(mail);
 
-        verify(pool, atLeastOnce()).returnResource(jedis);
         assertThatIsIgnored(mail);
         assertNoMailHasBeenSent();
     }
 
     @Test
-    public void proxyNotWellFormed_shouldBounceMail() throws MessagingException {
-        when(jedis.get(generateProxyKey(recipient))).thenReturn("not a valid proxy");
-
-        Mail mail = newMail();
-        mailet.service(mail);
-
-        verify(pool, atLeastOnce()).returnResource(jedis);
-        assertThatIsBounced(mail);
-        assertNoMailHasBeenSent();
-    }
-
-    @Test
     public void proxyNotActive_shouldBounceMail() throws MessagingException {
-        String proxy = "{\"ua\":\"someone@gmail.com\",\"ts\":\"2013-02-04T20:55:19.625Z\",\"ex\":\"2013-02-09T20:55:19.625Z\",\"ac\":false}";
-        when(jedis.get(generateProxyKey(recipient))).thenReturn(proxy);
+        ProxyMail proxy = ProxyMail.create(recipient, userAddress, daysOffset(-2), daysOffset(5), "en");
+        when(ebeanServer.find(ProxyMail.class, recipient.toString())).thenReturn(proxy);
 
         Mail mail = newMail();
         mailet.service(mail);
 
-        verify(pool, atLeastOnce()).returnResource(jedis);
         assertThatIsBounced(mail);
         assertNoMailHasBeenSent();
     }
 
     @Test
     public void proxyBlocked_shouldSwallowMail() throws MessagingException {
-        String proxy = "{\"ua\":\"someone@gmail.com\",\"ts\":\"2013-02-04T20:55:19.625Z\",\"ex\":\"2013-02-09T20:55:19.625Z\",\"ac\":true, \"bl\":true}";
-        when(jedis.get(generateProxyKey(recipient))).thenReturn(proxy);
+        ProxyMail proxy = ProxyMail.create(recipient, userAddress, daysOffset(-2), daysOffset(5), "en");
+        proxy.activate();
+        proxy.block();
+        when(ebeanServer.find(ProxyMail.class, recipient.toString())).thenReturn(proxy);
 
         Mail mail = newMail();
         mailet.service(mail);
 
-        verify(pool, atLeastOnce()).returnResource(jedis);
         assertThatIsIgnored(mail);
         assertNoMailHasBeenSent();
     }
 
     @Test
     public void proxyActive_shouldForwardMail() throws MessagingException {
-        String proxy = "{\"ua\":\"someone@gmail.com\",\"ts\":\"2013-02-04T20:55:19.625Z\",\"ex\":\"2013-02-09T20:55:19.625Z\",\"ac\":true}";
-        when(jedis.get(generateProxyKey(recipient))).thenReturn(proxy);
+        ProxyMail proxy = ProxyMail.create(recipient, userAddress, daysOffset(-2), daysOffset(5), "en");
+        proxy.activate();
+        when(ebeanServer.find(ProxyMail.class, recipient.toString())).thenReturn(proxy);
 
         Mail mail = newMail();
         mailet.service(mail);
 
         assertThat(mail.getState(), is(Mail.GHOST));
-        verify(pool, atLeastOnce()).returnResource(jedis);
         verify(context).sendMail(mailCaptor.capture());
 
         Mail forwardMail = mailCaptor.getValue();
@@ -181,5 +170,9 @@ public class ForwardMailetTest {
         } catch (MessagingException e) {
             Throwables.propagate(e);
         }
+    }
+
+    private Date daysOffset(int days) {
+        return new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * days);
     }
 }

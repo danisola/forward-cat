@@ -1,34 +1,31 @@
 package controllers;
 
 import com.forwardcat.common.ProxyMail;
-import com.forwardcat.common.RedisKeys;
 import com.google.inject.Inject;
+import models.ProxyRepository;
 import org.apache.mailet.MailAddress;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.i18n.Lang;
+import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Pipeline;
 import views.html.confirm_deletion;
 import views.html.proxy_deleted;
 
 import java.util.Optional;
 
-import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.formatInstant;
-import static models.ExpirationUtils.toDateTime;
 
-public class DeleteProxy extends AbstractController {
+public class DeleteProxy extends Controller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteProxy.class.getName());
+    private final ProxyRepository proxyRepo;
 
     @Inject
-    public DeleteProxy(JedisPool jedisPool) {
-        super(jedisPool);
+    DeleteProxy(ProxyRepository proxyRepo) {
+        this.proxyRepo = proxyRepo;
     }
 
     public Result confirmDeletion(String p, String h) {
@@ -43,7 +40,7 @@ public class DeleteProxy extends AbstractController {
 
         // Validating the proxy
         MailAddress proxyMail = maybeProxyMail.get();
-        Optional<ProxyMail> maybeProxy = getProxy(generateProxyKey(proxyMail));
+        Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyMail);
         if (!maybeProxy.isPresent()) {
             LOGGER.debug("Proxy {} doesn't exist", proxyMail);
             return badRequest();
@@ -64,10 +61,9 @@ public class DeleteProxy extends AbstractController {
         }
 
         // Generating the answer
-        DateTime expirationTime = toDateTime(proxy.getExpirationTime());
         Lang lang = getBestLanguage(request, lang());
-        String date = formatInstant(expirationTime, lang);
-        return ok(confirm_deletion.render(lang, proxyMail.toString(), date, hashValue));
+        String expiratonDate = formatInstant(proxy.getExpirationTime(), lang);
+        return ok(confirm_deletion.render(lang, proxyMail.toString(), expiratonDate, hashValue));
     }
 
     public Result delete(String p, String h) {
@@ -82,10 +78,9 @@ public class DeleteProxy extends AbstractController {
 
         // Validating the proxy
         MailAddress proxyMail = maybeProxyMail.get();
-        String proxyKey = generateProxyKey(proxyMail);
-        Optional<ProxyMail> maybeProxy = getProxy(generateProxyKey(proxyMail));
+        Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyMail);
         if (!maybeProxy.isPresent()) {
-            LOGGER.debug("Proxy % doesn't exist", proxyKey);
+            LOGGER.debug("Proxy % doesn't exist", proxyMail);
             return badRequest();
         }
 
@@ -104,13 +99,7 @@ public class DeleteProxy extends AbstractController {
         }
 
         // Removing the proxy
-        dbStatement(jedis -> {
-            Pipeline pipeline = jedis.pipelined();
-
-            pipeline.del(proxyKey);
-            pipeline.zrem(RedisKeys.ALERTS_SET, proxyMail.toString());
-            pipeline.sync();
-        });
+        proxyRepo.delete(proxy);
 
         // Sending the response
         Lang lang = getBestLanguage(request, lang());

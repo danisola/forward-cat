@@ -1,20 +1,22 @@
 package controllers;
 
 import com.google.inject.Inject;
+import models.ProxyRepository;
 import org.apache.mailet.MailAddress;
+import play.mvc.Controller;
 import play.mvc.Result;
-import redis.clients.jedis.JedisPool;
 
 import java.util.Optional;
 
-import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.getMailAddress;
 
-public class ValidateProxy extends AbstractController {
+public class ValidateProxy extends Controller {
+
+    private final ProxyRepository proxyRepo;
 
     @Inject
-    ValidateProxy(JedisPool jedisPool) {
-        super(jedisPool);
+    ValidateProxy(ProxyRepository proxyRepo) {
+        this.proxyRepo = proxyRepo;
     }
 
     public Result validate(String proxy) {
@@ -24,11 +26,7 @@ public class ValidateProxy extends AbstractController {
             return ok(Boolean.FALSE.toString());
         }
 
-        String proxyKey = generateProxyKey(mailAddress.get());
-
-        Boolean valid = dbFunction(jedis -> !jedis.exists(proxyKey))
-                .orElseGet(() -> false);
-
+        Boolean valid = !proxyRepo.exists(mailAddress.get());
         return ok(valid.toString());
     }
 }

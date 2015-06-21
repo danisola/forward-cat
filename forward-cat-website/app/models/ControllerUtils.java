@@ -39,7 +39,7 @@ public class ControllerUtils {
      */
     public static String getHash(ProxyMail proxy) {
         Hasher hasher = HASH_FUNCTION.newHasher();
-        hasher.putString(proxy.getCreationTime(), Charsets.UTF_8);
+        hasher.putString(proxy.getCreationTime().toString(), Charsets.UTF_8);
         return hasher.hash().toString();
     }
 

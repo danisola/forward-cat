@@ -1,36 +1,31 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.Inject;
 import models.MailSender;
+import models.ProxyRepository;
 import org.apache.mailet.MailAddress;
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import play.i18n.Lang;
+import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.twirl.api.Html;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Pipeline;
 import views.html.proxy_created_email;
 
+import java.time.ZonedDateTime;
 import java.util.Optional;
 
-import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
 
-public class AddProxy extends AbstractController {
+public class AddProxy extends Controller {
 
-    private final ObjectMapper mapper;
+    private final ProxyRepository proxyRepo;
     private final MailSender mailSender;
 
     @Inject
-    public AddProxy(JedisPool jedisPool, ObjectMapper mapper, MailSender mailSender) {
-        super(jedisPool);
-        this.mapper = mapper;
+    AddProxy(ProxyRepository proxyRepo, MailSender mailSender) {
+        this.proxyRepo = proxyRepo;
         this.mailSender = mailSender;
     }
 
@@ -55,28 +50,16 @@ public class AddProxy extends AbstractController {
         }
 
         MailAddress proxyMailAddress = maybeProxyMailAddress.get();
-        DateTime creationTime = new DateTime();
-        String creationTimeStr = toStringValue(creationTime);
-        String expirationTimeStr = toStringValue(creationTime.plusDays(duration));
+
+        ZonedDateTime creationTime = now();
+        ZonedDateTime expirationTime = creationTime.plusDays(duration);
         Lang lang = getBestLanguage(request, lang());
-        ProxyMail proxyMail = new ProxyMail(userMail.toString(), creationTimeStr, expirationTimeStr, lang.code());
+        ProxyMail proxyMail = ProxyMail.create(proxyMailAddress, userMail, toDate(creationTime), toDate(expirationTime), lang.code());
 
         // Creating the proxy
-        Optional<Boolean> proxyAlreadyExists = dbFunction(jedis -> {
-            String proxyKey = generateProxyKey(proxyMailAddress);
-            Boolean exists = jedis.exists(proxyKey);
-            if (!exists) {
-                String jsonValue = mapper.writeValueAsString(proxyMail);
-
-                Pipeline pipeline = jedis.pipelined();
-                pipeline.set(proxyKey, jsonValue);
-                pipeline.expire(proxyKey, getUnconfirmedProxyDuration());
-                pipeline.sync();
-            }
-            return exists;
-        });
-
-        if (!proxyAlreadyExists.isPresent() || proxyAlreadyExists.get()) {
+        if (!proxyRepo.exists(proxyMailAddress)) {
+            proxyRepo.save(proxyMail);
+        } else {
             return badRequest(); // Proxy already exists: cannot create a new one
         }
 

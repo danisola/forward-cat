@@ -6,8 +6,7 @@ import org.junit.After;
 import org.junit.Before;
 import play.GlobalSettings;
 import play.test.FakeApplication;
-
-import java.io.IOException;
+import play.test.Helpers;
 
 import static play.test.Helpers.*;
 
@@ -16,7 +15,7 @@ public abstract class PlayTest {
     private FakeApplication fakeApplication;
 
     @Before
-    public void setUp() throws IOException, InterruptedException {
+    public void setUp() throws Exception {
         final AbstractModule module = getModule();
         GlobalSettings testGlobal = new GlobalSettings() {
             @Override
@@ -25,11 +24,11 @@ public abstract class PlayTest {
             }
         };
 
-        fakeApplication = fakeApplication(testGlobal);
+        fakeApplication = fakeApplication(Helpers.inMemoryDatabase(), testGlobal);
         start(fakeApplication);
     }
 
-    public abstract AbstractModule getModule() throws IOException;
+    public abstract AbstractModule getModule() throws Exception;
 
     @After
     public void cleanup() {

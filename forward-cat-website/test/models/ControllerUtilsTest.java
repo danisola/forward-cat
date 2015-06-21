@@ -1,5 +1,7 @@
 package models;
 
+import com.google.inject.AbstractModule;
+import com.google.inject.Guice;
 import org.apache.mailet.MailAddress;
 import org.junit.After;
 import org.junit.Before;
@@ -7,9 +9,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import play.GlobalSettings;
 import play.i18n.Lang;
 import play.mvc.Http;
 import play.test.FakeApplication;
+import play.test.Helpers;
 
 import java.util.Optional;
 
@@ -30,7 +34,18 @@ public class ControllerUtilsTest  {
 
     @Before
     public void setup() {
-        fakeApplication = fakeApplication();
+        GlobalSettings testGlobal = new GlobalSettings() {
+            @Override
+            public <A> A getControllerInstance(Class<A> controllerClass) throws Exception {
+                return Guice.createInjector(new AbstractModule() {
+                    @Override
+                    protected void configure() {
+
+                    }
+                }).getInstance(controllerClass);
+            }
+        };
+        fakeApplication = fakeApplication(Helpers.inMemoryDatabase(), testGlobal);
         start(fakeApplication);
     }
 

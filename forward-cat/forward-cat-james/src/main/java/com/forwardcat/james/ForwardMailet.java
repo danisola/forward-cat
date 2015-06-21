@@ -1,6 +1,5 @@
 package com.forwardcat.james;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forwardcat.common.ProxyMail;
 import com.forwardcat.common.RedisKeys;
 import com.google.common.annotations.VisibleForTesting;
@@ -25,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static com.forwardcat.james.MailUtils.shouldBounce;
 
 public class ForwardMailet extends AbstractRedirect {
@@ -49,24 +47,7 @@ public class ForwardMailet extends AbstractRedirect {
             return;
         }
 
-        // Getting the proxy information
-        JedisPool pool = resourcesProvider.getPool();
-        Jedis jedis = pool.getResource();
-        ProxyMail proxy = null;
-        try {
-            String proxyKey = generateProxyKey(recipient);
-            String proxyString = jedis.get(proxyKey);
-            if (proxyString != null) {
-                ObjectMapper mapper = resourcesProvider.getMapper();
-                proxy = mapper.readValue(proxyString, ProxyMail.class);
-            }
-        } catch (Exception e) {
-            log("Error: " + getStackTrace(e));
-            reject(mail);
-            return;
-        } finally {
-            pool.returnResource(jedis);
-        }
+        ProxyMail proxy = resourcesProvider.getEbeanServer().find(ProxyMail.class, recipient.toString());
 
         logIfDebug("New mail - sender: %s, recipients: %s, name: %s, remoteHost: %s, remoteAddr: %s, state: %s, lastUpdated: %s, errorMessage: %s",
                 mail.getSender(), arrayToString(mail.getRecipients().toArray()), mail.getName(), mail.getRemoteHost(),
@@ -200,9 +181,7 @@ public class ForwardMailet extends AbstractRedirect {
                 // Send it off...
                 getMailetContext().sendMail(newMail);
             } else {
-                StringBuffer logBuffer = new StringBuffer(256).append(getMailetName()).append(" mailet cannot forward ").append(originalMail.getName()).append(". Invalid sender domain for ").append(newMail.getSender()).append(". Consider using the Resend mailet ")
-                        .append("using a different sender.");
-                throw new MessagingException(logBuffer.toString());
+                throw new MessagingException(getMailetName() + " mailet cannot forward " + originalMail.getName() + ". Invalid sender domain for " + newMail.getSender() + ". Consider using the Resend mailet " + "using a different sender.");
             }
 
         } finally {

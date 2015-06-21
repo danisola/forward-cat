@@ -3,32 +3,34 @@ package controllers;
 import com.forwardcat.common.ProxyMail;
 import com.forwardcat.common.RedisKeys;
 import com.google.inject.Inject;
+import models.ProxyRepository;
 import models.SpamCatcher;
+import models.StatsRepository;
 import org.apache.mailet.MailAddress;
-import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import play.i18n.Lang;
+import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.Pipeline;
 import views.html.proxy_created;
 
 import java.util.Optional;
 
-import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
-import static models.ExpirationUtils.*;
+import static models.ExpirationUtils.formatInstant;
 
-public class ConfirmProxy extends AbstractController {
+public class ConfirmProxy extends Controller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmProxy.class.getName());
+    private final StatsRepository statsRepo;
+    private final ProxyRepository proxyRepo;
     private final SpamCatcher spamCatcher;
 
     @Inject
-    ConfirmProxy(JedisPool jedisPool, SpamCatcher spamCatcher) {
-        super(jedisPool);
+    ConfirmProxy(StatsRepository statsRepo, ProxyRepository proxyRepo, SpamCatcher spamCatcher) {
+        this.statsRepo = statsRepo;
+        this.proxyRepo = proxyRepo;
         this.spamCatcher = spamCatcher;
     }
 
@@ -42,9 +44,8 @@ public class ConfirmProxy extends AbstractController {
         }
 
         // Getting the proxy
-        MailAddress proxyMail = maybeProxyMail.get();
-        String proxyKey = generateProxyKey(proxyMail);
-        Optional<ProxyMail> maybeProxy = getProxy(proxyKey);
+        MailAddress proxyMailAddress = maybeProxyMail.get();
+        Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyMailAddress);
         if (!maybeProxy.isPresent()) {
             return badRequest();
         }
@@ -64,29 +65,17 @@ public class ConfirmProxy extends AbstractController {
         }
         proxy.activate();
 
-        dbStatement(jedis -> {
-            Pipeline pipeline = jedis.pipelined();
+        if (spamCatcher.isSpam(proxyMailAddress)) {
+            proxy.block();
+            statsRepo.incrementCounter(RedisKeys.SPAMMER_PROXIES_BLOCKED_COUNTER);
+        }
 
-            if (spamCatcher.isSpam(proxyMail)) {
-                proxy.block();
-                pipeline.incr(RedisKeys.SPAMMER_PROXIES_BLOCKED_COUNTER);
-            }
-
-            // Calculating the TTL of the proxy
-            DateTime expirationTime = toDateTime(proxy.getExpirationTime());
-            DateTime alertTime = getAlertTime(expirationTime);
-
-            pipeline.set(proxyKey, toJsonString(proxy)); // Saving the proxy
-            pipeline.expire(proxyKey, secondsTo(expirationTime)); // Setting TTL
-            pipeline.zadd(RedisKeys.ALERTS_SET, alertTime.getMillis(), proxyMail.toString()); // Adding an alert
-            pipeline.incr(RedisKeys.PROXIES_ACTIVATED_COUNTER); // Incrementing proxies activated
-            pipeline.sync();
-        });
+        proxyRepo.save(proxy);
+        statsRepo.incrementCounter(RedisKeys.PROXIES_ACTIVATED_COUNTER);
 
         // Generating the response
-        DateTime expirationTime = toDateTime(proxy.getExpirationTime());
         Lang language = getBestLanguage(request, lang());
-        String date = formatInstant(expirationTime, language);
-        return ok(proxy_created.render(language, proxyMail.toString(), date));
+        String expirationDate = formatInstant(proxy.getExpirationTime(), language);
+        return ok(proxy_created.render(language, proxyMailAddress.toString(), expirationDate));
     }
 }

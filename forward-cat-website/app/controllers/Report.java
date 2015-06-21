@@ -3,12 +3,13 @@ package controllers;
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.Inject;
 import models.MailSender;
+import models.ProxyRepository;
 import org.apache.mailet.MailAddress;
 import play.Play;
 import play.i18n.Lang;
+import play.mvc.Controller;
 import play.mvc.Result;
 import play.twirl.api.Html;
-import redis.clients.jedis.JedisPool;
 import views.html.report;
 import views.html.user_reported;
 import views.html.user_reported_email;
@@ -16,17 +17,17 @@ import views.html.user_reported_email;
 import javax.mail.internet.AddressException;
 import java.util.Optional;
 
-import static com.forwardcat.common.RedisKeys.generateProxyKey;
 import static models.ControllerUtils.*;
 
-public class Report extends AbstractController {
+public class Report extends Controller {
 
+    private final ProxyRepository proxyRepo;
     private final MailSender mailSender;
     private final MailAddress reportAddress;
 
     @Inject
-    public Report(JedisPool jedisPool, MailSender mailSender) throws AddressException {
-        super(jedisPool);
+    Report(ProxyRepository proxyRepo, MailSender mailSender) throws AddressException {
+        this.proxyRepo = proxyRepo;
         this.mailSender = mailSender;
         this.reportAddress = new MailAddress(Play.application().configuration().getString("reportAddress"));
     }
@@ -45,9 +46,7 @@ public class Report extends AbstractController {
         Optional<MailAddress> mailAddress = toMailAddress(proxy);
         if (mailAddress.isPresent() && isLocal(mailAddress.get())) {
 
-            String proxyKey = generateProxyKey(mailAddress.get());
-
-            Optional<ProxyMail> maybeProxyMail = getProxy(proxyKey);
+            Optional<ProxyMail> maybeProxyMail = proxyRepo.getProxy(mailAddress.get());
             if (maybeProxyMail.isPresent()) {
 
                 ProxyMail proxyMail = maybeProxyMail.get();

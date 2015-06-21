@@ -1,24 +1,20 @@
 package controllers;
 
 import com.google.inject.AbstractModule;
+import models.ProxyRepository;
+import org.apache.mailet.MailAddress;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import play.mvc.Result;
 import play.test.FakeRequest;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.exceptions.JedisException;
 
 import java.io.IOException;
 
-import static com.forwardcat.common.RedisKeys.generateProxyKey;
-import static models.ControllerUtils.getMailAddress;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 import static play.test.Helpers.*;
 
@@ -27,23 +23,19 @@ public class ValidateProxyTest extends PlayTest {
 
     public static final String USER_IN_USE = "in-use";
     public static final String USER_NOT_IN_USE = "not-in-use";
-    @Mock JedisPool jedisPool;
-    @Mock Jedis jedis;
+    @Mock ProxyRepository proxyRepo;
 
     @Override
     public AbstractModule getModule() throws IOException {
-        when(jedisPool.getResource()).thenReturn(jedis);
-
-        String inUseKey = generateProxyKey(getMailAddress(USER_IN_USE, "forward.cat").get());
-        when(jedis.exists(inUseKey)).thenReturn(true);
-
-        String notInUseKey = generateProxyKey(getMailAddress(USER_NOT_IN_USE, "forward.cat").get());
-        when(jedis.exists(notInUseKey)).thenReturn(false);
+        when(proxyRepo.exists(any(MailAddress.class))).thenAnswer(invocationOnMock -> {
+            MailAddress passedAddress = (MailAddress) invocationOnMock.getArguments()[0];
+            return (USER_IN_USE + "@forward.cat").equals(passedAddress.toString());
+        });
 
         return new AbstractModule() {
             @Override
             protected void configure() {
-                bind(JedisPool.class).toInstance(jedisPool);
+                bind(ProxyRepository.class).toInstance(proxyRepo);
             }
         };
     }
@@ -60,9 +52,9 @@ public class ValidateProxyTest extends PlayTest {
         assertThatIsInvalid(route);
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void redisConnectionError_sendInvalidUsername() throws Exception {
-        doThrow(JedisException.class).when(jedis).exists(anyString());
+        when(proxyRepo.exists(any(MailAddress.class))).thenThrow(new RuntimeException());
         Result route = route(request(USER_NOT_IN_USE));
         assertThatIsInvalid(route);
     }

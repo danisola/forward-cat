@@ -12,6 +12,8 @@ scalaVersion := "2.11.4"
 lazy val root = (project in file(".")).enablePlugins(PlayJava, SbtWeb)
 
 libraryDependencies ++= Seq(
+    javaEbean,
+    "postgresql" % "postgresql" % "9.1-901-1.jdbc4",
     "redis.clients" % "jedis" % "2.1.0",
     "org.apache.james" % "apache-mailet" % "2.4",
     "com.google.inject" % "guice" % "3.0",

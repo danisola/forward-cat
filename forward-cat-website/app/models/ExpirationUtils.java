@@ -1,17 +1,16 @@
 package models;
 
 import com.google.common.collect.ImmutableSet;
-import org.joda.time.DateTime;
-import org.joda.time.ReadableInstant;
-import org.joda.time.Seconds;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
 import play.i18n.Lang;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DecimalStyle;
+import java.util.Date;
 import java.util.Locale;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 /**
  * Collection of methods for dealing with time and expiration dates
@@ -23,50 +22,15 @@ public class ExpirationUtils {
     private static final int MAX_PROXY_DURATION_DAYS = 15;
     private static final int INCREMENT_DAYS_ADDED = 5;
 
-    private static final DateTimeFormatter DATE_PARSER = ISODateTimeFormat.dateTimeParser();
-    private static final DateTimeFormatter DATE_FORMATTER = ISODateTimeFormat.dateTime();
     private static final ImmutableSet<Integer> VALID_DURATIONS = ImmutableSet.of(3, 5, 7);
 
     /**
-     * Converts a {@link DateTime} to a {@link String}
-     */
-    public static String toStringValue(DateTime dateTime) {
-        checkNotNull(dateTime);
-        return dateTime.toString(DATE_FORMATTER);
-    }
-
-    /**
-     * Converts a {@link String} to a {@link DateTime}
-     */
-    public static DateTime toDateTime(String stringValue) {
-        checkNotNull(stringValue);
-        return DATE_PARSER.parseDateTime(stringValue);
-    }
-
-    /**
-     * Returns the number of whole seconds between now and the given datetime
-     */
-    public static int secondsTo(ReadableInstant instant) {
-        checkNotNull(instant);
-        return Seconds.secondsBetween(new DateTime(), instant).getSeconds();
-    }
-
-    /**
-     * Formats a {@link ReadableInstant} with the given {@link Locale} in a user
+     * Formats a {@link Date} with the given {@link Locale} in a user
      * friendly way
      */
-    public static String formatInstant(ReadableInstant instant, Lang language) {
+    public static String formatInstant(Date date, Lang language) {
         Locale locale = language.toLocale();
-        return DateTimeFormat.forStyle("SS").withLocale(locale).print(instant);
-    }
-
-    /**
-     * Given an expiration time, returns the {@link DateTime} when the alert
-     * should be sent
-     */
-    public static DateTime getAlertTime(DateTime expirationDateTime) {
-        checkNotNull(expirationDateTime);
-        return expirationDateTime.minusDays(1);
+        return ISO_OFFSET_DATE_TIME.withDecimalStyle(DecimalStyle.of(locale)).format(toZonedDateTime(date));
     }
 
     /**
@@ -75,6 +39,18 @@ public class ExpirationUtils {
     public static boolean isValidDuration(Integer duration) {
         checkNotNull(duration);
         return VALID_DURATIONS.contains(duration);
+    }
+
+    public static Date toDate(ZonedDateTime dateTime) {
+        return Date.from(dateTime.toInstant());
+    }
+
+    public static ZonedDateTime toZonedDateTime(Date date) {
+        return ZonedDateTime.ofInstant(date.toInstant(), ZoneOffset.UTC);
+    }
+
+    public static ZonedDateTime now() {
+        return ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     /**

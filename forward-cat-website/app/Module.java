@@ -1,6 +1,4 @@
 import alerts.GuiceJobFactory;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import com.google.common.base.Throwables;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -11,7 +9,6 @@ import models.SpamCatcher;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.impl.StdSchedulerFactory;
-import play.libs.Json;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -25,8 +22,6 @@ public class Module extends AbstractModule {
         bind(Options.class).toInstance(options);
         bind(MailSender.class).in(Singleton.class);
         bind(SpamCatcher.class).in(Singleton.class);
-
-        Json.setObjectMapper(new ObjectMapper().registerModule(new AfterburnerModule()));
     }
 
     @Provides

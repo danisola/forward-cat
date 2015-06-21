@@ -1,74 +1,133 @@
 package com.forwardcat.common;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.mailet.MailAddress;
+
+import javax.persistence.*;
+import java.time.Instant;
+import java.util.Date;
 
 import static com.google.common.base.Preconditions.checkState;
+import static java.time.format.DateTimeFormatter.ISO_OFFSET_DATE_TIME;
 
 /**
  * Temporary mail
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Entity(name = "proxies")
 public class ProxyMail {
 
-  private final String userAddress;
-  private final String creationTime;
-  private final String lang;
-  private String expirationTime;
-  private boolean blocked = false;
-  private boolean active = false;
+    @Id @Column(nullable = false)
+    private String proxyAddress;
+    @Column(nullable = false)
+    private String userAddress;
+    @Column(nullable = false) @Temporal(TemporalType.TIMESTAMP)
+    private Date creationTime;
+    @Column(nullable = false)
+    private String lang;
+    @Column(nullable = false) @Temporal(TemporalType.TIMESTAMP)
+    private Date expirationTime;
+    private boolean blocked = false;
+    private boolean active = false;
+    private boolean expirationNotified = false;
 
-  @JsonCreator
-  public ProxyMail(@JsonProperty("ua") String userAddress, @JsonProperty("ts") String creationTime,
-                   @JsonProperty("ex") String expirationTime, @JsonProperty("l") String lang) {
-    this.userAddress = userAddress;
-    this.creationTime = creationTime;
-    this.expirationTime = expirationTime;
-    this.lang = lang;
-  }
+    public String getProxyAddress() {
+        return proxyAddress;
+    }
 
-  @JsonProperty("ua")
-  public String getUserAddress() {
-    return userAddress;
-  }
+    public void setProxyAddress(String proxyAddress) {
+        this.proxyAddress = proxyAddress;
+    }
 
-  @JsonProperty("ts")
-  public String getCreationTime() {
-    return creationTime;
-  }
+    public String getUserAddress() {
+        return userAddress;
+    }
 
-  @JsonProperty("ex")
-  public String getExpirationTime() {
-    return expirationTime;
-  }
+    public void setUserAddress(String userAddress) {
+        this.userAddress = userAddress;
+    }
 
-  public void setExpirationTime(String expirationTime) {
-    this.expirationTime = expirationTime;
-  }
+    public Date getCreationTime() {
+        return creationTime;
+    }
 
-  @JsonProperty("l")
-  public String getLang() {
-    return lang;
-  }
+    public void setCreationTime(Date creationTime) {
+        this.creationTime = creationTime;
+    }
 
-  public void block() {
-    checkState(!blocked, "Proxy is already blocked");
-    blocked = true;
-  }
+    public Date getExpirationTime() {
+        return expirationTime;
+    }
 
-  @JsonProperty("bl")
-  public boolean isBlocked() {
-    return blocked;
-  }
+    public void setExpirationTimeStr(String expirationTime) {
+        this.expirationTime = Date.from(Instant.from(ISO_OFFSET_DATE_TIME.parse(expirationTime)));
+    }
 
-  public void activate() {
-    checkState(!active, "Proxy is already active");
-    active = true;
-  }
+    public void setExpirationTime(Date expirationTime) {
+        this.expirationTime = expirationTime;
+    }
 
-  @JsonProperty("ac")
-  public boolean isActive() {
-    return active;
-  }
+    public String getLang() {
+        return lang;
+    }
+
+    public void setLang(String lang) {
+        this.lang = lang;
+    }
+
+    public void block() {
+        checkState(!blocked, "Proxy is already blocked");
+        blocked = true;
+    }
+
+    public void setBlocked(boolean blocked) {
+        this.blocked = blocked;
+    }
+
+    public boolean isBlocked() {
+        return blocked;
+    }
+
+    public void activate() {
+        checkState(!active, "Proxy is already active");
+        active = true;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
+    public boolean isExpirationNotified() {
+        return expirationNotified;
+    }
+
+    public void setExpirationNotified(boolean expirationNotified) {
+        this.expirationNotified = expirationNotified;
+    }
+
+    @Override
+    public String toString() {
+        return "ProxyMail{" +
+                "proxyAddress='" + proxyAddress + '\'' +
+                ", userAddress='" + userAddress + '\'' +
+                ", creationTime='" + creationTime + '\'' +
+                ", lang='" + lang + '\'' +
+                ", expirationTime='" + expirationTime + '\'' +
+                ", blocked=" + blocked +
+                ", active=" + active +
+                ", expirationNotified=" + expirationNotified +
+                '}';
+    }
+
+    public static ProxyMail create(MailAddress proxyAddress, MailAddress userAddress, Date creationTime, Date expirationTime, String lang) {
+        ProxyMail proxy = new ProxyMail();
+        proxy.setProxyAddress(proxyAddress.toString());
+        proxy.setUserAddress(userAddress.toString());
+        proxy.setCreationTime(creationTime);
+        proxy.setExpirationTime(expirationTime);
+        proxy.setLang(lang);
+        return proxy;
+    }
 }

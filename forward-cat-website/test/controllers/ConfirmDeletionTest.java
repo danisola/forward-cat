@@ -1,25 +1,22 @@
 package controllers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.AbstractModule;
+import models.ProxyRepository;
+import org.apache.mailet.MailAddress;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import play.mvc.Result;
 import play.test.FakeRequest;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.exceptions.JedisException;
 
 import java.io.IOException;
 
+import static controllers.TestUtils.*;
 import static models.ControllerUtils.getHash;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static play.mvc.Http.Status.BAD_REQUEST;
 import static play.test.Helpers.*;
@@ -27,24 +24,20 @@ import static play.test.Helpers.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ConfirmDeletionTest extends PlayTest {
 
-    String proxyMail = "test@forward.cat";
-    String proxyData = "{\"ua\":\"my_address@mail.com\",\"ts\":\"2013-01-27T01:58:53.874+01:00\",\"ex\":\"2013-02-01T01:58:53.874+01:00\",\"ac\":true}";
-    String proxyHash;
-    @Mock JedisPool jedisPool;
-    @Mock Jedis jedis;
+    MailAddress proxyMail = toMailAddress("test@forward.cat");
+    ProxyMail proxy = activeProxy(proxyMail, false);
+    String proxyHash = getHash(proxy);
+
+    @Mock ProxyRepository proxyRepo;
 
     @Override
     public AbstractModule getModule() throws IOException {
-        when(jedisPool.getResource()).thenReturn(jedis);
-        when(jedis.get("p:" + proxyMail)).thenReturn(proxyData);
-
-        ProxyMail proxy = new ObjectMapper().readValue(proxyData, ProxyMail.class);
-        proxyHash = getHash(proxy);
+        whenAddressReturnProxy(proxyRepo, proxyMail, proxy);
 
         return new AbstractModule() {
             @Override
             protected void configure() {
-                bind(JedisPool.class).toInstance(jedisPool);
+                bind(ProxyRepository.class).toInstance(proxyRepo);
             }
         };
     }
@@ -57,7 +50,7 @@ public class ConfirmDeletionTest extends PlayTest {
 
     @Test
     public void hashMissing_sendBadRequest() throws Exception {
-        Result route = route(request(proxyMail, null));
+        Result route = route(request(proxyMail.toString(), null));
         assertThat(status(route), is(BAD_REQUEST));
     }
 
@@ -69,20 +62,20 @@ public class ConfirmDeletionTest extends PlayTest {
 
     @Test
     public void invalidHash_sendBadRequest() throws Exception {
-        Result route = route(request(proxyMail, "wrongHash"));
+        Result route = route(request(proxyMail.toString(), "wrongHash"));
         assertThat(status(route), is(BAD_REQUEST));
     }
 
-    @Test
+    @Test(expected = RuntimeException.class)
     public void redisException_sendBadRequest() throws Exception {
-        doThrow(JedisException.class).when(jedis).get(anyString());
-        Result route = route(request(proxyMail, proxyHash));
+        when(proxyRepo.getProxy(proxyMail)).thenThrow(new RuntimeException());
+        Result route = route(request(proxyMail.toString(), proxyHash));
         assertThat(status(route), is(BAD_REQUEST));
     }
 
     @Test
     public void everythingFine_sendConfirmationPage() throws Exception {
-        Result route = route(request(proxyMail, proxyHash));
+        Result route = route(request(proxyMail.toString(), proxyHash));
         assertThat(status(route), is(OK));
     }
 

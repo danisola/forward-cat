@@ -7,6 +7,6 @@ public class StringNormalizer {
     }
 
     private StringNormalizer() {
-
+        // Non-instantiable
     }
 }
