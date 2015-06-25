@@ -123,8 +123,8 @@ public class ProxyMail {
 
     public static ProxyMail create(MailAddress proxyAddress, MailAddress userAddress, Date creationTime, Date expirationTime, String lang) {
         ProxyMail proxy = new ProxyMail();
-        proxy.setProxyAddress(proxyAddress.toString());
-        proxy.setUserAddress(userAddress.toString());
+        proxy.setProxyAddress(proxyAddress.toString().toLowerCase());
+        proxy.setUserAddress(userAddress.toString().toLowerCase());
         proxy.setCreationTime(creationTime);
         proxy.setExpirationTime(expirationTime);
         proxy.setLang(lang);

@@ -57,7 +57,7 @@ public class ControllerUtils {
     public static Optional<MailAddress> getMailAddress(String username, String domainName) {
         if (username != null && domainName != null) {
             try {
-                return Optional.of(new MailAddress(username, domainName));
+                return Optional.of(new MailAddress(username.toLowerCase(), domainName.toLowerCase()));
             } catch (AddressException e) {
                 // Do nothing
             }
@@ -79,7 +79,7 @@ public class ControllerUtils {
     public static Optional<MailAddress> toMailAddress(String emailAddress) {
         if (emailAddress != null) {
             try {
-                return Optional.of(new MailAddress(emailAddress));
+                return Optional.of(new MailAddress(emailAddress.toLowerCase()));
             } catch (AddressException ex) {
                 // Do nothing
             }

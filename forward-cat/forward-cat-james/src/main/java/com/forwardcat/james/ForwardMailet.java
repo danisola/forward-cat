@@ -47,7 +47,8 @@ public class ForwardMailet extends AbstractRedirect {
             return;
         }
 
-        ProxyMail proxy = resourcesProvider.getEbeanServer().find(ProxyMail.class, recipient.toString());
+        String normalizedRecipient = recipient.toString().toLowerCase();
+        ProxyMail proxy = resourcesProvider.getEbeanServer().find(ProxyMail.class, normalizedRecipient);
 
         logIfDebug("New mail - sender: %s, recipients: %s, name: %s, remoteHost: %s, remoteAddr: %s, state: %s, lastUpdated: %s, errorMessage: %s",
                 mail.getSender(), arrayToString(mail.getRecipients().toArray()), mail.getName(), mail.getRemoteHost(),

@@ -4,6 +4,7 @@ import com.avaje.ebean.Ebean;
 import com.forwardcat.common.ProxyMail;
 import org.apache.mailet.MailAddress;
 
+import javax.annotation.Nonnull;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
@@ -24,19 +25,19 @@ public class ProxyRepository {
     /**
      * Returns the {@link ProxyMail} linked to the given mail address
      */
-    public Optional<ProxyMail> getProxy(MailAddress address) {
-        return Optional.ofNullable(Ebean.find(ProxyMail.class, address.toString()));
+    public Optional<ProxyMail> getProxy(@Nonnull MailAddress address) {
+        return Optional.ofNullable(Ebean.find(ProxyMail.class, toString(address)));
     }
 
-    public boolean exists(MailAddress proxyMailAddress) {
+    public boolean exists(@Nonnull MailAddress proxyMailAddress) {
         int count = Ebean.createQuery(ProxyMail.class)
                 .where()
-                .eq("proxy_address", proxyMailAddress.toString())
+                .eq("proxy_address", toString(proxyMailAddress))
                 .findRowCount();
         return count >= 1;
     }
 
-    public void update(ProxyMail proxy) {
+    public void update(@Nonnull ProxyMail proxy) {
         Ebean.update(proxy);
     }
 
@@ -79,5 +80,9 @@ public class ProxyRepository {
         } finally {
             Ebean.endTransaction();
         }
+    }
+
+    private String toString(@Nonnull MailAddress address) {
+        return address.toString().toLowerCase();
     }
 }
