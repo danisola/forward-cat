@@ -11,10 +11,12 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import views.html.confirm_deletion;
+import views.html.error_page;
 import views.html.proxy_deleted;
 
 import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.formatInstant;
 
@@ -30,69 +32,53 @@ public class DeleteProxy extends Controller {
 
     public Result confirmDeletion(String p, String h) {
         Http.Request request = request();
+        Lang language = getBestLanguage(request, lang());
 
         // Checking params
         Optional<MailAddress> maybeProxyMail = toMailAddress(p);
         if (!maybeProxyMail.isPresent() || h == null) {
-            LOGGER.debug("Wrong params: {}", request);
-            return badRequest();
+            return badRequest(error_page.render(language, empty()));
         }
 
-        // Validating the proxy
+        // Getting the proxy & checking that the hash is correct
         MailAddress proxyMail = maybeProxyMail.get();
         Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyMail);
-        if (!maybeProxy.isPresent()) {
-            LOGGER.debug("Proxy {} doesn't exist", proxyMail);
-            return badRequest();
-        }
-
-        // Checking that the hash is correct
-        ProxyMail proxy = maybeProxy.get();
-        String hashValue = getHash(proxy);
-        if (!h.equals(hashValue)) {
-            LOGGER.debug("Hash values are not equals {} - {}", h, hashValue);
-            return badRequest();
+        if (!isAuthenticated(maybeProxy, h)) {
+            return badRequest(error_page.render(language, empty()));
         }
 
         // Checking that the proxy is active
+        ProxyMail proxy = maybeProxy.get();
         if (!proxy.isActive()) {
             LOGGER.debug("Proxy {} is not active", proxy);
             return badRequest();
         }
 
         // Generating the answer
-        Lang lang = getBestLanguage(request, lang());
-        String expiratonDate = formatInstant(proxy.getExpirationTime(), lang);
-        return ok(confirm_deletion.render(lang, proxyMail.toString(), expiratonDate, hashValue));
+        String expirationDate = formatInstant(proxy.getExpirationTime(), language);
+        String hashValue = getHash(proxy);
+        return ok(confirm_deletion.render(language, proxyMail, expirationDate, hashValue));
     }
 
     public Result delete(String p, String h) {
         Http.Request request = request();
+        Lang lang = getBestLanguage(request, lang());
 
         // Checking params
         Optional<MailAddress> maybeProxyMail = toMailAddress(p);
         if (!maybeProxyMail.isPresent() || h == null) {
-            LOGGER.debug("Wrong params: {}", request);
-            return badRequest();
+            return badRequest(error_page.render(lang, empty()));
         }
 
-        // Validating the proxy
+        // Getting the proxy & checking that the hash is correct
         MailAddress proxyMail = maybeProxyMail.get();
         Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyMail);
-        if (!maybeProxy.isPresent()) {
-            LOGGER.debug("Proxy % doesn't exist", proxyMail);
-            return badRequest();
-        }
-
-        // Checking that the hash is correct
-        ProxyMail proxy = maybeProxy.get();
-        String hashValue = getHash(proxy);
-        if (!h.equals(hashValue)) {
-            LOGGER.debug("Hash values are not equals %s - %s", h, hashValue);
-            return badRequest();
+        if (!isAuthenticated(maybeProxy, h)) {
+            return badRequest(error_page.render(lang, empty()));
         }
 
         // Checking whether the proxy is active or not
+        ProxyMail proxy = maybeProxy.get();
         if (!proxy.isActive()) {
             LOGGER.debug("Proxy is not active");
             return badRequest();
@@ -102,7 +88,6 @@ public class DeleteProxy extends Controller {
         proxyRepo.delete(proxy);
 
         // Sending the response
-        Lang lang = getBestLanguage(request, lang());
         return ok(proxy_deleted.render(lang));
     }
 }

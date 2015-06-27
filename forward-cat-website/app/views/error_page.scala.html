@@ -1,0 +1,12 @@
+@(lang: Lang, reason: java.util.Optional[String])
+
+    @simple_page(lang, Messages("error_page.title")(lang), Messages("error_page.header")(lang)) {
+        <p>@Html(Messages("error_page.content")(lang))</p>
+
+        @if(reason.isPresent) {
+            <p>@Html(Messages("error_page.reason")(lang)) <b>@Html(Messages(reason.get)(lang))</b></p>
+        }
+
+        <br />
+        <p><a href="/" class="btn btn-primary"><i class="icon-chevron-left\"></i> @Messages("error_page.back")(lang)</a></p>
+    }

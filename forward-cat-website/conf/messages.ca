@@ -90,3 +90,9 @@ proxy_extended.header = Duració de l''adreça temporal correctament perllongada
 proxy_extended.content1 = L''adreça temporal <b>{0}</b> estarà activa fins a {1}.
 proxy_extended.content2 = Si vols desactivar-la abans, només cal que cliquis a l''enllaç corresponent del correu que acabes de rebre.
 proxy_extended.content3 = Que tinguis un bon dia!
+
+error_page.title = Alguna cosa ha fallat
+error_page.header = Alguna cosa ha fallat
+error_page.content = Ho sentim molt, però la seva petició no s'ha pogut portar a terme.
+error_page.reason = Ha passat això:
+error_page.back = Tornar a Forward Cat

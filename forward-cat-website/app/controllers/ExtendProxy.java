@@ -10,12 +10,14 @@ import play.i18n.Lang;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import views.html.error_page;
 import views.html.proxy_extended;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
 
@@ -31,29 +33,23 @@ public class ExtendProxy extends Controller {
 
     public Result extend(String p, String h) {
         Http.Request request = request();
+        Lang language = getBestLanguage(request, lang());
 
         // Checking params
         Optional<MailAddress> maybeProxyMail = toMailAddress(p);
         if (!maybeProxyMail.isPresent() || h == null) {
-            return badRequest();
+            return badRequest(error_page.render(language, empty()));
         }
 
-        // Getting the proxy
+        // Getting the proxy & checking that the hash is correct
         MailAddress proxyMail = maybeProxyMail.get();
         Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyMail);
-        if (!maybeProxy.isPresent()) {
-            return badRequest();
-        }
-
-        // Checking that the hash is correct
-        ProxyMail proxy = maybeProxy.get();
-        String hashValue = getHash(proxy);
-        if (!h.equals(hashValue)) {
-            LOGGER.debug("Hash values are not equals {} - {}", h, hashValue);
-            return badRequest();
+        if (!isAuthenticated(maybeProxy, h)) {
+            return badRequest(error_page.render(language, empty()));
         }
 
         // Checking that the proxy is active
+        ProxyMail proxy = maybeProxy.get();
         if (!proxy.isActive()) {
             LOGGER.debug("Proxy {} is already active", proxy);
             return badRequest();
@@ -70,9 +66,8 @@ public class ExtendProxy extends Controller {
         proxyRepo.update(proxy);
 
         // Generating the answer
-        Lang language = getBestLanguage(request, lang());
         String date = formatInstant(expirationTimeDate, language);
-        return ok(proxy_extended.render(language, proxyMail.toString(), date));
+        return ok(proxy_extended.render(language, proxyMail, date));
     }
 
     private ZonedDateTime getNewExpirationTime(ZonedDateTime newExpirationTime, ZonedDateTime maxExpirationTime) {

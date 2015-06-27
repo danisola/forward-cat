@@ -44,6 +44,13 @@ public class ControllerUtils {
     }
 
     /**
+     * Given a {@link com.forwardcat.common.ProxyMail} and a hash, returns true if the hash is valid
+     */
+    public static boolean isAuthenticated(Optional<ProxyMail> proxy, String hash) {
+        return proxy.isPresent() && hash.equals(getHash(proxy.get()));
+    }
+
+    /**
      * Given a username and a domain name, returns a {@link org.apache.mailet.MailAddress}
      */
     public static Optional<MailAddress> getMailAddress(String username) {

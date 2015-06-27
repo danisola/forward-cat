@@ -1,4 +1,4 @@
-@(lang: Lang, proxy: String, date: String, hash: String)
+@(lang: Lang, proxy: org.apache.mailet.MailAddress, date: String, hash: String)
 
     @simple_page(lang, Messages("confirm_deletion.title")(lang), Messages("confirm_deletion.header")(lang)) {
         <p>@Html(Messages("confirm_deletion.content1", proxy, date)(lang))</p>

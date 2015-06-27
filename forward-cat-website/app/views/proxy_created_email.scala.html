@@ -1,4 +1,4 @@
-@(lang: Lang, proxy: String, hash: String)
+@(lang: Lang, proxy: org.apache.mailet.MailAddress, hash: String)
 
     @simple_email(lang, Messages("proxy_created_email.title")(lang)) {
         <p>@Html(Messages("proxy_created_email.content1", proxy)(lang))</p>

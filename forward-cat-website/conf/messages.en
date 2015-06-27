@@ -90,3 +90,9 @@ proxy_extended.header = Temporary email address successfully extended
 proxy_extended.content1 = Your temporary address <b>{0}</b> will be active until {1}.
 proxy_extended.content2 = If you want to deactivate it earlier, just click on the deactivation link in the email you just received.
 proxy_extended.content3 = Happy forwarding!
+
+error_page.title = Something went wrong
+error_page.header = Something went wrong
+error_page.content = We're very sorry, but we cannot fulfill your request.
+error_page.reason = Here's what happened:
+error_page.back = Back to Forward Cat

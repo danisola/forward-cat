@@ -13,10 +13,12 @@ import play.i18n.Lang;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
+import views.html.error_page;
 import views.html.proxy_created;
 
 import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.formatInstant;
 
@@ -36,36 +38,30 @@ public class ConfirmProxy extends Controller {
 
     public Result confirm(String p, String h) throws Exception {
         Http.Request request = request();
+        Lang language = getBestLanguage(request, lang());
 
         // Checking params
         Optional<MailAddress> maybeProxyMail = toMailAddress(p);
         if (!maybeProxyMail.isPresent() || h == null) {
-            return badRequest();
+            return badRequest(error_page.render(language, empty()));
         }
 
-        // Getting the proxy
-        MailAddress proxyMailAddress = maybeProxyMail.get();
-        Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyMailAddress);
-        if (!maybeProxy.isPresent()) {
-            return badRequest();
-        }
-
-        // Checking that the hash is correct
-        ProxyMail proxy = maybeProxy.get();
-        String hashValue = getHash(proxy);
-        if (!h.equals(hashValue)) {
-            LOGGER.debug("Hash values are not equals %s - %s", h, hashValue);
-            return badRequest();
+        // Getting the proxy & checking that the hash is correct
+        MailAddress proxyAddress = maybeProxyMail.get();
+        Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyAddress);
+        if (!isAuthenticated(maybeProxy, h)) {
+            return badRequest(error_page.render(language, empty()));
         }
 
         // Checking that the proxy is not already active
+        ProxyMail proxy = maybeProxy.get();
         if (proxy.isActive()) {
             LOGGER.debug("Proxy {} is already active", proxy);
             return badRequest();
         }
         proxy.activate();
 
-        if (spamCatcher.isSpam(proxyMailAddress)) {
+        if (spamCatcher.isSpam(proxyAddress)) {
             proxy.block();
             statsRepo.incrementCounter(RedisKeys.SPAMMER_PROXIES_BLOCKED_COUNTER);
         }
@@ -74,8 +70,7 @@ public class ConfirmProxy extends Controller {
         statsRepo.incrementCounter(RedisKeys.PROXIES_ACTIVATED_COUNTER);
 
         // Generating the response
-        Lang language = getBestLanguage(request, lang());
         String expirationDate = formatInstant(proxy.getExpirationTime(), language);
-        return ok(proxy_created.render(language, proxyMailAddress.toString(), expirationDate));
+        return ok(proxy_created.render(language, proxyAddress, expirationDate));
     }
 }

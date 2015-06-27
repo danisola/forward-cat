@@ -65,7 +65,7 @@ public class AddProxy extends Controller {
 
         // Sending the confirmation mail
         String subject = "Forward Cat";
-        Html content = proxy_created_email.render(lang, proxyMailAddress.toString(), getHash(proxyMail));
+        Html content = proxy_created_email.render(lang, proxyMailAddress, getHash(proxyMail));
         mailSender.sendHtmlMail(userMail, subject, content.toString());
 
         return ok("true");

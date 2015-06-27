@@ -90,3 +90,9 @@ proxy_extended.header = Caducidad de la dirección temporal extendida
 proxy_extended.content1 = La dirección temporal <b>{0}</b> estará activa hasta el {1}.
 proxy_extended.content2 = Si deseas desactivarla antes, solo tienes que hacer clic en el enlace correspondiente del email que acabas de recibir.
 proxy_extended.content3 = ¡Que tengas un buen día!
+
+error_page.title = Algo ha fallado
+error_page.header = Algo ha fallado
+error_page.content = Lo sentimos mucho, pero su petición no se ha podido llevar a cabo.
+error_page.reason = Ha pasado esto:
+error_page.back = Volver a Forward Cat
