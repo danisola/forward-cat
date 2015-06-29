@@ -7,7 +7,7 @@ name := "forward-cat-web"
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.11.4"
+scalaVersion := "2.11.6"
 
 lazy val root = (project in file(".")).enablePlugins(PlayJava, SbtWeb)
 

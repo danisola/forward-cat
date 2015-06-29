@@ -1,7 +1,5 @@
 package models;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import org.apache.mailet.MailAddress;
 import org.junit.After;
 import org.junit.Before;
@@ -13,7 +11,6 @@ import play.GlobalSettings;
 import play.i18n.Lang;
 import play.mvc.Http;
 import play.test.FakeApplication;
-import play.test.Helpers;
 
 import java.util.Optional;
 
@@ -34,18 +31,7 @@ public class ControllerUtilsTest  {
 
     @Before
     public void setup() {
-        GlobalSettings testGlobal = new GlobalSettings() {
-            @Override
-            public <A> A getControllerInstance(Class<A> controllerClass) throws Exception {
-                return Guice.createInjector(new AbstractModule() {
-                    @Override
-                    protected void configure() {
-
-                    }
-                }).getInstance(controllerClass);
-            }
-        };
-        fakeApplication = fakeApplication(Helpers.inMemoryDatabase(), testGlobal);
+        fakeApplication = fakeApplication(inMemoryDatabase(), new GlobalSettings());
         start(fakeApplication);
     }
 
@@ -68,19 +54,17 @@ public class ControllerUtilsTest  {
 
     @Test
     public void unknownHost_shouldReturnDefaultLang() {
-        Http.Request request = setRequest("zz.forward.cat");
-        Lang language = getBestLanguage(request, EN);
+        Lang language = getBestLanguage(requestWithHost("zz.forward.cat"), EN);
         assertThat(language.code(), is("en"));
     }
 
     @Test
     public void knownHost_shouldReturnItsLang() {
-        Http.Request request = setRequest("es.forward.cat");
-        Lang language = getBestLanguage(request, EN);
+        Lang language = getBestLanguage(requestWithHost("es.forward.cat"), EN);
         assertThat(language.code(), is("es"));
     }
 
-    private Http.Request setRequest(String host) {
+    private Http.Request requestWithHost(String host) {
         when(request.host()).thenReturn(host);
         return request;
     }

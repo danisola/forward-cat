@@ -6,16 +6,19 @@ import play.mvc.Result;
 import views.html.email_sent;
 import views.html.forward;
 
+import javax.inject.Singleton;
+
 import static models.ControllerUtils.getBestLanguage;
 
+@Singleton
 public class Landing extends Controller {
 
-    public static Result index() {
+    public Result index() {
         Lang lang = getBestLanguage(request(), lang());
         return ok(forward.render(lang));
     }
 
-    public static Result emailSent() {
+    public Result emailSent() {
         Lang lang = getBestLanguage(request(), lang());
         return ok(email_sent.render(lang));
     }

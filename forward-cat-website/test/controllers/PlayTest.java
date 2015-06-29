@@ -6,7 +6,6 @@ import org.junit.After;
 import org.junit.Before;
 import play.GlobalSettings;
 import play.test.FakeApplication;
-import play.test.Helpers;
 
 import static play.test.Helpers.*;
 
@@ -24,7 +23,7 @@ public abstract class PlayTest {
             }
         };
 
-        fakeApplication = fakeApplication(Helpers.inMemoryDatabase(), testGlobal);
+        fakeApplication = fakeApplication(inMemoryDatabase(), testGlobal);
         start(fakeApplication);
     }
 
