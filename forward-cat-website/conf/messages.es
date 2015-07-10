@@ -30,7 +30,7 @@ index.about.section2.title = Evita el correo no deseado
 index.about.section2.content = Forward Cat te proporciona una herramienta para evitar que empresas y personas te envíen correos una vez haya acabado vuestra transacción. ¡Mantén oculta tu dirección!
 index.about.section3.title = Cuando utilizar Forward Cat
 index.about.section3.content = Usa una dirección de email temporal cuando te registres en páginas que exigen tus datos para acceder a los contenidos, o para vender algo en una página de anuncios clasificados.
-index.about.section4.title = Totalment privado
+index.about.section4.title = Totalmente privado
 index.about.section4.content = Forward Cat no guarda tus correos y no son visibles para nadie que no seas tú. Tu dirección de correo temporal será destruida completamente cuando termine la duración que hayas establecido.
 index.footer.by = Creado por <a target="_blank" href="http://www.dani-sola.com">Dani Solà</a>. Agradecimiento especial a <a href="http://sophiacasas.es" target="_blank">Sophia Casas</a>. Ilustraciones realizadas por <a href="http://raulilustrado.wordpress.com" target="_blank">Raúl Vélez</a>.
 index.footer.code = Código bajo licencia <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> hospedado en <a href="https://github.com/danisola/forward-cat" target="_blank">GitHub</a>.
