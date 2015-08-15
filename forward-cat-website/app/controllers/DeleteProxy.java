@@ -2,7 +2,7 @@ package controllers;
 
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.Inject;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +23,11 @@ import static models.ExpirationUtils.formatInstant;
 public class DeleteProxy extends Controller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteProxy.class.getName());
-    private final ProxyRepository proxyRepo;
+    private final Repository repository;
 
     @Inject
-    DeleteProxy(ProxyRepository proxyRepo) {
-        this.proxyRepo = proxyRepo;
+    DeleteProxy(Repository repository) {
+        this.repository = repository;
     }
 
     public Result confirmDeletion(String p, String h) {
@@ -42,7 +42,7 @@ public class DeleteProxy extends Controller {
 
         // Getting the proxy & checking that the hash is correct
         MailAddress proxyMail = maybeProxyMail.get();
-        Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyMail);
+        Optional<ProxyMail> maybeProxy = repository.getProxy(proxyMail);
         if (!isAuthenticated(maybeProxy, h)) {
             return badRequest(error_page.render(language, empty()));
         }
@@ -72,7 +72,7 @@ public class DeleteProxy extends Controller {
 
         // Getting the proxy & checking that the hash is correct
         MailAddress proxyMail = maybeProxyMail.get();
-        Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyMail);
+        Optional<ProxyMail> maybeProxy = repository.getProxy(proxyMail);
         if (!isAuthenticated(maybeProxy, h)) {
             return badRequest(error_page.render(lang, empty()));
         }
@@ -85,7 +85,7 @@ public class DeleteProxy extends Controller {
         }
 
         // Removing the proxy
-        proxyRepo.delete(proxy);
+        repository.delete(proxy);
 
         // Sending the response
         return ok(proxy_deleted.render(lang));

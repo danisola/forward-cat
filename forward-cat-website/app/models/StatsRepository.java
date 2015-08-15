@@ -2,6 +2,7 @@ package models;
 
 import com.avaje.ebean.Ebean;
 import com.forwardcat.common.ProxyMail;
+import com.forwardcat.common.User;
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ public class StatsRepository {
 
             Pipeline pipeline = jedis.pipelined();
 
+            int activeUsersRs = Ebean.find(User.class).findRowCount();
             int activeProxiesRs = Ebean.find(ProxyMail.class).findRowCount();
             Response<String> emailsBlockedRs = pipeline.get(EMAILS_BLOCKED_COUNTER);
             Response<String> emailsForwardedRs = pipeline.get(EMAILS_FORWARDED_COUNTER);
@@ -57,6 +59,7 @@ public class StatsRepository {
             pipeline.sync();
 
             counters = new StatsCounters(
+                    activeUsersRs,
                     activeProxiesRs,
                     toInt(emailsBlockedRs.get()),
                     toInt(emailsForwardedRs.get()),
@@ -81,13 +84,16 @@ public class StatsRepository {
     }
 
     public static class StatsCounters {
+        public final int activeUsers;
         public final int activeProxies;
         public final int emailsBlocked;
         public final int emailsForwarded;
         public final int proxiesActivated;
         public final int spammerProxiesBlocked;
 
-        public StatsCounters(int activeProxies, int emailsBlocked, int emailsForwarded, int proxiesActivated, int spammerProxiesBlocked) {
+        public StatsCounters(int activeUsers, int activeProxies, int emailsBlocked, int emailsForwarded, int
+                proxiesActivated, int spammerProxiesBlocked) {
+            this.activeUsers = activeUsers;
             this.activeProxies = activeProxies;
             this.emailsBlocked = emailsBlocked;
             this.emailsForwarded = emailsForwarded;

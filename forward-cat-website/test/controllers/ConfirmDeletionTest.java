@@ -2,7 +2,7 @@ package controllers;
 
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.AbstractModule;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,16 +28,16 @@ public class ConfirmDeletionTest extends PlayTest {
     ProxyMail proxy = activeProxy(proxyMail, false);
     String proxyHash = getHash(proxy);
 
-    @Mock ProxyRepository proxyRepo;
+    @Mock Repository repository;
 
     @Override
     public AbstractModule getModule() throws IOException {
-        whenAddressReturnProxy(proxyRepo, proxyMail, proxy);
+        whenAddressReturnProxy(repository, proxyMail, proxy);
 
         return new AbstractModule() {
             @Override
             protected void configure() {
-                bind(ProxyRepository.class).toInstance(proxyRepo);
+                bind(Repository.class).toInstance(repository);
             }
         };
     }
@@ -68,7 +68,7 @@ public class ConfirmDeletionTest extends PlayTest {
 
     @Test(expected = RuntimeException.class)
     public void redisException_sendBadRequest() throws Exception {
-        when(proxyRepo.getProxy(proxyMail)).thenThrow(new RuntimeException());
+        when(repository.getProxy(proxyMail)).thenThrow(new RuntimeException());
         Result route = route(request(proxyMail.toString(), proxyHash));
         assertThat(status(route), is(BAD_REQUEST));
     }

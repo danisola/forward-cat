@@ -4,7 +4,7 @@ import com.forwardcat.common.ProxyMail;
 import com.google.inject.Inject;
 import models.MailSender;
 import models.Options;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
@@ -32,12 +32,12 @@ public class SendAlertJob implements Job {
     private final String subject = "Forward Cat";
     private final MailSender mailSender;
     private final Options options;
-    private final ProxyRepository proxyRepository;
+    private final Repository repository;
 
     @Inject
-    SendAlertJob(ProxyRepository proxyRepository, MailSender mailSender,
+    SendAlertJob(Repository repository, MailSender mailSender,
                  Options options) {
-        this.proxyRepository = proxyRepository;
+        this.repository = repository;
         this.mailSender = mailSender;
         this.options = options;
     }
@@ -45,11 +45,12 @@ public class SendAlertJob implements Job {
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         // Getting the proxies that will expire before tomorrow
-        Set<ProxyMail> expiringProxies = proxyRepository.getExpiringProxies();
+        Set<ProxyMail> expiringProxies = repository.getExpiringProxies();
 
         sendAlerts(expiringProxies);
-        proxyRepository.removeExpiredProxies();
-        proxyRepository.removeNonActivatedProxies();
+        repository.removeExpiredProxies();
+        repository.removeNonActivatedProxies();
+        repository.removeUsersWithoutProxies();
     }
 
     /**
@@ -62,7 +63,7 @@ public class SendAlertJob implements Job {
             try {
                 // Sending the mail
                 Lang lang = new Lang(Lang.get(proxy.getLang()).get());
-                MailAddress address = toMailAddress(proxy.getUserAddress()).get();
+                MailAddress address = toMailAddress(proxy.getUser().getEmailAddress()).get();
 
                 Date expirationTime = proxy.getExpirationTime();
                 String date = formatInstant(expirationTime, lang);
@@ -71,7 +72,7 @@ public class SendAlertJob implements Job {
                 mailSender.sendHtmlMail(address, subject, content.toString());
 
                 proxy.setExpirationNotified(true);
-                proxyRepository.update(proxy);
+                repository.update(proxy);
             } catch (Exception ex) {
                 LOGGER.error("Unexpected exception sending expiration notification for proxy: " + proxy, ex);
             }

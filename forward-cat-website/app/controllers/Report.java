@@ -3,7 +3,7 @@ package controllers;
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.Inject;
 import models.MailSender;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import play.Play;
 import play.i18n.Lang;
@@ -21,13 +21,13 @@ import static models.ControllerUtils.*;
 
 public class Report extends Controller {
 
-    private final ProxyRepository proxyRepo;
+    private final Repository repository;
     private final MailSender mailSender;
     private final MailAddress reportAddress;
 
     @Inject
-    Report(ProxyRepository proxyRepo, MailSender mailSender) throws AddressException {
-        this.proxyRepo = proxyRepo;
+    Report(Repository repository, MailSender mailSender) throws AddressException {
+        this.repository = repository;
         this.mailSender = mailSender;
         this.reportAddress = new MailAddress(Play.application().configuration().getString("reportAddress"));
     }
@@ -46,7 +46,7 @@ public class Report extends Controller {
         Optional<MailAddress> mailAddress = toMailAddress(proxy);
         if (mailAddress.isPresent() && isLocal(mailAddress.get())) {
 
-            Optional<ProxyMail> maybeProxyMail = proxyRepo.getProxy(mailAddress.get());
+            Optional<ProxyMail> maybeProxyMail = repository.getProxy(mailAddress.get());
             if (maybeProxyMail.isPresent()) {
 
                 ProxyMail proxyMail = maybeProxyMail.get();

@@ -1,7 +1,7 @@
 package controllers;
 
 import com.google.inject.Inject;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import play.mvc.Controller;
 import play.mvc.Result;
@@ -12,11 +12,11 @@ import static models.ControllerUtils.getMailAddress;
 
 public class ValidateProxy extends Controller {
 
-    private final ProxyRepository proxyRepo;
+    private final Repository repository;
 
     @Inject
-    ValidateProxy(ProxyRepository proxyRepo) {
-        this.proxyRepo = proxyRepo;
+    ValidateProxy(Repository repository) {
+        this.repository = repository;
     }
 
     public Result validate(String proxy) {
@@ -26,7 +26,7 @@ public class ValidateProxy extends Controller {
             return ok(Boolean.FALSE.toString());
         }
 
-        Boolean valid = !proxyRepo.exists(mailAddress.get());
+        Boolean valid = !repository.proxyExists(mailAddress.get());
         return ok(valid.toString());
     }
 }

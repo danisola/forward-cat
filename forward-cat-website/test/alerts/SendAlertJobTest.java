@@ -5,7 +5,7 @@ import com.forwardcat.common.ProxyMail;
 import com.google.common.collect.Sets;
 import models.MailSender;
 import models.Options;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,14 +33,13 @@ public class SendAlertJobTest {
     @Mock MailSender mailSender;
     @Mock JobExecutionContext ctx;
     @Mock Options opts;
-    @Mock ProxyRepository proxyRepo;
-
+    @Mock Repository repository;
 
     @Before
     public void setUp() throws IOException {
         when(opts.getTimeBetweenAlertMailsMillis()).thenReturn(1);
 
-        job = new SendAlertJob(proxyRepo, mailSender, opts);
+        job = new SendAlertJob(repository, mailSender, opts);
     }
 
     @Test
@@ -48,12 +47,12 @@ public class SendAlertJobTest {
         job.execute(ctx);
 
         verify(mailSender, never()).sendHtmlMail(any(MailAddress.class), anyString(), anyString());
-        verify(proxyRepo, never()).update(any(ProxyMail.class));
+        verify(repository, never()).update(any(ProxyMail.class));
     }
 
     @Test
     public void someAlerts_sendMailsAndRemoveThem() throws Exception {
-        when(proxyRepo.getExpiringProxies()).thenReturn(Sets.newHashSet(proxy));
+        when(repository.getExpiringProxies()).thenReturn(Sets.newHashSet(proxy));
         job.execute(ctx);
 
         verify(mailSender, times(1)).sendHtmlMail(any(MailAddress.class), anyString(), anyString());

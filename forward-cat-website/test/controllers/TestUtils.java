@@ -1,8 +1,9 @@
 package controllers;
 
 import com.forwardcat.common.ProxyMail;
+import com.forwardcat.common.User;
 import com.google.common.base.Throwables;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 
 import javax.mail.internet.AddressException;
@@ -30,6 +31,7 @@ public class TestUtils {
         if (active) {
             proxyMail.activate();
         }
+        proxyMail.setUser(User.create(toMailAddress("user@address.com"), new Date()));
         return proxyMail;
     }
 
@@ -41,8 +43,8 @@ public class TestUtils {
         }
     }
 
-    public static void whenAddressReturnProxy(ProxyRepository proxyRepo, MailAddress address, ProxyMail proxy) {
-        when(proxyRepo.getProxy(any(MailAddress.class))).thenAnswer(invocationOnMock -> {
+    public static void whenAddressReturnProxy(Repository repository, MailAddress address, ProxyMail proxy) {
+        when(repository.getProxy(any(MailAddress.class))).thenAnswer(invocationOnMock -> {
             MailAddress passedAddress = (MailAddress) invocationOnMock.getArguments()[0];
             if (address.toString().equals(passedAddress.toString())) {
                 return Optional.of(proxy);

@@ -17,8 +17,8 @@ public class ProxyMail {
 
     @Id @Column(nullable = false)
     private String proxyAddress;
-    @Column(nullable = false)
-    private String userAddress;
+    @ManyToOne
+    private User user;
     @Column(nullable = false) @Temporal(TemporalType.TIMESTAMP)
     private Date creationTime;
     @Column(nullable = false)
@@ -37,12 +37,12 @@ public class ProxyMail {
         this.proxyAddress = proxyAddress;
     }
 
-    public String getUserAddress() {
-        return userAddress;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserAddress(String userAddress) {
-        this.userAddress = userAddress;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Date getCreationTime() {
@@ -111,7 +111,6 @@ public class ProxyMail {
     public String toString() {
         return "ProxyMail{" +
                 "proxyAddress='" + proxyAddress + '\'' +
-                ", userAddress='" + userAddress + '\'' +
                 ", creationTime='" + creationTime + '\'' +
                 ", lang='" + lang + '\'' +
                 ", expirationTime='" + expirationTime + '\'' +
@@ -124,7 +123,6 @@ public class ProxyMail {
     public static ProxyMail create(MailAddress proxyAddress, MailAddress userAddress, Date creationTime, Date expirationTime, String lang) {
         ProxyMail proxy = new ProxyMail();
         proxy.setProxyAddress(proxyAddress.toString().toLowerCase());
-        proxy.setUserAddress(userAddress.toString().toLowerCase());
         proxy.setCreationTime(creationTime);
         proxy.setExpirationTime(expirationTime);
         proxy.setLang(lang);

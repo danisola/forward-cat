@@ -2,7 +2,7 @@ package controllers;
 
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.AbstractModule;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,16 +28,16 @@ public class ExtendProxyTest extends PlayTest {
     ProxyMail proxy = activeProxy(proxyMail, false);
     String proxyHash = getHash(proxy);
 
-    @Mock ProxyRepository proxyRepo;
+    @Mock Repository repository;
 
     @Override
     public AbstractModule getModule() throws IOException {
-        whenAddressReturnProxy(proxyRepo, proxyMail, proxy);
+        whenAddressReturnProxy(repository, proxyMail, proxy);
 
         return new AbstractModule() {
             @Override
             protected void configure() {
-                bind(ProxyRepository.class).toInstance(proxyRepo);
+                bind(Repository.class).toInstance(repository);
             }
         };
     }
@@ -70,7 +70,7 @@ public class ExtendProxyTest extends PlayTest {
     public void everythingFine_sendConfirmationPage() throws Exception {
         Result route = route(request(proxyMail.toString(), proxyHash));
         assertThat(status(route), is(OK));
-        verify(proxyRepo).update(any(ProxyMail.class));
+        verify(repository).update(any(ProxyMail.class));
     }
 
     private FakeRequest request(String proxy, String hash) {

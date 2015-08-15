@@ -3,7 +3,7 @@ package controllers;
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.AbstractModule;
 import models.MailSender;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,12 +34,12 @@ public class ReportTest extends PlayTest {
     MailAddress spammerProxy = toMailAddress("spammer@forward.cat");
     ProxyMail spammer = activeProxy(blockedProxy, false);
 
-    @Mock ProxyRepository proxyRepo;
+    @Mock Repository repository;
     @Mock MailSender mailSender;
 
     @Override
     public AbstractModule getModule() throws IOException {
-        when(proxyRepo.getProxy(any(MailAddress.class))).thenAnswer(invocationOnMock -> {
+        when(repository.getProxy(any(MailAddress.class))).thenAnswer(invocationOnMock -> {
             String strAddress = invocationOnMock.getArguments()[0].toString();
             if (inactive.toString().equals(strAddress)) {
                 return Optional.of(inactive);
@@ -54,7 +54,7 @@ public class ReportTest extends PlayTest {
         return new AbstractModule() {
             @Override
             protected void configure() {
-                bind(ProxyRepository.class).toInstance(proxyRepo);
+                bind(Repository.class).toInstance(repository);
                 bind(MailSender.class).toInstance(mailSender);
             }
         };

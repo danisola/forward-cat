@@ -2,7 +2,7 @@ package controllers;
 
 import com.forwardcat.common.ProxyMail;
 import com.google.inject.Inject;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +24,11 @@ import static models.ExpirationUtils.*;
 public class ExtendProxy extends Controller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ExtendProxy.class.getName());
-    private final ProxyRepository proxyRepo;
+    private final Repository repository;
 
     @Inject
-    ExtendProxy(ProxyRepository proxyRepo) {
-        this.proxyRepo = proxyRepo;
+    ExtendProxy(Repository repository) {
+        this.repository = repository;
     }
 
     public Result extend(String p, String h) {
@@ -43,7 +43,7 @@ public class ExtendProxy extends Controller {
 
         // Getting the proxy & checking that the hash is correct
         MailAddress proxyMail = maybeProxyMail.get();
-        Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyMail);
+        Optional<ProxyMail> maybeProxy = repository.getProxy(proxyMail);
         if (!isAuthenticated(maybeProxy, h)) {
             return badRequest(error_page.render(language, empty()));
         }
@@ -63,7 +63,7 @@ public class ExtendProxy extends Controller {
         Date expirationTimeDate = toDate(newExpirationTime);
         proxy.setExpirationTime(expirationTimeDate);
 
-        proxyRepo.update(proxy);
+        repository.update(proxy);
 
         // Generating the answer
         String date = formatInstant(expirationTimeDate, language);

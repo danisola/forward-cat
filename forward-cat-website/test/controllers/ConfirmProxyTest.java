@@ -3,7 +3,7 @@ package controllers;
 import com.forwardcat.common.ProxyMail;
 import com.forwardcat.common.RedisKeys;
 import com.google.inject.AbstractModule;
-import models.ProxyRepository;
+import models.Repository;
 import models.StatsRepository;
 import org.apache.mailet.MailAddress;
 import org.junit.Test;
@@ -31,17 +31,17 @@ public class ConfirmProxyTest extends PlayTest {
     ProxyMail proxy = inactiveProxy(proxyMail);
     String proxyHash = getHash(proxy);
 
-    @Mock ProxyRepository proxyRepo;
+    @Mock Repository repository;
     @Mock StatsRepository statsRepo;
 
     @Override
     public AbstractModule getModule() throws IOException, AddressException {
-        whenAddressReturnProxy(proxyRepo, proxyMail, proxy);
+        whenAddressReturnProxy(repository, proxyMail, proxy);
 
         return new AbstractModule() {
             @Override
             protected void configure() {
-                bind(ProxyRepository.class).toInstance(proxyRepo);
+                bind(Repository.class).toInstance(repository);
                 bind(StatsRepository.class).toInstance(statsRepo);
             }
         };
@@ -75,7 +75,7 @@ public class ConfirmProxyTest extends PlayTest {
     public void everythingFine_sendConfirmationPage() throws Exception {
         Result route = route(request(proxyMail.toString(), proxyHash));
         assertThat(status(route), is(OK));
-        verify(proxyRepo).save(proxy);
+        verify(repository).save(proxy);
         verify(statsRepo).incrementCounter(RedisKeys.PROXIES_ACTIVATED_COUNTER);
     }
 

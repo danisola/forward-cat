@@ -1,9 +1,10 @@
 package controllers;
 
 import com.forwardcat.common.ProxyMail;
+import com.forwardcat.common.User;
 import com.google.inject.Inject;
 import models.MailSender;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import play.i18n.Lang;
 import play.mvc.Controller;
@@ -20,12 +21,12 @@ import static models.ExpirationUtils.*;
 
 public class AddProxy extends Controller {
 
-    private final ProxyRepository proxyRepo;
+    private final Repository repository;
     private final MailSender mailSender;
 
     @Inject
-    AddProxy(ProxyRepository proxyRepo, MailSender mailSender) {
-        this.proxyRepo = proxyRepo;
+    AddProxy(Repository repository, MailSender mailSender) {
+        this.repository = repository;
         this.mailSender = mailSender;
     }
 
@@ -57,8 +58,11 @@ public class AddProxy extends Controller {
         ProxyMail proxyMail = ProxyMail.create(proxyMailAddress, userMail, toDate(creationTime), toDate(expirationTime), lang.code());
 
         // Creating the proxy
-        if (!proxyRepo.exists(proxyMailAddress)) {
-            proxyRepo.save(proxyMail);
+        Optional<User> maybeExistingUser = repository.getUser(userMail);
+        if (!repository.proxyExists(proxyMailAddress)) {
+            User user = maybeExistingUser.orElseGet(() -> User.create(userMail, toDate(creationTime)));
+            user.getProxies().add(proxyMail);
+            repository.save(user);
         } else {
             return badRequest(); // Proxy already exists: cannot create a new one
         }

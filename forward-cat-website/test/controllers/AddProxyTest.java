@@ -1,9 +1,9 @@
 package controllers;
 
-import com.forwardcat.common.ProxyMail;
+import com.forwardcat.common.User;
 import com.google.inject.AbstractModule;
 import models.MailSender;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,7 +15,8 @@ import play.test.FakeRequest;
 import javax.mail.internet.AddressException;
 import java.io.IOException;
 
-import static controllers.TestUtils.*;
+import static controllers.TestUtils.toMailAddress;
+import static java.util.Optional.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.anyString;
@@ -28,14 +29,14 @@ public class AddProxyTest extends PlayTest {
     MailAddress proxyMail = toMailAddress("test@forward.cat");
 
     @Mock MailSender mailSender;
-    @Mock ProxyRepository proxyRepo;
+    @Mock Repository repository;
 
     @Override
     public AbstractModule getModule() throws IOException, AddressException {
         return new AbstractModule() {
             @Override
             protected void configure() {
-                bind(ProxyRepository.class).toInstance(proxyRepo);
+                bind(Repository.class).toInstance(repository);
                 bind(MailSender.class).toInstance(mailSender);
             }
         };
@@ -67,7 +68,7 @@ public class AddProxyTest extends PlayTest {
 
     @Test
     public void proxyAlreadyExists_sendBadRequest() throws Exception {
-        when(proxyRepo.exists(proxyMail)).thenReturn(Boolean.TRUE);
+        when(repository.proxyExists(proxyMail)).thenReturn(Boolean.TRUE);
 
         Result route = route(request("test", "user@mail.com", 3));
         assertThat(status(route), is(BAD_REQUEST));
@@ -75,7 +76,7 @@ public class AddProxyTest extends PlayTest {
 
     @Test(expected = RuntimeException.class)
     public void connectionError_sendBadRequest() throws Exception {
-        when(proxyRepo.exists(proxyMail)).thenThrow(new RuntimeException());
+        when(repository.proxyExists(proxyMail)).thenThrow(new RuntimeException());
 
         Result route = route(request("test", "user@mail.com", 3));
         assertThat(status(route), is(BAD_REQUEST));
@@ -83,12 +84,13 @@ public class AddProxyTest extends PlayTest {
 
     @Test
     public void everythingFine_sendMailAndGoodResponse() throws Exception {
-        when(proxyRepo.exists(proxyMail)).thenReturn(Boolean.FALSE);
+        when(repository.proxyExists(proxyMail)).thenReturn(Boolean.FALSE);
+        when(repository.getUser(toMailAddress("user@mail.com"))).thenReturn(empty());
 
         Result route = route(request("test", "user@mail.com", 3));
         assertThat(status(route), is(OK));
 
-        verify(proxyRepo).save(any(ProxyMail.class));
+        verify(repository).save(any(User.class));
         verify(mailSender).sendHtmlMail(any(MailAddress.class), anyString(), anyString());
     }
 

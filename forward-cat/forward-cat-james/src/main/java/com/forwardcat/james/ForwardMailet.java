@@ -80,8 +80,8 @@ public class ForwardMailet extends AbstractRedirect {
         }
 
         // Getting the proxied address and sending the new mail
-        String proxiedMail = proxy.getUserAddress();
-        MailAddress to = new MailAddress(proxiedMail);
+        String userAddress = proxy.getUser().getEmailAddress();
+        MailAddress to = new MailAddress(userAddress);
         buildNewMail(mail, to);
         incrementCounter(RedisKeys.EMAILS_FORWARDED_COUNTER);
     }

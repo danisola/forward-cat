@@ -1,7 +1,7 @@
 package controllers;
 
 import com.google.inject.AbstractModule;
-import models.ProxyRepository;
+import models.Repository;
 import org.apache.mailet.MailAddress;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,11 +23,11 @@ public class ValidateProxyTest extends PlayTest {
 
     public static final String USER_IN_USE = "in-use";
     public static final String USER_NOT_IN_USE = "not-in-use";
-    @Mock ProxyRepository proxyRepo;
+    @Mock Repository repository;
 
     @Override
     public AbstractModule getModule() throws IOException {
-        when(proxyRepo.exists(any(MailAddress.class))).thenAnswer(invocationOnMock -> {
+        when(repository.proxyExists(any(MailAddress.class))).thenAnswer(invocationOnMock -> {
             MailAddress passedAddress = (MailAddress) invocationOnMock.getArguments()[0];
             return (USER_IN_USE + "@forward.cat").equals(passedAddress.toString());
         });
@@ -35,7 +35,7 @@ public class ValidateProxyTest extends PlayTest {
         return new AbstractModule() {
             @Override
             protected void configure() {
-                bind(ProxyRepository.class).toInstance(proxyRepo);
+                bind(Repository.class).toInstance(repository);
             }
         };
     }
@@ -54,7 +54,7 @@ public class ValidateProxyTest extends PlayTest {
 
     @Test(expected = RuntimeException.class)
     public void redisConnectionError_sendInvalidUsername() throws Exception {
-        when(proxyRepo.exists(any(MailAddress.class))).thenThrow(new RuntimeException());
+        when(repository.proxyExists(any(MailAddress.class))).thenThrow(new RuntimeException());
         Result route = route(request(USER_NOT_IN_USE));
         assertThatIsInvalid(route);
     }

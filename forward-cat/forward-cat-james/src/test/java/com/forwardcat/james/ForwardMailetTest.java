@@ -2,6 +2,7 @@ package com.forwardcat.james;
 
 import com.avaje.ebean.EbeanServer;
 import com.forwardcat.common.ProxyMail;
+import com.forwardcat.common.User;
 import com.google.common.base.Throwables;
 import org.apache.james.core.MailImpl;
 import org.apache.james.dnsservice.api.DNSService;
@@ -102,7 +103,7 @@ public class ForwardMailetTest {
 
     @Test
     public void proxyNotActive_shouldBounceMail() throws MessagingException {
-        ProxyMail proxy = ProxyMail.create(recipient, userAddress, daysOffset(-2), daysOffset(5), "en");
+        ProxyMail proxy = proxy();
         when(ebeanServer.find(ProxyMail.class, recipient.toString())).thenReturn(proxy);
 
         Mail mail = newMail();
@@ -114,7 +115,7 @@ public class ForwardMailetTest {
 
     @Test
     public void proxyBlocked_shouldSwallowMail() throws MessagingException {
-        ProxyMail proxy = ProxyMail.create(recipient, userAddress, daysOffset(-2), daysOffset(5), "en");
+        ProxyMail proxy = proxy();
         proxy.activate();
         proxy.block();
         when(ebeanServer.find(ProxyMail.class, recipient.toString())).thenReturn(proxy);
@@ -128,7 +129,7 @@ public class ForwardMailetTest {
 
     @Test
     public void proxyActive_shouldForwardMail() throws MessagingException {
-        ProxyMail proxy = ProxyMail.create(recipient, userAddress, daysOffset(-2), daysOffset(5), "en");
+        ProxyMail proxy = proxy();
         proxy.activate();
         when(ebeanServer.find(ProxyMail.class, recipient.toString())).thenReturn(proxy);
 
@@ -140,6 +141,12 @@ public class ForwardMailetTest {
 
         Mail forwardMail = mailCaptor.getValue();
         assertThat(forwardMail, notNullValue());
+    }
+
+    private ProxyMail proxy() {
+        ProxyMail proxy = ProxyMail.create(recipient, userAddress, daysOffset(-2), daysOffset(5), "en");
+        proxy.setUser(User.create(userAddress, new Date(), proxy));
+        return proxy;
     }
 
     private Mail newMail() throws MessagingException {

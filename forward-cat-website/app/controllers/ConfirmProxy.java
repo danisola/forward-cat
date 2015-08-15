@@ -3,7 +3,7 @@ package controllers;
 import com.forwardcat.common.ProxyMail;
 import com.forwardcat.common.RedisKeys;
 import com.google.inject.Inject;
-import models.ProxyRepository;
+import models.Repository;
 import models.SpamCatcher;
 import models.StatsRepository;
 import org.apache.mailet.MailAddress;
@@ -26,13 +26,13 @@ public class ConfirmProxy extends Controller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfirmProxy.class.getName());
     private final StatsRepository statsRepo;
-    private final ProxyRepository proxyRepo;
+    private final Repository repository;
     private final SpamCatcher spamCatcher;
 
     @Inject
-    ConfirmProxy(StatsRepository statsRepo, ProxyRepository proxyRepo, SpamCatcher spamCatcher) {
+    ConfirmProxy(StatsRepository statsRepo, Repository repository, SpamCatcher spamCatcher) {
         this.statsRepo = statsRepo;
-        this.proxyRepo = proxyRepo;
+        this.repository = repository;
         this.spamCatcher = spamCatcher;
     }
 
@@ -48,7 +48,7 @@ public class ConfirmProxy extends Controller {
 
         // Getting the proxy & checking that the hash is correct
         MailAddress proxyAddress = maybeProxyMail.get();
-        Optional<ProxyMail> maybeProxy = proxyRepo.getProxy(proxyAddress);
+        Optional<ProxyMail> maybeProxy = repository.getProxy(proxyAddress);
         if (!isAuthenticated(maybeProxy, h)) {
             return badRequest(error_page.render(language, empty()));
         }
@@ -66,7 +66,7 @@ public class ConfirmProxy extends Controller {
             statsRepo.incrementCounter(RedisKeys.SPAMMER_PROXIES_BLOCKED_COUNTER);
         }
 
-        proxyRepo.save(proxy);
+        repository.save(proxy);
         statsRepo.incrementCounter(RedisKeys.PROXIES_ACTIVATED_COUNTER);
 
         // Generating the response
