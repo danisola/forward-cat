@@ -6,7 +6,6 @@ import com.google.common.hash.HashFunction;
 import com.google.common.hash.Hasher;
 import com.google.common.hash.Hashing;
 import org.apache.mailet.MailAddress;
-import play.Play;
 import play.i18n.Lang;
 import play.mvc.Http;
 
@@ -16,7 +15,7 @@ import java.util.regex.Pattern;
 
 public class ControllerUtils {
     private static final Pattern HOST_LANG_PATTTERN = Pattern.compile("^[a-z]{2}\\..*");
-    private static final String DOMAIN_NAME_PROP = "domainName";
+    private static final String DOMAIN_NAME = "forward.cat";
 
     public static Lang getBestLanguage(Http.Request request, Lang preferred) {
         // Getting the info from the hostname
@@ -54,8 +53,7 @@ public class ControllerUtils {
      * Given a username and a domain name, returns a {@link org.apache.mailet.MailAddress}
      */
     public static Optional<MailAddress> getMailAddress(String username) {
-        String domainName = Play.application().configuration().getString(DOMAIN_NAME_PROP);
-        return getMailAddress(username, domainName);
+        return getMailAddress(username, DOMAIN_NAME);
     }
 
     /**
@@ -76,8 +74,7 @@ public class ControllerUtils {
      * Returns true if the given {@link MailAddress} has the local domain name
      */
     public static boolean isLocal(MailAddress userMail) {
-        String domainName = Play.application().configuration().getString(DOMAIN_NAME_PROP);
-        return domainName.equals(userMail.getDomain());
+        return DOMAIN_NAME.equals(userMail.getDomain());
     }
 
     /**
