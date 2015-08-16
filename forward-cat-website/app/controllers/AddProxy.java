@@ -23,6 +23,7 @@ public class AddProxy extends Controller {
 
     private final Repository repository;
     private final MailSender mailSender;
+    private final int INITIAL_PROXY_DURATION = 7;
 
     @Inject
     AddProxy(Repository repository, MailSender mailSender) {
@@ -30,12 +31,12 @@ public class AddProxy extends Controller {
         this.mailSender = mailSender;
     }
 
-    public Result addProxy(String proxy, String email, int duration) {
+    public Result addProxy(String proxy, String email) {
         Http.Request request = request();
 
         // Checking params
         Optional<MailAddress> maybeUserMail = toMailAddress(email);
-        if (proxy == null || !maybeUserMail.isPresent() || !isValidDuration(duration)) {
+        if (proxy == null || !maybeUserMail.isPresent()) {
             return badRequest();
         }
 
@@ -53,7 +54,7 @@ public class AddProxy extends Controller {
         MailAddress proxyMailAddress = maybeProxyMailAddress.get();
 
         ZonedDateTime creationTime = now();
-        ZonedDateTime expirationTime = creationTime.plusDays(duration);
+        ZonedDateTime expirationTime = creationTime.plusDays(INITIAL_PROXY_DURATION);
         Lang lang = getBestLanguage(request, lang());
         ProxyMail proxyMail = ProxyMail.create(proxyMailAddress, userMail, toDate(creationTime), toDate(expirationTime), lang.code());
 

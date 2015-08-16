@@ -12,12 +12,6 @@ index.form.proxy.label = Temporary address:
 index.form.proxy.title = Username
 index.form.proxy.content = This will be your username
 index.form.proxy.placeholder = example
-index.form.duration.label = Active for:
-index.form.duration.title = Duration
-index.form.duration.content = Select how long your temporary address should be active
-index.form.duration.3day = 3 days
-index.form.duration.5day = 5 days
-index.form.duration.7day = 7 days
 index.form.lang = en
 index.form.submit = Let''s do this!
 index.about.header = About
@@ -31,7 +25,7 @@ index.about.section2.content = Forward Cat provides a way to stop companies and 
 index.about.section3.title = When to use Forward Cat
 index.about.section3.content = Use a temporary email address to register for websites that ask for your details in exchange for access, or to sell something on a classifieds site.
 index.about.section4.title = Totally private
-index.about.section4.content = Forward Cat doesn''t store your emails, and they''re not visible to anyone except you. Your temporary email address will be totally deactivated after the lifespan you select comes to an end.
+index.about.section4.content = Forward Cat doesn''t store your emails, and they''re not visible to anyone except you. Your temporary email address will be totally deactivated after its lifespan comes to an end.
 index.footer.by = Made by <a target="_blank" href="http://www.dani-sola.com">Dani Solà</a>. Special thanks to <a href="http://sophiacasas.es" target="_blank">Sophia Casas</a>. Illustrations by <a href="http://raulilustrado.wordpress.com" target="_blank">Raúl Vélez</a>.
 index.footer.code = Code licensed under the <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> and hosted on <a href="https://github.com/danisola/forward-cat" target="_blank">GitHub</a>.
 index.footer.langs = Other languages: <a href="http://ca.forward.cat">Català</a> - <a href="http://es.forward.cat">Español</a>
@@ -63,7 +57,7 @@ proxy_created_email.content5 = Thanks for using Forward Cat!
 
 proxy_created.title = Temporary address activated
 proxy_created.header = Congratulations!
-proxy_created.content1 = <b>{0}</b> will be active until {1}.
+proxy_created.content1 = <b>{0}</b> will be active for a week.
 proxy_created.content2 = If you want to deactivate it earlier, just click on the deactivation link in the confirmation email you just received.
 proxy_created.content3 = We hope you find Forward Cat useful!
 

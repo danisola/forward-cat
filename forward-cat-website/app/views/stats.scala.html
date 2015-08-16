@@ -2,11 +2,15 @@
 
 @(lang: Lang, counters: StatsCounters)
 
+    @display(count: Int) = @{
+        "%,d" format count
+    }
+
     @simple_page(lang, "Some Stats", "Some Stats") {
-        <p>Current active users (approx): @counters.activeUsers</p>
-        <p>Current active proxies (approx): @counters.activeProxies</p>
-        <p>Total emails blocked: @counters.emailsBlocked</p>
-        <p>Total emails forwarded: @counters.emailsForwarded</p>
-        <p>Total proxies activated: @counters.proxiesActivated</p>
-        <p>Total spammer proxies blocked: @counters.spammerProxiesBlocked</p>
+        <p>Current active users (approx): @display(counters.activeUsers)</p>
+        <p>Current active proxies (approx): @display(counters.activeProxies)</p>
+        <p>Total emails blocked: @display(counters.emailsBlocked)</p>
+        <p>Total emails forwarded: @display(counters.emailsForwarded)</p>
+        <p>Total proxies activated: @display(counters.proxiesActivated)</p>
+        <p>Total spammer proxies blocked: @display(counters.spammerProxiesBlocked)</p>
     }

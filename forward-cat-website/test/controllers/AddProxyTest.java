@@ -43,26 +43,20 @@ public class AddProxyTest extends PlayTest {
     }
 
     @Test
-    public void wrongDuration_sendBadRequest() throws Exception {
-        Result route = route(request("test", "user@mail.com", 10));
-        assertThat(status(route), is(BAD_REQUEST));
-    }
-
-    @Test
     public void wrongEmail_sendBadRequest() throws Exception {
-        Result route = route(request("test", "not an address", 3));
+        Result route = route(request("test", "not an address"));
         assertThat(status(route), is(BAD_REQUEST));
     }
 
     @Test
     public void wrongUsername_sendBadRequest() throws Exception {
-        Result route = route(request("not valid", "user@mail.com", 3));
+        Result route = route(request("not valid", "user@mail.com"));
         assertThat(status(route), is(BAD_REQUEST));
     }
 
     @Test
     public void chainedProxy_sendBadRequest() throws Exception {
-        Result route = route(request("test", "email@forward.cat", 3));
+        Result route = route(request("test", "email@forward.cat"));
         assertThat(status(route), is(BAD_REQUEST));
     }
 
@@ -70,7 +64,7 @@ public class AddProxyTest extends PlayTest {
     public void proxyAlreadyExists_sendBadRequest() throws Exception {
         when(repository.proxyExists(proxyMail)).thenReturn(Boolean.TRUE);
 
-        Result route = route(request("test", "user@mail.com", 3));
+        Result route = route(request("test", "user@mail.com"));
         assertThat(status(route), is(BAD_REQUEST));
     }
 
@@ -78,7 +72,7 @@ public class AddProxyTest extends PlayTest {
     public void connectionError_sendBadRequest() throws Exception {
         when(repository.proxyExists(proxyMail)).thenThrow(new RuntimeException());
 
-        Result route = route(request("test", "user@mail.com", 3));
+        Result route = route(request("test", "user@mail.com"));
         assertThat(status(route), is(BAD_REQUEST));
     }
 
@@ -87,14 +81,14 @@ public class AddProxyTest extends PlayTest {
         when(repository.proxyExists(proxyMail)).thenReturn(Boolean.FALSE);
         when(repository.getUser(toMailAddress("user@mail.com"))).thenReturn(empty());
 
-        Result route = route(request("test", "user@mail.com", 3));
+        Result route = route(request("test", "user@mail.com"));
         assertThat(status(route), is(OK));
 
         verify(repository).save(any(User.class));
         verify(mailSender).sendHtmlMail(any(MailAddress.class), anyString(), anyString());
     }
 
-    private FakeRequest request(String proxy, String email, Integer duration) {
-        return fakeRequest(GET, "/add?proxy=" + proxy + "&email=" + email + "&duration=" + duration);
+    private FakeRequest request(String proxy, String email) {
+        return fakeRequest(GET, "/add?proxy=" + proxy + "&email=" + email);
     }
 }

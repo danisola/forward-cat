@@ -12,12 +12,6 @@ index.form.proxy.label = Nom d''usuari:
 index.form.proxy.title = Nom d''usuari
 index.form.proxy.content = Serà el nom d''usuari de la teva adreça temporal
 index.form.proxy.placeholder = exemple
-index.form.duration.label = Actiu durant:
-index.form.duration.title = Duració
-index.form.duration.content = Indica el nombre de dies que vols que l''adreça temporal estigui activa
-index.form.duration.3day = 3 dies
-index.form.duration.5day = 5 dies
-index.form.duration.7day = 7 dies
 index.form.lang = ca
 index.form.submit = Som-hi!
 index.about.header = Quant a
@@ -63,7 +57,7 @@ proxy_created_email.content5 = Gràcies per utilitzar Forward Cat!
 
 proxy_created.title = Adreça temporal activada
 proxy_created.header = Felicitats!
-proxy_created.content1 = <b>{0}</b> estarà activa fins al {1}.
+proxy_created.content1 = <b>{0}</b> estarà activa durant una setmana.
 proxy_created.content2 = Si vols desactivar-la abans, només cal que cliquis a l''enllaç corresponent del correu que acabes de rebre.
 proxy_created.content3 = Esperem que Forward Cat et sigui útil!
 

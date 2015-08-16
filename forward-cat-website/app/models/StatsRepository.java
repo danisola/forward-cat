@@ -1,6 +1,7 @@
 package models;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.FutureRowCount;
 import com.forwardcat.common.ProxyMail;
 import com.forwardcat.common.User;
 import com.google.common.base.Strings;
@@ -49,8 +50,8 @@ public class StatsRepository {
 
             Pipeline pipeline = jedis.pipelined();
 
-            int activeUsersRs = Ebean.find(User.class).findRowCount();
-            int activeProxiesRs = Ebean.find(ProxyMail.class).findRowCount();
+            FutureRowCount<User> activeUsersRs = Ebean.find(User.class).findFutureRowCount();
+            FutureRowCount<ProxyMail> activeProxiesRs = Ebean.find(ProxyMail.class).findFutureRowCount();
             Response<String> emailsBlockedRs = pipeline.get(EMAILS_BLOCKED_COUNTER);
             Response<String> emailsForwardedRs = pipeline.get(EMAILS_FORWARDED_COUNTER);
             Response<String> proxiesActivatedRs = pipeline.get(PROXIES_ACTIVATED_COUNTER);
@@ -59,8 +60,8 @@ public class StatsRepository {
             pipeline.sync();
 
             counters = new StatsCounters(
-                    activeUsersRs,
-                    activeProxiesRs,
+                    activeUsersRs.get(),
+                    activeProxiesRs.get(),
                     toInt(emailsBlockedRs.get()),
                     toInt(emailsForwardedRs.get()),
                     toInt(proxiesActivatedRs.get()),
