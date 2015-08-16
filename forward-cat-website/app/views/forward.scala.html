@@ -54,20 +54,20 @@
                 <div class="span12">
                     <form class="form-horizontal" id="proxy-form" action="/add" method="get">
                         <div class="control-group">
-                            <label class="control-label" for="email">@Messages("index.form.address.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.address.title")(lang)" data-content="@Messages("index.form.address.content")(lang)" class="icon-question-sign icon-large info-icon"></i></label>
-
-                            <div class="controls">
-                                <input type="email" class="input-xlarge" id="email" name="email" placeholder="@Messages("index.form.address.placeholder")(lang)" autocomplete="off">
-                                <p class="help-block"></p>
-                            </div>
-                        </div>
-                        <div class="control-group">
                             <label class="control-label" for="proxy">@Messages("index.form.proxy.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.proxy.title")(lang)" data-content="@Messages("index.form.proxy.content")(lang)" class="icon-question-sign icon-large info-icon"></i></label>
 
                             <div class="controls">
                                 <input type="text" class="input-xlarge" id="proxy" name="proxy" placeholder="@Messages("index.form.proxy.placeholder")(lang)" autocomplete="off">
 
                                 <p class="help-inline">@@forward.cat</p>
+                                <p class="help-block"></p>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="email">@Messages("index.form.address.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.address.title")(lang)" data-content="@Messages("index.form.address.content")(lang)" class="icon-question-sign icon-large info-icon"></i></label>
+
+                            <div class="controls">
+                                <input type="email" class="input-xlarge" id="email" name="email" placeholder="@Messages("index.form.address.placeholder")(lang)" autocomplete="off">
                                 <p class="help-block"></p>
                             </div>
                         </div>
