@@ -1,5 +1,6 @@
 package controllers;
 
+import com.forwardcat.common.ProxyMail;
 import com.forwardcat.common.User;
 import com.google.inject.AbstractModule;
 import models.MailSender;
@@ -14,8 +15,11 @@ import play.test.FakeRequest;
 
 import javax.mail.internet.AddressException;
 import java.io.IOException;
+import java.util.Date;
+import java.util.Optional;
 
 import static controllers.TestUtils.toMailAddress;
+import static controllers.TestUtils.whenAddressExistsReturn;
 import static java.util.Optional.empty;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -62,7 +66,7 @@ public class AddProxyTest extends PlayTest {
 
     @Test
     public void proxyAlreadyExists_sendBadRequest() throws Exception {
-        when(repository.proxyExists(proxyMail)).thenReturn(Boolean.TRUE);
+        whenAddressExistsReturn(repository, proxyMail, true);
 
         Result route = route(request("test", "user@mail.com"));
         assertThat(status(route), is(BAD_REQUEST));
@@ -77,8 +81,19 @@ public class AddProxyTest extends PlayTest {
     }
 
     @Test
+    public void tooManyProxies_sendBadRequest() throws Exception {
+        ProxyMail[] proxies = {mock(ProxyMail.class), mock(ProxyMail.class), mock(ProxyMail.class)};
+        User user = User.create(toMailAddress("user@mail.com"), new Date(), proxies);
+        whenAddressExistsReturn(repository, proxyMail, false);
+        when(repository.getUser(toMailAddress("user@mail.com"))).thenReturn(Optional.of(user));
+
+        Result route = route(request("test", "user@mail.com"));
+        assertThat(status(route), is(BAD_REQUEST));
+    }
+
+    @Test
     public void everythingFine_sendMailAndGoodResponse() throws Exception {
-        when(repository.proxyExists(proxyMail)).thenReturn(Boolean.FALSE);
+        whenAddressExistsReturn(repository, proxyMail, false);
         when(repository.getUser(toMailAddress("user@mail.com"))).thenReturn(empty());
 
         Result route = route(request("test", "user@mail.com"));

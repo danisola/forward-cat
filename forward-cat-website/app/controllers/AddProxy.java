@@ -20,13 +20,15 @@ import java.util.Optional;
 
 import static java.util.Optional.empty;
 import static models.ControllerUtils.*;
-import static models.ExpirationUtils.*;
+import static models.ExpirationUtils.now;
+import static models.ExpirationUtils.toDate;
 
 public class AddProxy extends Controller {
 
+    private static final int INITIAL_PROXY_DURATION = 7;
+    private static final int MAX_PROXIES = 3;
     private final Repository repository;
     private final MailSender mailSender;
-    private final int INITIAL_PROXY_DURATION = 7;
 
     @Inject
     AddProxy(Repository repository, MailSender mailSender) {
@@ -62,14 +64,19 @@ public class AddProxy extends Controller {
         ProxyMail proxyMail = ProxyMail.create(proxyMailAddress, userMail, toDate(creationTime), toDate(expirationTime), lang.code());
 
         // Creating the proxy
-        Optional<User> maybeExistingUser = repository.getUser(userMail);
-        if (!repository.proxyExists(proxyMailAddress)) {
-            User user = maybeExistingUser.orElseGet(() -> User.create(userMail, toDate(creationTime)));
-            user.getProxies().add(proxyMail);
-            repository.save(user);
-        } else {
+        if (repository.proxyExists(proxyMailAddress)) {
             return badRequest(error_page.render(lang, empty())); // Proxy already exists: cannot create a new one
         }
+
+        User user = repository.getUser(userMail).orElseGet(() ->
+                User.create(userMail, toDate(creationTime)));
+
+        if (user.getProxies().size() >= MAX_PROXIES) {
+            return badRequest(error_page.render(lang, Optional.of("error.too_many_proxies")));
+        }
+
+        user.getProxies().add(proxyMail);
+        repository.save(user);
 
         // Sending the confirmation mail
         String subject = "Forward Cat";

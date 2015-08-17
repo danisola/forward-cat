@@ -87,6 +87,9 @@ proxy_extended.content3 = Que tinguis un bon dia!
 
 error_page.title = Alguna cosa ha fallat
 error_page.header = Alguna cosa ha fallat
-error_page.content = Ho sentim molt, però la seva petició no s'ha pogut portar a terme.
-error_page.reason = Ha passat això:
+error_page.content = Ho sentim molt, però la petició no s'ha pogut portar a terme.
+error_page.reason = Això és el que ha passat:
 error_page.back = Tornar a Forward Cat
+
+error.too_many_proxies = Per lluitar contra el correu indesitjat, actualment només permetem un màxim de 3 correus \
+  temporals. Si en necessites més, envia un correu a <b>contact@forward.cat</b> explicant el perquè.

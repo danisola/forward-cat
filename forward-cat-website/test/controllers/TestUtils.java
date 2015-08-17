@@ -10,6 +10,7 @@ import javax.mail.internet.AddressException;
 import java.util.Date;
 import java.util.Optional;
 
+import static java.lang.String.format;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
@@ -50,6 +51,16 @@ public class TestUtils {
                 return Optional.of(proxy);
             }
             return Optional.empty();
+        });
+    }
+
+    public static void whenAddressExistsReturn(Repository repository, MailAddress address, boolean exists) {
+        when(repository.proxyExists(any(MailAddress.class))).thenAnswer(invocationOnMock -> {
+            MailAddress passedAddress = (MailAddress) invocationOnMock.getArguments()[0];
+            if (address.toString().equals(passedAddress.toString())) {
+                return exists;
+            }
+            throw new IllegalStateException(format("#proxyExists called with %s but %s was expected", passedAddress, address));
         });
     }
 }

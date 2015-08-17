@@ -90,3 +90,6 @@ error_page.header = Something went wrong
 error_page.content = We're very sorry, but we cannot fulfill your request.
 error_page.reason = Here's what happened:
 error_page.back = Back to Forward Cat
+
+error.too_many_proxies = To fight against spammers, we currently allow a maximum of 3 temporary addresses. If you \
+  need more, please contact us at <b>contact@forward.cat</b> explaining why.
