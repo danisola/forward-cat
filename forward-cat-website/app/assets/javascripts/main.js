@@ -27,7 +27,7 @@ $(document).ready(function () {
       error.appendTo(element.parent().find(".help-block"));
     },
     submitHandler: function (form) {
-      var userEmail = form.find('#email').val();
+      var userEmail = $('#proxy-form').find('#email').val();
       createCookie("user_email", userEmail, 365);
       form.submit();
     },
