@@ -31,12 +31,6 @@ public class LandingTest extends PlayTest {
         assertThat(status(route), is(OK));
     }
 
-    @Test
-    public void everythingFine_sendEmailSentPage() throws Exception {
-        Result route = route(request("/email_sent"));
-        assertThat(status(route), is(OK));
-    }
-
     private FakeRequest request(String path) {
         return fakeRequest(GET, path);
     }

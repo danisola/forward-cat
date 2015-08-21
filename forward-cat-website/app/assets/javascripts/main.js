@@ -1,5 +1,6 @@
 $(document).ready(function () {
-  $('#proxy-form').validate({
+  var proxyForm = $('#proxy-form');
+  proxyForm.validate({
     rules: {
       email: {
         required: true,
@@ -26,20 +27,37 @@ $(document).ready(function () {
       error.appendTo(element.parent().find(".help-block"));
     },
     submitHandler: function (form) {
-      $(form).ajaxSubmit({
-        url: "/add",
-        type: "get",
-        success: function() {
-          var userEmail = $('#proxy-form').find('#email').val();
-          createCookie("user_email", userEmail, 365);
-          window.location.href = "/email_sent";
-        }
-      });
+      var userEmail = form.find('#email').val();
+      createCookie("user_email", userEmail, 365);
+      form.submit();
     },
     success: function (label) {
       label.remove();
     }
   });
+
+  proxyForm.find('i[rel=\'tooltip\']').popover({
+    placement: "top",
+    trigger: "manual"
+  }).click(function() {
+    var currentElem = $(this);
+    var isTooltipOpen = hasTooltip(currentElem);
+    hideTooltip(getElemsWithTooltip());
+
+    if (!isTooltipOpen) {
+      showTooltip(currentElem);
+    }
+    return false; // Stop propagation & prevent default
+  });
+
+  $('body').click(function() {
+    hideTooltip(getElemsWithTooltip());  // Hide all tooltips
+  });
+
+  var userEmail = readCookie("user_email");
+  if (userEmail !== null) {
+    proxyForm.find('#email').val(userEmail);
+  }
 
   $('#report-form').validate({
     rules: {
@@ -65,41 +83,12 @@ $(document).ready(function () {
       error.appendTo(element.parent().find(".help-block"));
     },
     submitHandler: function (form) {
-      $(form).ajaxSubmit({
-        url: "/report-user",
-        type: "get",
-        success: function() {
-          window.location.href = "/user-reported";
-        }
-      });
+      form.submit();
     },
     success: function (label) {
       label.remove();
     }
   });
-
-  $('#proxy-form').find('i[rel=\'tooltip\']').popover({
-    placement: "top",
-    trigger: "manual"
-  }).click(function() {
-    var currentElem = $(this);
-    var isTooltipOpen = hasTooltip(currentElem);
-    hideTooltip(getElemsWithTooltip());
-
-    if (!isTooltipOpen) {
-      showTooltip(currentElem);
-    }
-    return false; // Stop propagation & prevent default
-  });
-
-  $('body').click(function() {
-    hideTooltip(getElemsWithTooltip());  // Hide all tooltips
-  });
-
-  var userEmail = readCookie("user_email");
-  if (userEmail !== null) {
-    $('#proxy-form').find('#email').val(userEmail);
-  }
 });
 
 function getElemsWithTooltip() {

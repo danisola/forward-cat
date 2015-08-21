@@ -4,10 +4,8 @@
 
 # Home page
 GET         /                        @controllers.Landing.index()
-GET         /email_sent              @controllers.Landing.emailSent()
 GET         /report                  @controllers.Report.reportGet()
 GET         /report-user             @controllers.Report.reportUser(proxy: String, message: String)
-GET         /user-reported           @controllers.Report.userReported()
 GET         /confirm                 @controllers.ConfirmProxy.confirm(p: String, h: String)
 GET         /add                     @controllers.AddProxy.addProxy(proxy: String, email: String)
 GET         /validate                @controllers.ValidateProxy.validate(proxy: String)

@@ -32,11 +32,6 @@ public class Report extends Controller {
         this.reportAddress = new MailAddress(Play.application().configuration().getString("reportAddress"));
     }
 
-    public Result userReported() {
-        Lang language = getBestLanguage(request(), lang());
-        return ok(user_reported.render(language));
-    }
-
     public Result reportGet() {
         Lang lang = getBestLanguage(request(), lang());
         return ok(report.render(lang));
@@ -57,6 +52,7 @@ public class Report extends Controller {
             }
         }
 
-        return ok("true");
+        Lang language = getBestLanguage(request(), lang());
+        return ok(user_reported.render(language));
     }
 }

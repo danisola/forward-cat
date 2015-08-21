@@ -11,11 +11,14 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.twirl.api.Html;
+import views.html.email_sent;
+import views.html.error_page;
 import views.html.proxy_created_email;
 
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+import static java.util.Optional.empty;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.*;
 
@@ -33,29 +36,29 @@ public class AddProxy extends Controller {
 
     public Result addProxy(String proxy, String email) {
         Http.Request request = request();
+        Lang lang = getBestLanguage(request, lang());
 
         // Checking params
         Optional<MailAddress> maybeUserMail = toMailAddress(email);
         if (proxy == null || !maybeUserMail.isPresent()) {
-            return badRequest();
+            return badRequest(error_page.render(lang, empty()));
         }
 
         MailAddress userMail = maybeUserMail.get();
         // Don't allow chained proxies
         if (isLocal(userMail)) {
-            return badRequest();
+            return badRequest(error_page.render(lang, empty()));
         }
 
         Optional<MailAddress> maybeProxyMailAddress = getMailAddress(proxy);
         if (!maybeProxyMailAddress.isPresent()) {
-            return badRequest();
+            return badRequest(error_page.render(lang, empty()));
         }
 
         MailAddress proxyMailAddress = maybeProxyMailAddress.get();
 
         ZonedDateTime creationTime = now();
         ZonedDateTime expirationTime = creationTime.plusDays(INITIAL_PROXY_DURATION);
-        Lang lang = getBestLanguage(request, lang());
         ProxyMail proxyMail = ProxyMail.create(proxyMailAddress, userMail, toDate(creationTime), toDate(expirationTime), lang.code());
 
         // Creating the proxy
@@ -65,7 +68,7 @@ public class AddProxy extends Controller {
             user.getProxies().add(proxyMail);
             repository.save(user);
         } else {
-            return badRequest(); // Proxy already exists: cannot create a new one
+            return badRequest(error_page.render(lang, empty())); // Proxy already exists: cannot create a new one
         }
 
         // Sending the confirmation mail
@@ -73,6 +76,6 @@ public class AddProxy extends Controller {
         Html content = proxy_created_email.render(lang, proxyMailAddress, getHash(proxyMail));
         mailSender.sendHtmlMail(userMail, subject, content.toString());
 
-        return ok("true");
+        return ok(email_sent.render(lang));
     }
 }
