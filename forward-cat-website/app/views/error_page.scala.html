@@ -4,7 +4,7 @@
         <p>@Html(Messages("error_page.content")(lang))</p>
 
         @if(reason.isPresent) {
-            <p>@Html(Messages("error_page.reason")(lang)) @Html(Messages(reason.get)(lang))</p>
+            <p>@Html(Messages(reason.get)(lang))</p>
         }
 
         <br />

@@ -88,7 +88,6 @@ proxy_extended.content3 = ¡Que tengas un buen día!
 error_page.title = Algo ha fallado
 error_page.header = Algo ha fallado
 error_page.content = Lo sentimos mucho, pero su petición no se ha podido llevar a cabo.
-error_page.reason = Ha pasado esto:
 error_page.back = Volver a Forward Cat
 
 error.too_many_proxies = Para luchar contra el correo indeseado, actualmente solo permitimos la creación de 3 direcciones temporales. Si necesitas más, envía un correo a <b>contact@forward.cat</b> explicando el porqué.
