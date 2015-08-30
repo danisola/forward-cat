@@ -6,10 +6,9 @@ import models.Repository;
 import org.apache.mailet.MailAddress;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import play.i18n.Lang;
 import play.mvc.Controller;
-import play.mvc.Http;
 import play.mvc.Result;
+import play.mvc.With;
 import views.html.confirm_deletion;
 import views.html.error_page;
 import views.html.proxy_deleted;
@@ -20,6 +19,7 @@ import static java.util.Optional.empty;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.formatInstant;
 
+@With(RedirectAction.class)
 public class DeleteProxy extends Controller {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DeleteProxy.class.getName());
@@ -30,21 +30,18 @@ public class DeleteProxy extends Controller {
         this.repository = repository;
     }
 
-    public Result confirmDeletion(String p, String h) {
-        Http.Request request = request();
-        Lang language = getBestLanguage(request, lang());
-
+    public Result confirmDeletion(String langCode, String p, String h) {
         // Checking params
         Optional<MailAddress> maybeProxyMail = toMailAddress(p);
         if (!maybeProxyMail.isPresent() || h == null) {
-            return badRequest(error_page.render(language, empty()));
+            return badRequest(error_page.render(lang(), empty()));
         }
 
         // Getting the proxy & checking that the hash is correct
         MailAddress proxyMail = maybeProxyMail.get();
         Optional<ProxyMail> maybeProxy = repository.getProxy(proxyMail);
         if (!isAuthenticated(maybeProxy, h)) {
-            return badRequest(error_page.render(language, empty()));
+            return badRequest(error_page.render(lang(), empty()));
         }
 
         // Checking that the proxy is active
@@ -55,26 +52,23 @@ public class DeleteProxy extends Controller {
         }
 
         // Generating the answer
-        String expirationDate = formatInstant(proxy.getExpirationTime(), language);
+        String expirationDate = formatInstant(proxy.getExpirationTime(), lang());
         String hashValue = getHash(proxy);
-        return ok(confirm_deletion.render(language, proxyMail, expirationDate, hashValue));
+        return ok(confirm_deletion.render(lang(), proxyMail, expirationDate, hashValue));
     }
 
-    public Result delete(String p, String h) {
-        Http.Request request = request();
-        Lang lang = getBestLanguage(request, lang());
-
+    public Result delete(String langCode, String p, String h) {
         // Checking params
         Optional<MailAddress> maybeProxyMail = toMailAddress(p);
         if (!maybeProxyMail.isPresent() || h == null) {
-            return badRequest(error_page.render(lang, empty()));
+            return badRequest(error_page.render(lang(), empty()));
         }
 
         // Getting the proxy & checking that the hash is correct
         MailAddress proxyMail = maybeProxyMail.get();
         Optional<ProxyMail> maybeProxy = repository.getProxy(proxyMail);
         if (!isAuthenticated(maybeProxy, h)) {
-            return badRequest(error_page.render(lang, empty()));
+            return badRequest(error_page.render(lang(), empty()));
         }
 
         // Checking whether the proxy is active or not
@@ -88,6 +82,6 @@ public class DeleteProxy extends Controller {
         repository.delete(proxy);
 
         // Sending the response
-        return ok(proxy_deleted.render(lang));
+        return ok(proxy_deleted.render(lang()));
     }
 }

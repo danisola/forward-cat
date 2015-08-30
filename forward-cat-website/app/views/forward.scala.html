@@ -13,11 +13,14 @@
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <![endif]-->
 
-        <link rel="canonical" href="@Messages("index.canonicalurl")(lang)" />
         <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
         <link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
         <link href="@routes.Assets.at("stylesheets/styles.min.css")" rel="stylesheet" >
         <link href="@routes.Assets.at("images/favicon.ico")" rel="shortcut icon">
+
+        <link rel="alternate" hreflang="en" href="http://forward.cat/" />
+        <link rel="alternate" hreflang="es" href="http://forward.cat/es/" />
+        <link rel="alternate" hreflang="ca" href="http://forward.cat/ca/" />
 
         <meta property="og:image" content="@routes.Assets.at("images/forward.png")"/>
         <link rel="image_src" href="@routes.Assets.at("images/forward.png")" />
@@ -53,7 +56,11 @@
 
             <div class="row-fluid marketing">
                 <div class="span12">
+                    @if(lang.code == "en") {
                     <form class="form-horizontal" id="proxy-form" action="/add" method="get">
+                    } else {
+                    <form class="form-horizontal" id="proxy-form" action="/@lang.code/add" method="get">
+                    }
                         <div class="control-group">
                             <label class="control-label" for="proxy">@Messages("index.form.proxy.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.proxy.title")(lang)" data-content="@Messages("index.form.proxy.content")(lang)" class="icon-question-sign icon-large info-icon"></i></label>
 

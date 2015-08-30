@@ -6,9 +6,9 @@ import models.MailSender;
 import models.Repository;
 import org.apache.mailet.MailAddress;
 import play.Play;
-import play.i18n.Lang;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.With;
 import play.twirl.api.Html;
 import views.html.report;
 import views.html.user_reported;
@@ -17,8 +17,10 @@ import views.html.user_reported_email;
 import javax.mail.internet.AddressException;
 import java.util.Optional;
 
-import static models.ControllerUtils.*;
+import static models.ControllerUtils.isLocal;
+import static models.ControllerUtils.toMailAddress;
 
+@With(RedirectAction.class)
 public class Report extends Controller {
 
     private final Repository repository;
@@ -32,12 +34,11 @@ public class Report extends Controller {
         this.reportAddress = new MailAddress(Play.application().configuration().getString("reportAddress"));
     }
 
-    public Result reportGet() {
-        Lang lang = getBestLanguage(request(), lang());
-        return ok(report.render(lang));
+    public Result reportGet(String langCode) {
+        return ok(report.render(lang()));
     }
 
-    public Result reportUser(String proxy, String message) {
+    public Result reportUser(String langCode, String proxy, String message) {
         Optional<MailAddress> mailAddress = toMailAddress(proxy);
         if (mailAddress.isPresent() && isLocal(mailAddress.get())) {
 
@@ -52,7 +53,6 @@ public class Report extends Controller {
             }
         }
 
-        Lang language = getBestLanguage(request(), lang());
-        return ok(user_reported.render(language));
+        return ok(user_reported.render(lang()));
     }
 }

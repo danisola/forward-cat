@@ -1,19 +1,17 @@
 package controllers;
 
-import play.i18n.Lang;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.With;
 import views.html.forward;
 
 import javax.inject.Singleton;
 
-import static models.ControllerUtils.getBestLanguage;
-
 @Singleton
+@With(RedirectAction.class)
 public class Landing extends Controller {
 
-    public Result index() {
-        Lang lang = getBestLanguage(request(), lang());
-        return ok(forward.render(lang));
+    public Result index(String langCode) {
+        return ok(forward.render(lang()));
     }
 }

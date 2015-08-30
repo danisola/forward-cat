@@ -1,5 +1,4 @@
 index.title = Forward Cat - Adreces temporals d''email
-index.canonicalurl = http://ca.forward.cat
 index.description = Crea una adreça temporal d''e-mail que reenvia automàticament els correus a la teva adreça real. És gratuït, ràpid i anònim!
 
 index.header = Crea una adreça temporal d''e-mail
@@ -16,7 +15,7 @@ index.form.lang = ca
 index.form.submit = Som-hi!
 index.about.header = Quant a
 index.about.content = Forward Cat és un servei que permet crear fàcilment una adreça temporal d''email que reenvia automàticament els correus a la teva adreça real.
-index.about.spam = <strong>Important:</strong> ens reservem el dret de cancel·lar o bloquejar la teva compta si descobrim que la fas servir per enviar spam. Si creus que algú està fent servir Forward Cat per enviar spam, <a href="/report">reporta-ho</a> si us plau.
+index.about.spam = <strong>Important:</strong> ens reservem el dret de cancel·lar o bloquejar la teva compta si descobrim que la fas servir per enviar spam. Si creus que algú està fent servir Forward Cat per enviar spam, <a href="/ca/report">reporta-ho</a> si us plau.
 index.about.contact = També pots <a target="_blank" href="mailto:contact@forward.cat?subject=Hola!">contactar-nos</a> per a qualsevol altre assumpte.
 index.about.section1.title = No revelis la teva adreça
 index.about.section1.content = Forward Cat és anònim, dóna una adreça temporal quan no vulguis revelar la teva adreça real.
@@ -28,7 +27,7 @@ index.about.section4.title = Totalment privat
 index.about.section4.content = Forward Cat no guarda el teu correu, i no és visible per a ningú a part de tu. La teva adreça de correu temporal serà totalment esborrada un cop arribi a la fi de la seva durada.
 index.footer.by = Fet per <a target="_blank" href="http://www.dani-sola.com">Dani Solà</a>. Agraïment especial a <a href="http://sophiacasas.es" target="_blank">Sophia Casas</a>. Il·lustracions fetes per <a href="http://raulilustrado.wordpress.com" target="_blank">Raúl Vélez</a>.
 index.footer.code = Codi sota llicència <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> hostatjat a <a href="https://github.com/danisola/forward-cat" target="_blank">GitHub</a>.
-index.footer.langs = Altres llengües: <a href="http://en.forward.cat">English</a> - <a href="http://es.forward.cat">Español</a>
+index.footer.langs = Altres llengües: <a href="http://forward.cat">English</a> - <a href="http://forward.cat/es/">Español</a>
 
 email_sent.title = Activeu la vostra adreça temporal!
 email_sent.header = Activeu la vostra adreça temporal!
@@ -50,9 +49,9 @@ user_reported.thanks = Gràcies per informar-nos!
 
 proxy_created_email.title = Activa la teva adreça d''email temporal
 proxy_created_email.content1 = L''adreça temporal <b>{0}</b> s''ha creat correctament.
-proxy_created_email.content2 = Fes clic <a href="http://www.forward.cat/confirm?p={0}&h={1}" target="_blank">aquí</a> per activar-la.
+proxy_created_email.content2 = Fes clic <a href="http://forward.cat/ca/confirm?p={0}&h={1}" target="_blank">aquí</a> per activar-la.
 proxy_created_email.content3 = Si no has creat aquesta adreça, només cal que eliminis aquest correu i l''oblidis :)
-proxy_created_email.content4 = Per desactivar l''adreça temporal en qualsevol moment, fes clic <a href="http://www.forward.cat/confirm-deletion?p={0}&h={1}">aquí</a>.
+proxy_created_email.content4 = Per desactivar l''adreça temporal en qualsevol moment, fes clic <a href="http://forward.cat/ca/confirm-deletion?p={0}&h={1}">aquí</a>.
 proxy_created_email.content5 = Gràcies per utilitzar Forward Cat!
 
 proxy_created.title = Adreça temporal activada
@@ -65,7 +64,7 @@ confirm_deletion.title = Elimina l''adreça temporal
 confirm_deletion.header = Vols eliminar la teva adreça temporal?
 confirm_deletion.content1 = <b>{0}</b> estarà activa fins al {1}.
 confirm_deletion.content2 = Vols desactivar i eliminar {0} ara?
-confirm_deletion.deactivate = <a href="/delete?p={0}&h={1}" class="btn btn-primary">Eliminar-la!</a>
+confirm_deletion.deactivate = <a href="/ca/delete?p={0}&h={1}" class="btn btn-primary">Eliminar-la!</a>
 
 proxy_deleted.title = L''adreça temporal ha sigut eliminada
 proxy_deleted.header = L''adreça temporal ha sigut eliminada
@@ -75,8 +74,8 @@ proxy_deleted.back = Tornar a Forward Cat
 
 proxy_expiring_email.title = La teva adreça temporal està a punt de ser eliminada
 proxy_expiring_email.content1 = L''adreça temporal <b>{0}</b> serà eliminada el {1}
-proxy_expiring_email.content2 = Fes clic <a href="http://www.forward.cat/extend?p={0}&h={1}" target="_blank">aquí</a> per mantenir-la activa uns dies més.
-proxy_expiring_email.content3 = Per desactivar l''adreça temporal en qualsevol moment, fes clic <a href="http://www.forward.cat/confirm-deletion?p={0}&h={1}" target="_blank">aquí</a>.
+proxy_expiring_email.content2 = Fes clic <a href="http://forward.cat/ca/extend?p={0}&h={1}" target="_blank">aquí</a> per mantenir-la activa uns dies més.
+proxy_expiring_email.content3 = Per desactivar l''adreça temporal en qualsevol moment, fes clic <a href="http://forward.cat/ca/confirm-deletion?p={0}&h={1}" target="_blank">aquí</a>.
 proxy_expiring_email.content4 = Gràcies per utilitzar Forward Cat!
 
 proxy_extended.title = Duració de l''adreça temporal correctament perllongada
