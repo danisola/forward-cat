@@ -5,11 +5,13 @@ import models.Repository;
 import org.apache.mailet.MailAddress;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.With;
 
 import java.util.Optional;
 
 import static models.ControllerUtils.getMailAddress;
 
+@With(RedirectAction.class)
 public class ValidateProxy extends Controller {
 
     private final Repository repository;
