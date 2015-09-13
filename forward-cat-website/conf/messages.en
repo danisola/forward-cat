@@ -27,7 +27,7 @@ index.about.section4.title = Totally private
 index.about.section4.content = Forward Cat doesn''t store your emails, and they''re not visible to anyone except you. Your temporary email address will be totally deactivated after its lifespan comes to an end.
 index.footer.by = Made by <a target="_blank" href="http://www.dani-sola.com">Dani Solà</a>. Special thanks to <a href="http://sophiacasas.es" target="_blank">Sophia Casas</a>. Illustrations by <a href="http://raulilustrado.wordpress.com" target="_blank">Raúl Vélez</a>.
 index.footer.code = Code licensed under the <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> and hosted on <a href="https://github.com/danisola/forward-cat" target="_blank">GitHub</a>.
-index.footer.langs = Other languages: <a href="https://forward.cat/ca/">Català</a> - <a href="https://forward.cat/es/">Español</a>
+index.footer.langs = Other languages: <a href="/ca/">Català</a> - <a href="/es/">Español</a>
 
 email_sent.title = Activate your temporary email address!
 email_sent.header = Activate your temporary email address!
