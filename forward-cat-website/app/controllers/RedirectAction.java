@@ -17,10 +17,10 @@ public class RedirectAction extends play.mvc.Action.Simple {
     private static final Pattern SUBDOMAIN_LANG_PATTTERN = Pattern.compile("^[a-z]{2}\\.forward.cat.*");
     private static final Pattern PATH_LANG_PATTTERN = Pattern.compile("^/(?<lang>[a-z]{2})([/\\?].*)?");
     private static final Map<String, String> SUBDOMAIN_REDIRECTS = new ImmutableMap.Builder<String, String>()
-            .put("www", "http://forward.cat")
-            .put("en", "http://forward.cat")
-            .put("es", "http://forward.cat/es")
-            .put("ca", "http://forward.cat/ca")
+            .put("www", "https://forward.cat")
+            .put("en", "https://forward.cat")
+            .put("es", "https://forward.cat/es")
+            .put("ca", "https://forward.cat/ca")
             .build();
 
     @Override

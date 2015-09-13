@@ -27,7 +27,7 @@ index.about.section4.title = Totalmente privado
 index.about.section4.content = Forward Cat no guarda tus correos y no son visibles para nadie que no seas tú. Tu dirección de correo temporal será destruida completamente cuando sea desactivada.
 index.footer.by = Creado por <a target="_blank" href="http://www.dani-sola.com">Dani Solà</a>. Agradecimiento especial a <a href="http://sophiacasas.es" target="_blank">Sophia Casas</a>. Ilustraciones realizadas por <a href="http://raulilustrado.wordpress.com" target="_blank">Raúl Vélez</a>.
 index.footer.code = Código bajo licencia <a target="_blank" rel="nofollow" href="http://www.apache.org/licenses/LICENSE-2.0">Apache License v2.0</a> hospedado en <a href="https://github.com/danisola/forward-cat" target="_blank">GitHub</a>.
-index.footer.langs = Otros idiomas: <a href="http://forward.cat/ca/">Català</a> - <a href="http://forward.cat">English</a>
+index.footer.langs = Otros idiomas: <a href="https://forward.cat/ca/">Català</a> - <a href="https://forward.cat">English</a>
 
 email_sent.title = ¡Activa tu dirección temporal!
 email_sent.header = ¡Activa tu dirección temporal!
@@ -49,9 +49,9 @@ user_reported.thanks = Gracias por informarnos!
 
 proxy_created_email.title = Activa su dirección de correo temporal
 proxy_created_email.content1 = La dirección temporal <b>{0}</b> ha sido creada correctamente.
-proxy_created_email.content2 = Haz clic <a href="http://forward.cat/es/confirm?p={0}&h={1}" target="_blank">aquí</a> para activarla.
+proxy_created_email.content2 = Haz clic <a href="https://forward.cat/es/confirm?p={0}&h={1}" target="_blank">aquí</a> para activarla.
 proxy_created_email.content3 = Si no has creado esta dirección, elimina este correo y olvídalo :)
-proxy_created_email.content4 = Para desactivar la dirección temporal en cualquier momento, haz clic <a href="http://forward.cat/es/confirm-deletion?p={0}&h={1}">aquí</a>.
+proxy_created_email.content4 = Para desactivar la dirección temporal en cualquier momento, haz clic <a href="https://forward.cat/es/confirm-deletion?p={0}&h={1}">aquí</a>.
 proxy_created_email.content5 = ¡Gracias por usar Forward Cat!
 
 proxy_created.title = Dirección temporal activada
@@ -74,8 +74,8 @@ proxy_deleted.back = Volver a Forward Cat
 
 proxy_expiring_email.title = Su dirección temporal está a punto de ser desactivada
 proxy_expiring_email.content1 = La dirección temporal <b>{0}</b> será desactivada y eliminada el {1}
-proxy_expiring_email.content2 = Haz clic <a href="http://forward.cat/es/extend?p={0}&h={1}" target="_blank">aquí</a> para mantenerla activa unos días más.
-proxy_expiring_email.content3 = Para desactivar la dirección temporal en cualquier momento, haz clic <a href="http://forward.cat/es/confirm-deletion?p={0}&h={1}" target="_blank">aquí</a>.
+proxy_expiring_email.content2 = Haz clic <a href="https://forward.cat/es/extend?p={0}&h={1}" target="_blank">aquí</a> para mantenerla activa unos días más.
+proxy_expiring_email.content3 = Para desactivar la dirección temporal en cualquier momento, haz clic <a href="https://forward.cat/es/confirm-deletion?p={0}&h={1}" target="_blank">aquí</a>.
 proxy_expiring_email.content4 = ¡Gracias por usar Forward Cat!
 
 proxy_extended.title = Caducidad de la dirección temporal extendida
