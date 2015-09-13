@@ -14,13 +14,9 @@ import java.util.regex.Pattern;
 public class RedirectAction extends play.mvc.Action.Simple {
 
     private static final Lang DEFAULT_LANG = Lang.forCode("en");
-    private static final Pattern SUBDOMAIN_LANG_PATTTERN = Pattern.compile("^[a-z]{2}\\.forward.cat.*");
     private static final Pattern PATH_LANG_PATTTERN = Pattern.compile("^/(?<lang>[a-z]{2})([/\\?].*)?");
     private static final Map<String, String> SUBDOMAIN_REDIRECTS = new ImmutableMap.Builder<String, String>()
             .put("www", "https://forward.cat")
-            .put("en", "https://forward.cat")
-            .put("es", "https://forward.cat/es")
-            .put("ca", "https://forward.cat/ca")
             .build();
 
     @Override
@@ -28,21 +24,10 @@ public class RedirectAction extends play.mvc.Action.Simple {
         Http.Request request = ctx.request();
         String host = request.host();
 
-        if (host != null) {
-            // www subdomain: redirect
-            if (host.startsWith("www.")) {
-                String redirectUrl = buildUrl("www", request.path(), request.queryString());
-                return promise(movedPermanently(redirectUrl));
-            }
-
-            // Lang in subdomain: redirect
-            if (SUBDOMAIN_LANG_PATTTERN.matcher(host).matches()) {
-                String langCode = host.substring(0, 2);
-                if (isValidLang(langCode)) {
-                    String redirectUrl = buildUrl(langCode, request.path(), request.queryString());
-                    return promise(movedPermanently(redirectUrl));
-                }
-            }
+        // www subdomain: redirect
+        if (host != null && host.startsWith("www.")) {
+            String redirectUrl = buildUrl("www", request.path(), request.queryString());
+            return promise(movedPermanently(redirectUrl));
         }
 
         // Lang in path: validate and set
@@ -76,7 +61,8 @@ public class RedirectAction extends play.mvc.Action.Simple {
     }
 
     private boolean isValidLang(String langCode) {
-        return SUBDOMAIN_REDIRECTS.containsKey(langCode);
+        Lang lang = Lang.forCode(langCode);
+        return Lang.availables().contains(lang);
     }
 
     private <A> F.Promise<A> promise(A result) {

@@ -67,21 +67,10 @@ public class RedirectActionTest extends PlayTest {
     }
 
     @Test
-    public void langOrWwwInSubdomain_requestShouldBeRedirected() throws Exception {
-        Map<String, String> tests = ImmutableMap.<String, String>builder().
-                put("www.forward.cat", "forward.cat").
-                put("en.forward.cat", "forward.cat").
-                put("es.forward.cat", "forward.cat/es").
-                put("ca.forward.cat", "forward.cat/ca").
-                build();
-
-        for (Entry<String, String> entry : tests.entrySet()) {
-            Result result = route(request(entry.getKey(), "/?param1=a&param2=b"));
-            assertThat(status(result), is(MOVED_PERMANENTLY));
-
-            String expectedRedirect = "http://" + entry.getValue() + "/?param1=a&param2=b";
-            assertThat(location(result), is(expectedRedirect));
-        }
+    public void wwwInSubdomain_requestShouldBeRedirected() throws Exception {
+        Result result = route(request("www.forward.cat", "/?param1=a&param2=b"));
+        assertThat(status(result), is(MOVED_PERMANENTLY));
+        assertThat(location(result), is("https://forward.cat/?param1=a&param2=b"));
     }
 
     private FakeRequest request(String host, String path) {
