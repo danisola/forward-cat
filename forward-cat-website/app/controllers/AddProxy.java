@@ -21,6 +21,7 @@ import static java.util.Optional.empty;
 import static models.ControllerUtils.*;
 import static models.ExpirationUtils.now;
 import static models.ExpirationUtils.toDate;
+import static models.MailAddressNormalizer.normalize;
 
 @With(RedirectAction.class)
 public class AddProxy extends Controller {
@@ -38,7 +39,7 @@ public class AddProxy extends Controller {
 
     public Result addProxy(String langCode, String proxy, String email) {
         // Checking params
-        Optional<MailAddress> maybeUserMail = toMailAddress(email);
+        Optional<MailAddress> maybeUserMail = normalize(toMailAddress(email));
         if (proxy == null || !maybeUserMail.isPresent()) {
             return badRequest(error_page.render(lang(), empty()));
         }
