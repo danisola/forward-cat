@@ -15,7 +15,7 @@ public class RedirectAction extends play.mvc.Action.Simple {
 
     private static final Lang DEFAULT_LANG = Lang.forCode("en");
     private static final Pattern PATH_LANG_PATTTERN = Pattern.compile("^/(?<lang>[a-z]{2})([/\\?].*)?");
-    private static final Map<String, String> SUBDOMAIN_REDIRECTS = new ImmutableMap.Builder<String, String>()
+    private static final Map<String, String> SUBDOMAIN_REDIRECTS = ImmutableMap.<String, String>builder()
             .put("www", "https://forward.cat")
             .build();
 
