@@ -1,0 +1,6 @@
+@(lang: Lang)
+
+    @simple_page(lang, Messages("contact_sent.title")(lang), Messages("contact_sent.header")(lang)) {
+        <p>@Messages("contact_sent.content")(lang)</p>
+        <p>@Messages("contact_sent.thanks")(lang)</p>
+    }

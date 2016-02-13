@@ -10,9 +10,7 @@ import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
 import play.twirl.api.Html;
-import views.html.report;
-import views.html.user_reported;
-import views.html.user_reported_email;
+import views.html.*;
 
 import javax.mail.internet.AddressException;
 import java.util.Optional;
@@ -25,13 +23,13 @@ public class Report extends Controller {
 
     private final Repository repository;
     private final MailSender mailSender;
-    private final MailAddress reportAddress;
+    private final MailAddress contactAddress;
 
     @Inject
     Report(Repository repository, MailSender mailSender) throws AddressException {
         this.repository = repository;
         this.mailSender = mailSender;
-        this.reportAddress = new MailAddress(Play.application().configuration().getString("reportAddress"));
+        this.contactAddress = new MailAddress(Play.application().configuration().getString("contactAddress"));
     }
 
     public Result reportGet(String langCode) {
@@ -48,7 +46,7 @@ public class Report extends Controller {
                 ProxyMail proxyMail = maybeProxyMail.get();
                 if (proxyMail.isActive() && !proxyMail.isBlocked()) {
                     Html content = user_reported_email.render(lang(), proxy, message);
-                    mailSender.sendHtmlMail(reportAddress, "User reported", content.toString());
+                    mailSender.sendHtmlMail(contactAddress, "User reported", content.toString());
                 }
             }
         }

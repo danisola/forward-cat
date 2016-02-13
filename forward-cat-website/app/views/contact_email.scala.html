@@ -1,0 +1,7 @@
+@(lang: Lang, email: String, message: String)
+
+    @simple_email(lang, "Contact") {
+        <p>From: @email</p>
+        <p>Message:</p>
+        <p>@message</p>
+    }

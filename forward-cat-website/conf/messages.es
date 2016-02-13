@@ -16,7 +16,7 @@ index.form.submit = ¡Adelante!
 index.about.header = Acerca de
 index.about.content = Forward Cat es un servicio permite crear fácilmente una dirección de correo temporal que te reenvía automáticamente el correo a tu dirección real.
 index.about.spam = <strong>Importante:</strong> nos reservamos el derecho de cancelar o bloquear tu cuenta si descubrimos que la usas para enviar spam. Si crees que alguien usa Forward Cat para enviar spam, <a href="/es/report">repórtalo</a> por favor.
-index.about.contact = También puedes <a target="_blank" href="mailto:contact@forward.cat?subject=Hola!">contactarnos</a> para cualquier otro asunto.
+index.about.contact = También puedes <a href="/es/contact">contactarnos</a> para cualquier otro asunto.
 index.about.section1.title = No reveles tu dirección
 index.about.section1.content = Forward Cat es anónimo, así puedes dar una dirección temporal cuando no quieres revelar tu dirección real.
 index.about.section2.title = Evita el correo no deseado
@@ -34,6 +34,18 @@ email_sent.header = ¡Activa tu dirección temporal!
 email_sent.content1 = Te hemos enviado un email, activa tu dirección de correo temporal en los siguientes 30 minutos para empezar a usarla.
 email_sent.content2 = Si no recibes el email, comprueba que no esté en la carpeta de correo no deseado.
 email_sent.back = Volver a Forward Cat
+
+contact.title = Como podemos ayudar?
+contact.header = Como podemos ayudar?
+contact.content = No dudes en contactarnos por cualquier cosa!
+contact.email = Tu email:
+contact.message = Mensaje:
+contact.submit = Enviar
+
+contact_sent.title = Mensaje enviado
+contact_sent.header = Mensaje enviado
+contact_sent.content = Tu mensaje ha sido enviado y responderemos lo más pronto posible.
+contact_sent.thanks = Gracias por contactarnos!
 
 report_user.title = Reportar uso indebido
 report_user.header = Reportar uso indebido
@@ -89,4 +101,4 @@ error_page.header = Algo ha fallado
 error_page.content = Lo sentimos mucho, pero su petición no se ha podido llevar a cabo.
 error_page.back = Volver a Forward Cat
 
-error.too_many_proxies = Para luchar contra el correo indeseado, actualmente solo permitimos la creación de 3 direcciones temporales. Si necesitas más, envía un correo a <b>contact@forward.cat</b> explicando el porqué.
+error.too_many_proxies = Para luchar contra el correo indeseado, actualmente solo permitimos la creación de 3 direcciones temporales. Si necesitas más, <a href="/contact">envía un correo</a> explicando el porqué.

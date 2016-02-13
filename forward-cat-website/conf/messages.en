@@ -16,7 +16,7 @@ index.form.submit = Let''s do this!
 index.about.header = About
 index.about.content = Forward Cat is a service that allows you to quickly create a temporary email address that automatically forwards to your real email address.
 index.about.spam = <strong>Important:</strong> we reserve the right to cancel or block your account without any further notice if you are found to be sending spam. If you believe someone is using this service to spam, please <a href="/report">report it</a>.
-index.about.contact = You can also <a target="_blank" href="mailto:contact@forward.cat?subject=Hi%20there!">contact us</a> for any other issue.
+index.about.contact = You can also <a href="/contact">contact us</a> for any other issue.
 index.about.section1.title = Don''t reveal your address
 index.about.section1.content = Forward Cat is anonymous- give out a disposable email address when you don''t want to disclose your real address.
 index.about.section2.title = Avoid spam
@@ -34,6 +34,18 @@ email_sent.header = Activate your temporary email address!
 email_sent.content1 = We have sent you an email, activate your new temporary email address within the next 30 minutes to start using it.
 email_sent.content2 = If you don''t see the email, please check your spam folder.
 email_sent.back = Back to Forward Cat
+
+contact.title = How can we help?
+contact.header = How can we help?
+contact.content = Feel free to contact us about anything!
+contact.email = Your email:
+contact.message = Message:
+contact.submit = Submit
+
+contact_sent.title = Message sent
+contact_sent.header = Message sent
+contact_sent.content = Your message has been sent, we'll come back to you shortly.
+contact_sent.thanks = Thanks for contacting us!
 
 report_user.title = Report abuse
 report_user.header = Report abuse
@@ -89,5 +101,4 @@ error_page.header = Something went wrong
 error_page.content = We're very sorry, but we cannot fulfill your request.
 error_page.back = Back to Forward Cat
 
-error.too_many_proxies = To fight against spammers, we currently allow a maximum of 3 temporary addresses. If you \
-  need more, please contact us at <b>contact@forward.cat</b> explaining why.
+error.too_many_proxies = To fight against spammers, we currently allow a maximum of 3 temporary addresses. If you need more, please <a href="/contact">contact us</a> explaining why.

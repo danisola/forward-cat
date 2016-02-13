@@ -1,0 +1,31 @@
+@(lang: Lang)
+
+    @simple_page(lang, Messages("contact.title")(lang), Messages("contact.header")(lang)) {
+        <p>@Messages("contact.content")(lang)</p><br />
+
+        @if(lang.code == "en") {
+        <form class="form-horizontal" id="contact-form" action="/contact-sent" method="get">
+        } else {
+        <form class="form-horizontal" id="contact-form" action="/@lang.code/contact-sent" method="get">
+        }
+            <div class="control-group">
+                <label class="control-label" for="proxy">@Messages("contact.email")(lang)</label>
+
+                <div class="controls">
+                    <input type="text" class="input-xlarge" id="email" name="email" placeholder="abc@@email.com" autocomplete="off">
+                    <p class="help-block"></p>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="message">@Messages("contact.message")(lang)</label>
+
+                <div class="controls">
+                    <textarea id="message" name="message" rows="4" class="input-xlarge"></textarea>
+                    <p class="help-block"></p>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">@Messages("contact.submit")(lang)</button>
+            </div>
+        </form>
+    }
