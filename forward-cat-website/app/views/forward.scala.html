@@ -13,7 +13,7 @@
         <![endif]-->
 
         <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
-        <link href="//netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-XdYbMnZ/QjLh6iI4ogqCTaIjrFk87ip+ekIjefZch0Y+PvJ8CDYtEs1ipDmPorQ+" crossorigin="anonymous">
         <link href="@routes.Assets.at("stylesheets/styles.min.css")" rel="stylesheet" >
         <link href="@routes.Assets.at("images/favicon.ico")" rel="shortcut icon">
 
@@ -61,7 +61,7 @@
                     <form class="form-horizontal" id="proxy-form" action="/@lang.code/add" method="get">
                     }
                         <div class="control-group">
-                            <label class="control-label" for="proxy">@Messages("index.form.proxy.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.proxy.title")(lang)" data-content="@Messages("index.form.proxy.content")(lang)" class="icon-question-sign icon-large info-icon"></i></label>
+                            <label class="control-label" for="proxy">@Messages("index.form.proxy.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.proxy.title")(lang)" data-content="@Messages("index.form.proxy.content")(lang)" class="fa fa-question-circle fa-lg info-icon"></i></label>
 
                             <div class="controls">
                                 <input type="text" class="input-xlarge" id="proxy" name="proxy" placeholder="@Messages("index.form.proxy.placeholder")(lang)" autocomplete="off">
@@ -71,7 +71,7 @@
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="email">@Messages("index.form.address.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.address.title")(lang)" data-content="@Messages("index.form.address.content")(lang)" class="icon-question-sign icon-large info-icon"></i></label>
+                            <label class="control-label" for="email">@Messages("index.form.address.label")(lang) <i rel="tooltip" data-title="@Messages("index.form.address.title")(lang)" data-content="@Messages("index.form.address.content")(lang)" class="fa fa-question-circle fa-lg info-icon"></i></label>
 
                             <div class="controls">
                                 <input type="email" class="input-xlarge" id="email" name="email" placeholder="@Messages("index.form.address.placeholder")(lang)" autocomplete="off">
@@ -96,18 +96,18 @@
 
                 <div class="row-fluid marketing">
                     <div class="span6">
-                        <h4><i class="icon-envelope"></i> @Messages("index.about.section1.title")(lang)</h4>
+                        <h4><i class="fa fa-envelope-o"></i> @Messages("index.about.section1.title")(lang)</h4>
                         <p>@Messages("index.about.section1.content")(lang)</p>
 
-                        <h4><i class="icon-ban-circle"></i> @Messages("index.about.section2.title")(lang)</h4>
+                        <h4><i class="fa fa-ban"></i> @Messages("index.about.section2.title")(lang)</h4>
                         <p>@Messages("index.about.section2.content")(lang)</p>
                     </div>
 
                     <div class="span6">
-                        <h4><i class="icon-lightbulb"></i> @Messages("index.about.section3.title")(lang)</h4>
+                        <h4><i class="fa fa-lightbulb-o"></i> @Messages("index.about.section3.title")(lang)</h4>
                         <p>@Messages("index.about.section3.content")(lang)</p>
 
-                        <h4><i class="icon-eye-close"></i> @Messages("index.about.section4.title")(lang)</h4>
+                        <h4><i class="fa fa-eye-slash"></i> @Messages("index.about.section4.title")(lang)</h4>
                         <p>@Messages("index.about.section4.content")(lang)</p>
                     </div>
                 </div>
