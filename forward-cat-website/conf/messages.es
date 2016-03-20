@@ -102,3 +102,5 @@ error_page.content = Lo sentimos mucho, pero su petición no se ha podido llevar
 error_page.back = Volver a Forward Cat
 
 error.too_many_proxies = Para luchar contra el correo indeseado, actualmente solo permitimos la creación de 3 direcciones temporales. Si necesitas más, <a href="/contact">envía un correo</a> explicando el porqué.
+
+faq.title = Preguntas frequentes

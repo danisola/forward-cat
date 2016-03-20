@@ -102,3 +102,5 @@ error_page.content = Ho sentim molt, però la petició no s'ha pogut portar a te
 error_page.back = Tornar a Forward Cat
 
 error.too_many_proxies = Per lluitar contra el correu indesitjat, actualment només permetem un màxim de 3 correus temporals. Si en necessites més, <a href="/ca/contact">envia un correu</a> explicant el perquè.
+
+faq.title = Preguntes freqüents

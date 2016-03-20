@@ -102,3 +102,5 @@ error_page.content = We're very sorry, but we cannot fulfill your request.
 error_page.back = Back to Forward Cat
 
 error.too_many_proxies = To fight against spammers, we currently allow a maximum of 3 temporary addresses. If you need more, please <a href="/contact">contact us</a> explaining why.
+
+faq.title = Frequent questions

@@ -1,0 +1,56 @@
+@(lang: Lang)
+
+@simple_page(lang, Messages("faq.title")(lang), Messages("faq.title")(lang)) {
+    <div class="faq">
+    @{
+        if(lang.code == "en") {
+            <h4>How long will my temporary email address be active for?</h4>
+            <p>
+            Your temporary address will be initially active for a week. A day before it expires you'll receive an
+            email allowing you to extend it for another week, but you can only do it once.
+            </p>
+            <h4>Can I deactivate my temporary email address?</h4>
+            <p>
+            Yes. In the activation email you received when you created your temporary email address there is a link
+            to deactivate it whenever you want.
+            </p>
+            <h4>I've got another question!</h4>
+            <p>
+            Feel free to <a href="/contact">contact us</a>, we'll answer as soon as possible.
+            </p>
+
+        } else if(lang.code == "ca") {
+            <h4>Quant de temps estarà activa la meva adreça temporal?</h4>
+            <p>
+            La teva adreça temporal estarà activa durant una setmana. Un dia abans de que es desactivi rebràs un
+            correu que et permetrà extendre-la una setmana més, però només es pot extendre un cop.
+            </p>
+            <h4>Puc desactivar la meva adreça temporal?</h4>
+            <p>
+            Si. En el correu d'activació que vas rebre quan vas crear la teva adreça temporal hi ha un enllaç des
+            d'on pots desactivar-la quan tu vulguis.
+            </p>
+            <h4>Tinc una altra pregunta!</h4>
+            <p>
+            Posa't en <a href="/ca/contact">contacte</a> amb nosaltres, respondrem el més aviat possible.
+            </p>
+
+        } else if(lang.code == "es") {
+            <h4>Quanto tiempo estará activa mi dirección temporal?</h4>
+            <p>
+            Tu dirección de correo temporal estará activa durante una semana. Un dia antes de que se desactive
+            recibirás un correo que te pemitirá extenderla una semana más, pero solamente se puede extender una vez.
+            </p>
+            <h4>Puedo desactivar mi dirección temporal?</h4>
+            <p>
+            Sí. En el correo de activación que recibiste cuando creaste tu dirección temporal hay un enlace des del
+            que puedes desactivarla cuando quieras.
+            </p>
+            <h4>Tengo otra pregunta!</h4>
+            <p>
+            Ponte en <a href="/es/contact">contacto</a> con nosotros, responderemos lo más pronto posible.
+            </p>
+        }
+    }
+    s</div>
+}

@@ -4,6 +4,8 @@
 
 GET        /                                       @controllers.Landing.index(langCode = "en")
 GET        /$langCode<[a-z]{2}>/                   @controllers.Landing.index(langCode)
+GET        /faq                                    @controllers.Faq.get(langCode = "en")
+GET        /$langCode<[a-z]{2}>/faq                @controllers.Faq.get(langCode)
 GET        /report                                 @controllers.Report.reportGet(langCode = "en")
 GET        /$langCode<[a-z]{2}>/report             @controllers.Report.reportGet(langCode)
 GET        /report-user                            @controllers.Report.reportUser(langCode = "en", proxy: String, message: String)
