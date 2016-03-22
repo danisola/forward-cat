@@ -3,11 +3,7 @@
     @simple_page(lang, Messages("report_user.title")(lang), Messages("report_user.header")(lang)) {
         <p>@Messages("report_proxy.content")(lang)</p><br />
 
-        @if(lang.code == "en") {
-        <form class="form-horizontal" id="report-form" action="/report-user" method="get">
-        } else {
-        <form class="form-horizontal" id="report-form" action="/@lang.code/report-user" method="get">
-        }
+        <form class="form-horizontal" id="report-form" action="@(DomainManager.buildUrl(lang, "/report-user"))" method="get">
             <div class="control-group">
                 <label class="control-label" for="proxy">@Messages("report_user.user")(lang)</label>
 

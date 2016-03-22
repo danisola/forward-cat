@@ -3,11 +3,7 @@
     @simple_page(lang, Messages("contact.title")(lang), Messages("contact.header")(lang)) {
         <p>@Messages("contact.content")(lang)</p><br />
 
-        @if(lang.code == "en") {
-        <form class="form-horizontal" id="contact-form" action="/contact-sent" method="get">
-        } else {
-        <form class="form-horizontal" id="contact-form" action="/@lang.code/contact-sent" method="get">
-        }
+        <form class="form-horizontal" id="contact-form" action="@(DomainManager.buildUrl(lang, "/contact-sent"))" method="get">
             <div class="control-group">
                 <label class="control-label" for="proxy">@Messages("contact.email")(lang)</label>
 
