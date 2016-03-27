@@ -1,23 +1,24 @@
+@import models.DomainManager.buildUrl
 @(lang: Lang)
 
     @simple_page(lang, Messages("contact.title")(lang), Messages("contact.header")(lang)) {
         <p>@Messages("contact.content")(lang)</p><br />
 
-        <form class="form-horizontal" id="contact-form" action="@(DomainManager.buildUrl(lang, "/contact-sent"))" method="get">
-            <div class="control-group">
+        <form id="contact-form" action="@(buildUrl(lang, "/contact-sent"))" method="get">
+            <div class="form-group">
                 <label class="control-label" for="proxy">@Messages("contact.email")(lang)</label>
 
                 <div class="controls">
-                    <input type="text" class="input-xlarge" id="email" name="email" placeholder="abc@@email.com" autocomplete="off">
-                    <p class="help-block"></p>
+                    <input type="text" class="form-control" id="email" name="email" placeholder="abc@@email.com" autocomplete="off">
+                    <p class="help-info"></p>
                 </div>
             </div>
-            <div class="control-group">
+            <div class="form-group">
                 <label class="control-label" for="message">@Messages("contact.message")(lang)</label>
 
                 <div class="controls">
-                    <textarea id="message" name="message" rows="4" class="input-xlarge"></textarea>
-                    <p class="help-block"></p>
+                    <textarea id="message" name="message" rows="4" class="form-control"></textarea>
+                    <p class="help-info"></p>
                 </div>
             </div>
             <div class="form-actions">

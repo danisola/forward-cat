@@ -24,7 +24,7 @@ $(document).ready(function () {
       }
     },
     errorPlacement: function (error, element) {
-      error.appendTo(element.parent().find(".help-block"));
+      error.appendTo(element.parent().find(".help-info"));
     },
     submitHandler: function (form) {
       var userEmail = $('#proxy-form').find('#email').val();
@@ -36,23 +36,7 @@ $(document).ready(function () {
     }
   });
 
-  proxyForm.find('i[rel=\'tooltip\']').popover({
-    placement: "top",
-    trigger: "manual"
-  }).click(function() {
-    var currentElem = $(this);
-    var isTooltipOpen = hasTooltip(currentElem);
-    hideTooltip(getElemsWithTooltip());
-
-    if (!isTooltipOpen) {
-      showTooltip(currentElem);
-    }
-    return false; // Stop propagation & prevent default
-  });
-
-  $('body').click(function() {
-    hideTooltip(getElemsWithTooltip());  // Hide all tooltips
-  });
+  $('[data-toggle="popover"]').popover();
 
   var userEmail = readCookie("user_email");
   if (userEmail !== null) {
@@ -80,7 +64,7 @@ $(document).ready(function () {
       }
     },
     errorPlacement: function (error, element) {
-      error.appendTo(element.parent().find(".help-block"));
+      error.appendTo(element.parent().find(".help-info"));
     },
     submitHandler: function (form) {
       form.submit();
@@ -90,24 +74,6 @@ $(document).ready(function () {
     }
   });
 });
-
-function getElemsWithTooltip() {
-  return $('#proxy-form').find("i[rel='tooltip'].tooltip-open");
-}
-
-function hasTooltip(elem) {
-  return elem.hasClass('tooltip-open');
-}
-
-function hideTooltip(elems) {
-  elems.removeClass('tooltip-open');
-  elems.popover('hide');
-}
-
-function showTooltip(elems) {
-  elems.popover('show');
-  elems.addClass('tooltip-open');
-}
 
 function createCookie(name, value, days) {
   var expires = "";

@@ -1,3 +1,7 @@
+navbar.faq = Preguntas Frequentes
+navbar.report = Reportar Usuario
+navbar.contact = Contactar
+
 index.title = Forward Cat - Direcciones temporales de email
 index.description = Crea una dirección temporal de email que reenvía automáticamente el correo a tu dirección real. ¡Es rápido, gratuito y anónimo!
 

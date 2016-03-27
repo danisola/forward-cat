@@ -1,3 +1,7 @@
+navbar.faq = Preguntes Freqüents
+navbar.report = Reportar Usuari
+navbar.contact = Contactar
+
 index.title = Forward Cat - Adreces temporals d''email
 index.description = Crea una adreça temporal d''e-mail que reenvia automàticament els correus a la teva adreça real. És gratuït, ràpid i anònim!
 

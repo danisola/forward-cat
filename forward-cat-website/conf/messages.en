@@ -1,3 +1,7 @@
+navbar.faq = Frequent Questions
+navbar.report = Report User
+navbar.contact = Contact
+
 index.title = Forward Cat - Temporary email addresses
 index.description = Get a temporary email address that automatically forwards to your real email address. It''s fast, free and anonymous!
 

@@ -1,24 +1,5 @@
-body {
-  padding-bottom: 40px;
-}
-
 .cat-img {
   margin: auto;
-}
-
-.title {
-  line-height: 20px;
-  margin: 15px 0;
-}
-
-#topbar {
-  width: 100%;
-  top: 0;
-  background-color: #AA3939;
-  position: fixed;
-  height: 4px;
-  left: 0;
-  z-index: 9999;
 }
 
 @media (min-width:400px) {
@@ -42,42 +23,96 @@ body {
   color: #3A87AD;
 }
 
-.form-actions {
-  background-color: transparent;
-  border: none;
-}
-
 .faq h4 {
   margin-top: 2em
 }
 
-/* Custom container */
-.container-narrow {
-  margin: 0 auto;
-  max-width: 700px;
+// From: http://getbootstrap.com/examples/jumbotron-narrow/jumbotron-narrow.css
+
+/* Space out content a bit */
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
 }
-.container-narrow > hr {
-  margin: 15px 0 10px 0;
+
+/* Everything but the jumbotron gets side spacing for mobile first views */
+.header,
+.marketing,
+.footer {
+  padding-right: 15px;
+  padding-left: 15px;
+}
+
+/* Custom page header */
+.header {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+/* Custom page footer */
+.footer {
+  color: #777;
+}
+
+/* Customize container */
+@media (min-width: 768px) {
+  .container {
+    max-width: 730px;
+  }
+}
+
+.section {
+  margin-bottom: 15px;
+}
+
+.navbar-default {
+  border-bottom: solid 2px #815A5A !important;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+  background-color: #815A5A !important;
 }
 
 /* Main marketing message and sign up button */
 .jumbotron {
   margin: 0;
+  padding: 40px 0 0 0 !important;
+  background-color: transparent !important;
   text-align: center;
 }
 .jumbotron h1 {
   font-size: 45px;
   line-height: 1;
 }
+
 .jumbotron .btn {
-  font-size: 21px;
   padding: 14px 24px;
+  font-size: 21px;
 }
 
 /* Supporting marketing content */
 .marketing {
-  margin: 60px 0;
+  margin: 40px 0;
 }
 .marketing p + h4 {
   margin-top: 28px;
+}
+
+/* Responsive: Portrait tablets and up */
+@media screen and (min-width: 768px) {
+  /* Remove the padding we set earlier */
+  .header,
+  .marketing,
+  .footer {
+    padding-right: 0;
+    padding-left: 0;
+  }
+  /* Space out the masthead */
+  .header {
+    margin-bottom: 30px;
+  }
+  /* Remove the bottom border on the jumbotron for visual effect */
+  .jumbotron {
+    border-bottom: 0;
+  }
 }

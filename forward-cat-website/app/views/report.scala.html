@@ -1,23 +1,24 @@
+@import models.DomainManager.buildUrl
 @(lang: Lang)
 
     @simple_page(lang, Messages("report_user.title")(lang), Messages("report_user.header")(lang)) {
         <p>@Messages("report_proxy.content")(lang)</p><br />
 
-        <form class="form-horizontal" id="report-form" action="@(DomainManager.buildUrl(lang, "/report-user"))" method="get">
-            <div class="control-group">
+        <form id="report-form" action="@(buildUrl(lang, "/report-user"))" method="get">
+            <div class="form-group">
                 <label class="control-label" for="proxy">@Messages("report_user.user")(lang)</label>
 
                 <div class="controls">
-                    <input type="text" class="input-xlarge" id="proxy" name="proxy" placeholder="abc@@forward.cat" autocomplete="off">
-                    <p class="help-block"></p>
+                    <input type="text" class="form-control" id="proxy" name="proxy" placeholder="abc@@forward.cat" autocomplete="off">
+                    <p class="help-info"></p>
                 </div>
             </div>
-            <div class="control-group">
+            <div class="form-group">
                 <label class="control-label" for="message">@Messages("report_user.reason")(lang)</label>
 
                 <div class="controls">
-                    <textarea id="message" name="message" rows="4" class="input-xlarge"></textarea>
-                    <p class="help-block"></p>
+                    <textarea id="message" name="message" rows="4" class="form-control"></textarea>
+                    <p class="help-info"></p>
                 </div>
             </div>
             <div class="form-actions">
