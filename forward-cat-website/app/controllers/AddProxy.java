@@ -6,6 +6,7 @@ import com.google.inject.Inject;
 import models.MailSender;
 import models.Repository;
 import org.apache.mailet.MailAddress;
+import play.i18n.Messages;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.With;
@@ -77,7 +78,7 @@ public class AddProxy extends Controller {
         repository.save(user);
 
         // Sending the confirmation mail
-        String subject = "Forward Cat";
+        String subject = Messages.get(lang(), "proxy_created_email.title");
         Html content = proxy_created_email.render(lang(), proxyMailAddress, getHash(proxyMail));
         mailSender.sendHtmlMail(userMail, subject, content.toString());
 

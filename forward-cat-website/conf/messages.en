@@ -63,12 +63,13 @@ user_reported.header = User reported
 user_reported.content = The user has been reported and will be investigated soon. However, bear in mind that even if we block his account we cannot stop him from sending more emails.
 user_reported.thanks = Thanks for letting us know!
 
-proxy_created_email.title = Activate your temporary email address
-proxy_created_email.content1 = The temporary address <b>{0}</b> has been successfully created.
-proxy_created_email.content2 = Click <a href="https://forward.cat/confirm?p={0}&h={1}" target="_blank">here</a> to activate it.
-proxy_created_email.content3 = If you have not created this temporary email address, just delete this mail and forget about it :)
-proxy_created_email.content4 = To deactivate your temporary email address at any time after it''s been activated, click <a href="https://forward.cat/confirm-deletion?p={0}&h={1}" target="_blank">here</a>.
-proxy_created_email.content5 = Thanks for using Forward Cat!
+proxy_created_email.title = Forward Cat - Activate your temporary email address
+proxy_created_email.intro = The address <b>{0}</b> is nearly ready:
+proxy_created_email.activation_url = https://forward.cat/confirm?p={0}&h={1}
+proxy_created_email.activate = Activate temporary address
+proxy_created_email.deactivate = To deactivate your temporary email address at any time after it''s been activated, click <a href="https://forward.cat/confirm-deletion?p={0}&h={1}" target="_blank">here</a>.
+proxy_created_email.forget_it = If you have not created this temporary email address, just delete this mail and forget about it :)
+proxy_created_email.thanks = Thanks for using Forward Cat!
 
 proxy_created.title = Temporary address activated
 proxy_created.header = Congratulations!

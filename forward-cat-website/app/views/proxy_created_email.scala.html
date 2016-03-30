@@ -1,9 +1,11 @@
 @(lang: Lang, proxy: org.apache.mailet.MailAddress, hash: String)
 
     @simple_email(lang, Messages("proxy_created_email.title")(lang)) {
-        <p>@Html(Messages("proxy_created_email.content1", proxy)(lang))</p>
-        <p>@Html(Messages("proxy_created_email.content2", proxy, hash)(lang))</p>
-        <p>@Html(Messages("proxy_created_email.content3")(lang))</p>
-        <p>@Html(Messages("proxy_created_email.content4", proxy, hash)(lang))</p>
-        <p>@Html(Messages("proxy_created_email.content5")(lang))</p>
+        <p>@Html(Messages("proxy_created_email.intro", proxy)(lang))</p>
+        @defining(Messages("proxy_created_email.activation_url", proxy, hash)(lang)) { url =>
+            <p>@button_email(Messages("proxy_created_email.activate")(lang), url)</p>
+        }
+        <p>@Html(Messages("proxy_created_email.deactivate", proxy, hash)(lang))</p>
+        <p>@Html(Messages("proxy_created_email.forget_it")(lang))</p>
+        <p>@Html(Messages("proxy_created_email.thanks")(lang))</p>
     }

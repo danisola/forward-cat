@@ -63,12 +63,13 @@ user_reported.header = Usuari reportat
 user_reported.content = L'usuari ha sigut reportat i aviat serà investigat. De totes formes, tingues en compte que encara que bloquegem la seva compta no podem evitar que segueixi enviant spam.
 user_reported.thanks = Gràcies per informar-nos!
 
-proxy_created_email.title = Activa la teva adreça d''email temporal
-proxy_created_email.content1 = L''adreça temporal <b>{0}</b> s''ha creat correctament.
-proxy_created_email.content2 = Fes clic <a href="https://forward.cat/ca/confirm?p={0}&h={1}" target="_blank">aquí</a> per activar-la.
-proxy_created_email.content3 = Si no has creat aquesta adreça, només cal que eliminis aquest correu i l''oblidis :)
-proxy_created_email.content4 = Per desactivar l''adreça temporal en qualsevol moment, fes clic <a href="https://forward.cat/ca/confirm-deletion?p={0}&h={1}">aquí</a>.
-proxy_created_email.content5 = Gràcies per utilitzar Forward Cat!
+proxy_created_email.title = Forward Cat - Activa la teva adreça d''email temporal
+proxy_created_email.intro = L''adreça <b>{0}</b> està quasi a punt:
+proxy_created_email.activation_url = https://forward.cat/ca/confirm?p={0}&h={1}
+proxy_created_email.activate = Activar l''adreça temporal
+proxy_created_email.deactivate = Per desactivar l''adreça temporal en qualsevol moment, fes clic <a href="https://forward.cat/ca/confirm-deletion?p={0}&h={1}">aquí</a>.
+proxy_created_email.forget_it = Si no has creat aquesta adreça, només cal que eliminis aquest correu i l''oblidis :)
+proxy_created_email.thanks = Gràcies per utilitzar Forward Cat!
 
 proxy_created.title = Adreça temporal activada
 proxy_created.header = Felicitats!
