@@ -150,9 +150,7 @@
           -->
 
         <!-- Set the HELO/EHLO name to use when connectiong to remote SMTP-Server -->
-        <!--
-        <mail.smtp.localhost>myMailServer</mail.smtp.localhost>
-          -->
+        <mail.smtp.localhost>forward.cat</mail.smtp.localhost>
       </mailet>
 
     </processor>
